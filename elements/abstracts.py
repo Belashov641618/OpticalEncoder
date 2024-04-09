@@ -8,11 +8,19 @@ class AbstractElement(torch.nn.Module):
     delayed:DelayedFunctions
     accuracy:Accuracy
 
-    pixels:InOutParams[int]
+    pixels:IOParams[int]
+    def _change_pixels_input(self):
+        pass
+    def _change_pixels_output(self):
+        pass
     def _change_pixels(self):
         pass
 
-    length:InOutParams[float]
+    length:IOParams[float]
+    def _change_length_input(self):
+        pass
+    def _change_length_output(self):
+        pass
     def _change_length(self):
         pass
 
@@ -25,11 +33,23 @@ class AbstractElement(torch.nn.Module):
         self.accuracy = Accuracy()
         self.delayed = DelayedFunctions()
 
-        self.pixels = InOutParams[int](*[self._change_pixels] * 4)
-        self.length = InOutParams[float](*[self._change_length] * 4)
+        self.pixels = IOParams[int](change_input=self._change_pixels_input, change_output=self._change_pixels_output, change=self._change_pixels)
+        self.length = IOParams[float](change_input=self._change_length_input, change_output=self._change_length_output, change=self._change_length)
 
+        print(pixels)
+        print(self.pixels._input.x, self.pixels._input.y, self.pixels._output.x, self.pixels._output.y)
         self.pixels.set(pixels)
+        print(self.pixels._input.x, self.pixels._input.y, self.pixels._output.x, self.pixels._output.y)
+
+        print(length)
+        print(self.length._input.x, self.length._input.y, self.length._output.x, self.length._output.y)
         self.length.set(length)
+        print(self.length._input.x, self.length._input.y, self.length._output.x, self.length._output.y)
+
+        print('')
+        print('Pixels:', self.pixels._input.x, self.pixels._input.y, self.pixels._output.x, self.pixels._output.y)
+        print('Length:', self.length._input.x, self.length._input.y, self.length._output.x, self.length._output.y)
+
 
         if logger is None:
             logger = Logger(False, prefix='Deleted')
@@ -86,15 +106,15 @@ class AbstractPropagator(AbstractOptical):
         else:
             return super().device
 
-    distance:ChangeableParam[float]
     def _change_distance(self):
-        print('abstract')
         pass
+    @Param[float]
+    def distance(self):
+        self._change_distance()
 
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, distance:float, logger:Logger=None):
         super().__init__(pixels, length, wavelength, reflection, absorption, logger=logger)
-        self.distance = ChangeableParam[float](self._change_distance)
-        self.distance.__set__(distance)
+        self.distance = distance
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)

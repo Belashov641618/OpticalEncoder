@@ -9,15 +9,15 @@ class FurrierPropagation(AbstractPropagator):
         if not hasattr(self, '_add_pixels'):
             self._add_pixels = XYParams[int](None, None)
             self._add_pixels.set(0)
-        self._add_pixels.x = upper_integer(closest_integer((self.length.output.x - self.length.input.x) * self.pixels.input.x / self.length.input.x) / 2)
-        self._add_pixels.y = upper_integer(closest_integer((self.length.output.y - self.length.input.y) * self.pixels.input.y / self.length.input.y) / 2)
+        self._add_pixels.x = upper_integer(closest_integer((self.length._output.x - self.length._input.x) * self.pixels._input.x / self.length._input.x) / 2)
+        self._add_pixels.y = upper_integer(closest_integer((self.length._output.y - self.length._input.y) * self.pixels._input.y / self.length._input.y) / 2)
     _pad_pixels:XYParams[int]
     def _reset_pad_pixels(self):
         if not hasattr(self, '_pad_pixels'):
             self._pad_pixels = XYParams[int](None, None)
             self._pad_pixels.set(0)
-        self._pad_pixels.x = upper_integer(self.border_ratio*self.pixels.input.x)
-        self._pad_pixels.y = upper_integer(self.border_ratio*self.pixels.input.y)
+        self._pad_pixels.x = upper_integer(self.border_ratio * self.pixels._input.x)
+        self._pad_pixels.y = upper_integer(self.border_ratio * self.pixels._input.y)
     @property
     def _padding_x(self):
         return self._pad_pixels.x + (self._add_pixels.x if self._add_pixels.x > 0 else 0)
@@ -38,22 +38,22 @@ class FurrierPropagation(AbstractPropagator):
         return self._unpadding_x, self._unpadding_x, self._unpadding_y, self._unpadding_y
     @property
     def _total_pixels_x(self):
-        return self.pixels.input.x + 2 * self._padding_x
+        return self.pixels._input.x + 2 * self._padding_x
     @property
     def _total_pixels_y(self):
-        return self.pixels.input.y + 2 * self._padding_y
+        return self.pixels._input.y + 2 * self._padding_y
     @property
     def _total_length_x(self):
-        return self._total_pixels_x * self.length.input.x / self.pixels.input.x
+        return self._total_pixels_x * self.length._input.x / self.pixels._input.x
     @property
     def _total_length_y(self):
-        return self._total_pixels_y * self.length.input.y / self.pixels.input.y
+        return self._total_pixels_y * self.length._input.y / self.pixels._input.y
     @property
     def _step_x(self):
-        return self.length.input.x / self.pixels.input.x
+        return self.length._input.x / self.pixels._input.x
     @property
     def _step_y(self):
-        return self.length.input.y / self.pixels.input.y
+        return self.length._input.y / self.pixels._input.y
 
     def _recalc_propagation_buffer(self):
         print('Recalc prop buffer')
@@ -69,10 +69,12 @@ class FurrierPropagation(AbstractPropagator):
 
         self.register_buffer('_propagation_buffer', torch.exp(1j * Kz * self.distance))
 
-    border_ratio:ChangeableParam[float]
     def _change_border(self):
         self.delayed.add(self._reset_pad_pixels, -1.)
         self.delayed.add(self._recalc_propagation_buffer)
+    @Param
+    def border_ratio(self):
+        self._change_border()
 
     def _reset_all(self):
         self.delayed.add(self._reset_add_pixels, -1.)
@@ -96,8 +98,7 @@ class FurrierPropagation(AbstractPropagator):
 
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, distance:float, border_ratio:float=0.5, interpolation:IMType=InterpolateModes.bilinear, logger:Logger=None):
         super().__init__(pixels, length, wavelength, reflection, absorption, distance, logger=logger)
-        self.border_ratio = ChangeableParam[float](self._change_border)
-        self.border_ratio.__set__(border_ratio)
+        self.border_ratio = border_ratio
         self.interpolation = InterpolateMode(interpolation)
         self._reset_all()
         self.delayed.launch()
@@ -109,5 +110,5 @@ class FurrierPropagation(AbstractPropagator):
         field = field * self._propagation_buffer
         field = torch.fft.ifft2(field)
         field = torch.nn.functional.pad(field, self._unpaddings)
-        field = interpolate(field, (self.pixels.output.x, self.pixels.output.y), mode=self.interpolation.mode)
+        field = interpolate(field, (self.pixels._output.x, self.pixels._output.y), mode=self.interpolation.mode)
         return field

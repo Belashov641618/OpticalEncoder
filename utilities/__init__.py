@@ -1,5 +1,7 @@
-from .basics import DelayedFunctions, Accuracy, InOutParams, XYParams, IntXY, FloatXY, FloatIO, IntIO, SpaceParam, FloatS, ChangeableParam
+from .basics import DelayedFunctions, Accuracy
+from .basics import Param, XYParams, IOParams, IntXY, FloatXY, IntIO, FloatIO
+from .basics import SpaceParam, FloatS
+from .basics import InterpolateMode, InterpolateModes, IMType
 from .loggers import Logger
 from .methods import closest_integer, upper_integer, interpolate
-from .basics import InterpolateMode, InterpolateModes, IMType
 from belashovplot import TiledPlot

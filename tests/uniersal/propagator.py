@@ -11,10 +11,10 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
     if logger is None:
         logger = Logger(False)
 
-    pixels_x = model.pixels.input.x
-    pixels_y = model.pixels.input.y
-    length_x = model.length.input.x
-    length_y = model.length.input.y
+    pixels_x = model.pixels._input.x
+    pixels_y = model.pixels._input.y
+    length_x = model.length._input.x
+    length_y = model.length._input.y
 
     wavelength = model.wavelength.effective
     reflection = model.reflection.effective
@@ -48,15 +48,15 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
         field = mask * torch.ones((pixels_x, pixels_y), dtype=model.accuracy.tensor_complex, device=model.device)
         field = field.expand(1, model.wavelength.length, -1, -1)
         result = model.forward(field)
-        cutX = torch.zeros((Nz, model.pixels.output.y), dtype=model.accuracy.tensor_complex, device=model.device)
-        cutY = torch.zeros((Nz, model.pixels.output.x), dtype=model.accuracy.tensor_complex, device=model.device)
+        cutX = torch.zeros((Nz, model.pixels._output.y), dtype=model.accuracy.tensor_complex, device=model.device)
+        cutY = torch.zeros((Nz, model.pixels._output.x), dtype=model.accuracy.tensor_complex, device=model.device)
 
         for i, dist in enumerate(numpy.linspace(0, distance, Nz)):
             model.distance = dist
             print('cahnged', dist)
             temp = model.forward(field).squeeze()
-            cutX[i] = temp[model.pixels.output.x//2, :]
-            cutY[i] = temp[:, model.pixels.output.y//2]
+            cutX[i] = temp[model.pixels._output.x // 2, :]
+            cutY[i] = temp[:, model.pixels._output.y // 2]
 
         field = field.squeeze().abs().cpu()
         result = result.squeeze().abs().cpu()

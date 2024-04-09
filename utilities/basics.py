@@ -75,123 +75,103 @@ class Accuracy:
         return self._bits
 
 
-IntXY   = Union[int, Tuple[int,int]]
-FloatXY = Union[float, Tuple[float,float]]
-
-IntIO = Union[int, Tuple[int,int], Tuple[int,int,int,int]]
-FloatIO = Union[float, Tuple[float,float], Tuple[float,float,float,float]]
 
 ParamType = TypeVar('ParamType')
-SetterType = Callable[[ParamType], None]
-class ChangeableProperty(Generic[ParamType]):
-    _value : Optional[ParamType]
-    _setter : SetterType
-    def __init__(self, setter:SetterType):
-        self._setter = setter
-        self._value = None
-    def __set__(self, obj, value:ParamType):
-        if self._setter is None:
-            raise AttributeError
-        self._setter(value)
-    def __get__(self, obj):
-        return self._value
-class ChangeableParam(Generic[ParamType]):
-    _param : Optional[ParamType]
-    _change_function : Optional[Callable]
-    def __get__(self, obj):
-        return self._param
-    def __set__(self, obj, value:ParamType):
-        if value != self._param:
-            self._param = value
-            if self._change_function is not None:
-                self._change_function()
-    def __init__(self, change_function:Optional[Callable]):
-        self._param = None
-        self._change_function = change_function
+TypeXY  = Union[ParamType, Tuple[ParamType,ParamType]]
+IntXY   = Union[int, Tuple[int,int]]
+FloatXY = Union[float, Tuple[float,float]]
+TypeIO  = Union[ParamType, Tuple[ParamType,ParamType], Tuple[ParamType,ParamType,ParamType,ParamType]]
+IntIO   = Union[int, Tuple[int,int], Tuple[int,int,int,int]]
+FloatIO = Union[float, Tuple[float,float], Tuple[float,float,float,float]]
 
-    def __truediv__(self, other):
-        if isinstance(other, ChangeableParam):
-            return self._param / other._param
-        else:
-            return self._param / other
-    def __rtruediv__(self, other):
-        if isinstance(other, ChangeableParam):
-            return other._param / self._param
-        else:
-            return other / self._param
-    def __mul__(self, other):
-        if isinstance(other, ChangeableParam):
-            return self._param * other._param
-        else:
-            return self._param * other
-    def __rmul__(self, other):
-        return self*other
+ChangeType = Callable[[], None]
+class Param(Generic[ParamType]):
+    _value : Optional[ParamType]
+    _change_function : Optional[ChangeType]
+    def __init__(self, change:ChangeType=None):
+        self._change_function = change
+        self._value = None
+    def set(self, value:ParamType):
+        if self._value != value:
+            self._value = value
+            self._change_function()
+    def get(self):
+        return self._value
+    @property
+    def value(self):
+        return self._value
+    @value.setter
+    def value(self, value:ParamType):
+        self.set(value)
 
 class XYParams(Generic[ParamType]):
-    _x:ChangeableParam[ParamType]
+    _change : Optional[ChangeType]
+
+    _x:Param[ParamType]
     @property
     def x(self):
-        return self._x
+        return self._x.value
     @x.setter
     def x(self, value:ParamType):
-        self._x = value
+        if self._x != value:
+            self._x.value = value
+            self._change()
 
-    _y:ChangeableParam[ParamType]
+    _y:Param[ParamType]
     @property
     def y(self):
-        return self._y
+        return self._y.value
     @y.setter
     def y(self, value:ParamType):
-        self._y = value
+        if self._y != value:
+            self._y.value = value
+            self._change()
 
-    def set(self, data:Union[ParamType, Tuple[ParamType,ParamType]]):
+    def __init__(self, change_x:ChangeType=None, change_y:ChangeType=None, change:ChangeType=None):
+        self._change = change
+        self._x = Param[ParamType](change_x)
+        self._y = Param[ParamType](change_y)
+
+    def set(self, data:TypeXY):
         if isinstance(data, tuple):
-            self.x = data[0]
-            self.y = data[1]
+            self.x.set(data[0])
+            self.y.set(data[1])
+            if self._x.value != data[0] or self._y.value != data[1]:
+                self._change()
         else:
-            self.x = data
-            self.y = data
+            self.x.set(data)
+            self.y.set(data)
+            if self._x.value != data or self._y.value != data:
+                self._change()
+    def get(self):
+        return self.x.get(), self.y.get()
 
-    def __init__(self, change_x:Optional[Callable], change_y:Optional[Callable]):
-        self._x = ChangeableParam[ParamType](change_x)
-        self._y = ChangeableParam[ParamType](change_y)
+class IOParams(Generic[ParamType]):
+    _change         :Optional[ChangeType]
 
-class InOutParams(Generic[ParamType]):
-    _input : XYParams[ParamType]
+    _input   :XYParams[ParamType]
     @property
     def input(self):
         return self._input
-    @input.setter
-    def input(self, *args, **kwargs):
-        raise NotImplementedError
 
-    _output : XYParams[ParamType]
-    @property
-    def output(self):
-        return self._output
-    @output.setter
-    def output(self, *args, **kwargs):
-        raise NotImplementedError
+    _output  :XYParams[ParamType]
 
-    def set(self, data:Union[ParamType, Tuple[ParamType,ParamType], Tuple[ParamType,ParamType,ParamType,ParamType]]):
+
+
+    def __init__(self, change_input_x:ChangeType=None, change_input_y:ChangeType=None, change_output_x:ChangeType=None, change_output_y:ChangeType=None, change_input:ChangeType=None, change_output:ChangeType=None, change:ChangeType=None):
+        self._change = change
+        self._change_input = change_input
+        self._change_output = change_output
+        self._input   = XYParams[ParamType](change_input_x, change_input_y, change_input)
+        self._output  = XYParams[ParamType](change_output_x, change_output_y, change_output)
+
+    def set(self, data:TypeIO):
         if isinstance(data, tuple):
-            if len(data) == 2:
-                self._input.set(data[0])
-                self._output.set(data[1])
-            if len(data) == 4:
-                self._input.x = data[0]
-                self._input.y = data[1]
-                self._output.x = data[2]
-                self._output.y = data[3]
-            else: raise AttributeError
+            self._input.set(data[0])
+            self._output.set(data[1])
         else:
             self._input.set(data)
             self._output.set(data)
-
-    def __init__(self, change_in_x:Optional[Callable], change_in_y:Optional[Callable], change_out_x:Optional[Callable], change_out_y:Optional[Callable]):
-        self._input = XYParams[ParamType](change_in_x, change_out_x)
-        self._output = XYParams[ParamType](change_in_y, change_out_y)
-
 
 
 
@@ -259,6 +239,7 @@ class SpaceParam(Generic[ParamType]):
     def __init__(self, change:Callable):
         self._change = change
         self._connections = []
+
 
 
 IMType = Literal['nearest','linear','bilinear','bicubic','trilinear','area','nearest-exact']
