@@ -82,12 +82,25 @@ IntIO = Union[int, Tuple[int,int], Tuple[int,int,int,int]]
 FloatIO = Union[float, Tuple[float,float], Tuple[float,float,float,float]]
 
 ParamType = TypeVar('ParamType')
+SetterType = Callable[[ParamType], None]
+class ChangeableProperty(Generic[ParamType]):
+    _value : Optional[ParamType]
+    _setter : SetterType
+    def __init__(self, setter:SetterType):
+        self._setter = setter
+        self._value = None
+    def __set__(self, obj, value:ParamType):
+        if self._setter is None:
+            raise AttributeError
+        self._setter(value)
+    def __get__(self, obj):
+        return self._value
 class ChangeableParam(Generic[ParamType]):
     _param : Optional[ParamType]
     _change_function : Optional[Callable]
-    def __get__(self):
+    def __get__(self, obj):
         return self._param
-    def __set__(self, value:ParamType):
+    def __set__(self, obj, value:ParamType):
         if value != self._param:
             self._param = value
             if self._change_function is not None:
@@ -113,22 +126,6 @@ class ChangeableParam(Generic[ParamType]):
             return self._param * other
     def __rmul__(self, other):
         return self*other
-
-
-    # def __eq__(self, other:Union[ParamType, ChangeableParam[ParamType]]):
-    #     return self._param == other._param if isinstance(other, ChangeableParam) else self._param == other
-    # def __ne__(self, other:Union[ParamType, ChangeableParam[ParamType]]):
-    #     return self._param != other._param if isinstance(other, ChangeableParam) else self._param != other
-    # def __lt__(self, other:Union[ParamType, ChangeableParam[ParamType]]):
-    #     return self._param <  other._param if isinstance(other, ChangeableParam) else self._param <  other
-    # def __gt__(self, other:Union[ParamType, ChangeableParam[ParamType]]):
-    #     return self._param >  other._param if isinstance(other, ChangeableParam) else self._param >  other
-    # def __le__(self, other:Union[ParamType, ChangeableParam[ParamType]]):
-    #     return self._param <= other._param if isinstance(other, ChangeableParam) else self._param <= other
-    # def __ge__(self, other:Union[ParamType, ChangeableParam[ParamType]]):
-    #     return self._param >= other._param if isinstance(other, ChangeableParam) else self._param >= other
-
-
 
 class XYParams(Generic[ParamType]):
     _x:ChangeableParam[ParamType]
@@ -194,6 +191,9 @@ class InOutParams(Generic[ParamType]):
     def __init__(self, change_in_x:Optional[Callable], change_in_y:Optional[Callable], change_out_x:Optional[Callable], change_out_y:Optional[Callable]):
         self._input = XYParams[ParamType](change_in_x, change_out_x)
         self._output = XYParams[ParamType](change_in_y, change_out_y)
+
+
+
 
 FloatS = Union[float, tuple[float,float,int]]
 class SpaceParam(Generic[ParamType]):

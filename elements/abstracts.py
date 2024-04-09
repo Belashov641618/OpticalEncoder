@@ -88,6 +88,7 @@ class AbstractPropagator(AbstractOptical):
 
     distance:ChangeableParam[float]
     def _change_distance(self):
+        print('abstract')
         pass
 
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, distance:float, logger:Logger=None):
