@@ -38,25 +38,24 @@ class FurrierPropagation(AbstractPropagator):
         return self._unpadding_x, self._unpadding_x, self._unpadding_y, self._unpadding_y
     @property
     def _total_pixels_x(self):
-        return self.pixels._input.x + 2 * self._padding_x
+        return self.pixels.input.x + 2 * self._padding_x
     @property
     def _total_pixels_y(self):
-        return self.pixels._input.y + 2 * self._padding_y
+        return self.pixels.input.y + 2 * self._padding_y
     @property
     def _total_length_x(self):
-        return self._total_pixels_x * self.length._input.x / self.pixels._input.x
+        return self._total_pixels_x * self.length.input.x / self.pixels.input.x
     @property
     def _total_length_y(self):
-        return self._total_pixels_y * self.length._input.y / self.pixels._input.y
+        return self._total_pixels_y * self.length.input.y / self.pixels.input.y
     @property
     def _step_x(self):
-        return self.length._input.x / self.pixels._input.x
+        return self.length.input.x / self.pixels.input.x
     @property
     def _step_y(self):
-        return self.length._input.y / self.pixels._input.y
+        return self.length.input.y / self.pixels.input.y
 
     def _recalc_propagation_buffer(self):
-        print('Recalc prop buffer')
         freq_x = torch.fft.fftfreq(self._total_pixels_x, d=self._step_x, device=self.device, dtype=self.accuracy.tensor_float)
         freq_y = torch.fft.fftfreq(self._total_pixels_y, d=self._step_y, device=self.device, dtype=self.accuracy.tensor_float)
         freq_x_mesh, freq_y_mesh = torch.meshgrid(freq_x, freq_y, indexing='ij')
@@ -85,7 +84,6 @@ class FurrierPropagation(AbstractPropagator):
     def _change_length(self):
         self._reset_all()
     def _change_distance(self):
-        print('recalc')
         self.delayed.add(self._recalc_propagation_buffer)
     def _change_absorption(self):
         self.delayed.add(self._recalc_propagation_buffer)

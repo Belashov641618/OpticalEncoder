@@ -36,20 +36,8 @@ class AbstractElement(torch.nn.Module):
         self.pixels = IOParams[int](change_input=self._change_pixels_input, change_output=self._change_pixels_output, change=self._change_pixels)
         self.length = IOParams[float](change_input=self._change_length_input, change_output=self._change_length_output, change=self._change_length)
 
-        print(pixels)
-        print(self.pixels._input.x, self.pixels._input.y, self.pixels._output.x, self.pixels._output.y)
         self.pixels.set(pixels)
-        print(self.pixels._input.x, self.pixels._input.y, self.pixels._output.x, self.pixels._output.y)
-
-        print(length)
-        print(self.length._input.x, self.length._input.y, self.length._output.x, self.length._output.y)
         self.length.set(length)
-        print(self.length._input.x, self.length._input.y, self.length._output.x, self.length._output.y)
-
-        print('')
-        print('Pixels:', self.pixels._input.x, self.pixels._input.y, self.pixels._output.x, self.pixels._output.y)
-        print('Length:', self.length._input.x, self.length._input.y, self.length._output.x, self.length._output.y)
-
 
         if logger is None:
             logger = Logger(False, prefix='Deleted')
@@ -108,12 +96,17 @@ class AbstractPropagator(AbstractOptical):
 
     def _change_distance(self):
         pass
-    @Param[float]
+    _distance:Param[float]
+    @property
     def distance(self):
-        self._change_distance()
+        return self._distance.value
+    @distance.setter
+    def distance(self, meters:float):
+        self._distance.value = meters
 
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, distance:float, logger:Logger=None):
         super().__init__(pixels, length, wavelength, reflection, absorption, logger=logger)
+        self._distance = Param[float](self._change_distance)
         self.distance = distance
 
     def forward(self, field:torch.Tensor, *args, **kwargs):

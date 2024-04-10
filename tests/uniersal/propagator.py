@@ -11,10 +11,10 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
     if logger is None:
         logger = Logger(False)
 
-    pixels_x = model.pixels._input.x
-    pixels_y = model.pixels._input.y
-    length_x = model.length._input.x
-    length_y = model.length._input.y
+    pixels_x = model.pixels.input.x
+    pixels_y = model.pixels.input.y
+    length_x = model.length.input.x
+    length_y = model.length.input.y
 
     wavelength = model.wavelength.effective
     reflection = model.reflection.effective
@@ -44,7 +44,7 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
     with torch.no_grad():
         x_mesh, y_mesh = torch.meshgrid(torch.linspace(-length_x/2, +length_x/2, pixels_x, device=model.device, dtype=model.accuracy.tensor_float), torch.linspace(-length_y/2, +length_y/2, pixels_y, device=model.device, dtype=model.accuracy.tensor_float), indexing='ij')
         mask = (-width/2 <= x_mesh) * (x_mesh <= +width/2) * (-height/2 <= y_mesh) * (y_mesh <= +height/2)
-        if torch.sum(mask) <= 0: raise ValueError(f'Параметры щели width и/или height слишком малы\nwidth: {width} из критических: {length_x/pixels_x}\nheight: {height} из критических: {length_y/pixels_y}')
+        if torch.sum(mask) <= 4: raise ValueError(f'Параметры щели width и/или height слишком малы\nwidth: {width} из критических: {2*length_x/pixels_x}\nheight: {height} из критических: {2*length_y/pixels_y}')
         field = mask * torch.ones((pixels_x, pixels_y), dtype=model.accuracy.tensor_complex, device=model.device)
         field = field.expand(1, model.wavelength.length, -1, -1)
         result = model.forward(field)
@@ -53,29 +53,29 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
 
         for i, dist in enumerate(numpy.linspace(0, distance, Nz)):
             model.distance = dist
-            print('cahnged', dist)
             temp = model.forward(field).squeeze()
-            cutX[i] = temp[model.pixels._output.x // 2, :]
-            cutY[i] = temp[:, model.pixels._output.y // 2]
+            cutX[i] = temp[model.pixels.output.x // 2, :]
+            cutY[i] = temp[:, model.pixels.output.y // 2]
 
         field = field.squeeze().abs().cpu()
         result = result.squeeze().abs().cpu()
         cutX = cutX.squeeze().abs().cpu()
         cutY = cutY.squeeze().abs().cpu()
 
+    shift = 1.0
     kwargs = {'aspect':'auto'}
     axes = plot.axes.add(0, 0)
     plot.graph.title('Начальное поле')
-    axes.imshow(field, **kwargs)
+    axes.imshow(torch.log10(field + shift), **kwargs)
     axes = plot.axes.add(1, 0)
     plot.graph.title('Срез YZ')
-    axes.imshow(result, **kwargs)
+    axes.imshow(torch.log10(result + shift), **kwargs)
     axes = plot.axes.add(0, 1)
     plot.graph.title('Срез XZ')
-    axes.imshow(cutX, **kwargs)
+    axes.imshow(torch.log10(cutX + shift), **kwargs)
     axes = plot.axes.add(1, 1)
     plot.graph.title('Результат')
-    axes.imshow(cutY, **kwargs)
+    axes.imshow(torch.log10(cutY + shift), **kwargs)
 
     return plot
 

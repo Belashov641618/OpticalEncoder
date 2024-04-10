@@ -85,6 +85,23 @@ IntIO   = Union[int, Tuple[int,int], Tuple[int,int,int,int]]
 FloatIO = Union[float, Tuple[float,float], Tuple[float,float,float,float]]
 
 ChangeType = Callable[[], None]
+def _function_combiner(function1:Optional[ChangeType], function2:Optional[ChangeType]):
+    if function1 is not None:
+        if function2 is not None:
+            def combined():
+                function1()
+                function2()
+            return combined
+        else:
+            def combined():
+                function1()
+            return combined
+    elif function2 is not None:
+        def combined():
+            function2()
+        return combined
+    else:
+        return None
 class Param(Generic[ParamType]):
     _value : Optional[ParamType]
     _change_function : Optional[ChangeType]
@@ -94,7 +111,7 @@ class Param(Generic[ParamType]):
     def set(self, value:ParamType):
         if self._value != value:
             self._value = value
-            self._change_function()
+            if self._change_function is not None: self._change_function()
     def get(self):
         return self._value
     @property
@@ -105,17 +122,13 @@ class Param(Generic[ParamType]):
         self.set(value)
 
 class XYParams(Generic[ParamType]):
-    _change : Optional[ChangeType]
-
     _x:Param[ParamType]
     @property
     def x(self):
         return self._x.value
     @x.setter
     def x(self, value:ParamType):
-        if self._x != value:
-            self._x.value = value
-            self._change()
+        self._x.value = value
 
     _y:Param[ParamType]
     @property
@@ -123,28 +136,23 @@ class XYParams(Generic[ParamType]):
         return self._y.value
     @y.setter
     def y(self, value:ParamType):
-        if self._y != value:
-            self._y.value = value
-            self._change()
+        self._y.value = value
 
     def __init__(self, change_x:ChangeType=None, change_y:ChangeType=None, change:ChangeType=None):
-        self._change = change
+        change_x = _function_combiner(change, change_x)
+        change_y = _function_combiner(change, change_y)
         self._x = Param[ParamType](change_x)
         self._y = Param[ParamType](change_y)
 
     def set(self, data:TypeXY):
         if isinstance(data, tuple):
-            self.x.set(data[0])
-            self.y.set(data[1])
-            if self._x.value != data[0] or self._y.value != data[1]:
-                self._change()
+            self._x.set(data[0])
+            self._y.set(data[1])
         else:
-            self.x.set(data)
-            self.y.set(data)
-            if self._x.value != data or self._y.value != data:
-                self._change()
+            self._x.set(data)
+            self._y.set(data)
     def get(self):
-        return self.x.get(), self.y.get()
+        return self._x.get(), self._y.get()
 
 class IOParams(Generic[ParamType]):
     _change         :Optional[ChangeType]
@@ -155,16 +163,15 @@ class IOParams(Generic[ParamType]):
         return self._input
 
     _output  :XYParams[ParamType]
-
-
+    @property
+    def output(self):
+        return self._output
 
     def __init__(self, change_input_x:ChangeType=None, change_input_y:ChangeType=None, change_output_x:ChangeType=None, change_output_y:ChangeType=None, change_input:ChangeType=None, change_output:ChangeType=None, change:ChangeType=None):
-        self._change = change
-        self._change_input = change_input
-        self._change_output = change_output
+        change_input = _function_combiner(change_input, change)
+        change_output = _function_combiner(change_output, change)
         self._input   = XYParams[ParamType](change_input_x, change_input_y, change_input)
         self._output  = XYParams[ParamType](change_output_x, change_output_y, change_output)
-
     def set(self, data:TypeIO):
         if isinstance(data, tuple):
             self._input.set(data[0])
@@ -172,7 +179,6 @@ class IOParams(Generic[ParamType]):
         else:
             self._input.set(data)
             self._output.set(data)
-
 
 
 FloatS = Union[float, tuple[float,float,int]]
@@ -239,7 +245,6 @@ class SpaceParam(Generic[ParamType]):
     def __init__(self, change:Callable):
         self._change = change
         self._connections = []
-
 
 
 IMType = Literal['nearest','linear','bilinear','bicubic','trilinear','area','nearest-exact']
