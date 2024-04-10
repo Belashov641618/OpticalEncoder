@@ -66,7 +66,7 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
     format_y, letter_y = engineering.separatedformatter(length_y / 2, 'м')
     format_z, letter_z = engineering.separatedformatter(distance,     'м')
 
-    (field, result, cutX, cutY), shift = shifted_log10(field, result, cutX, cutY, average=0.5, reduce='max')
+    (field, result, cutX, cutY), shift = shifted_log10(field, result, cutX, cutY, average=0.5, reduce='mean')
     plot.description.bottom(f"К амплитудам была применена функция экспозиции: $log_{{10}}(x+{round(shift, 2)})$")
 
     kwargs = {'aspect':'auto'}

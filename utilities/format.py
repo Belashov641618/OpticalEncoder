@@ -30,7 +30,7 @@ class EngineeringFormater:
         x = numpy.abs(x)
         index = 0
         for power_ in self._decimal_powers[1:]:
-            if x > 10.**power_:
+            if x >= 10.**power_:
                 index += 1
             else: break
         power = self._decimal_powers[index]
