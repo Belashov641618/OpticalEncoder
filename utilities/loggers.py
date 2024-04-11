@@ -1,9 +1,133 @@
 from __future__ import annotations
 
-from typing import TextIO, Union, List, Iterable, Callable, Iterator
-from time import ctime, time
-import math
 import numpy
+import torch
+
+from typing import TextIO, Union, List, Iterable, Callable, Iterator, Optional
+from time import ctime, time
+
+class DynamicApproximation:
+    _total:int
+    _x_buffer:torch.Tensor
+    _y_buffer:torch.Tensor
+
+    def __init__(self, total:int):
+        self._total = total
+        self._lost_deviation_ratio = 0.25
+        self._last_loss = 0.
+        self.reset()
+        self.linear()
+
+    _current:int
+    def reset(self):
+        self._current = 0
+        self._x_buffer  = torch.zeros(self._total, dtype=torch.float32)
+        self._y_buffer  = torch.zeros(self._total, dtype=torch.float32)
+
+    def append(self, xy:Union[float,torch.Tensor], y:Union[float,torch.Tensor]=None):
+        if y is None:
+            y = xy
+            if isinstance(xy, float): xy = float(self._current)
+            elif isinstance(xy, torch.Tensor):
+                if len(xy.size()) == 1: xy = torch.arange(self._current, self._current+xy.size(0))
+                else: xy = torch.tensor(self._current)
+            else: raise TypeError
+        if self._current >= self._total:
+            raise StopIteration
+        elif isinstance(xy, float) and isinstance(y, float):
+            self._x_buffer[self._current] = xy
+            self._y_buffer[self._current] = y
+            self._current += 1
+        elif isinstance(xy, torch.Tensor) and isinstance(y, torch.Tensor):
+            if len(xy.size()) > 1 or len(y.size()) > 1: raise ValueError
+            elif xy.size() != y.size(): raise ValueError
+            length = xy.size(0) if len(xy.size()) == 1 else 1
+            if self._current + length >= self._total:
+                length = self._total - self._current
+            if length > 1:
+                self._x_buffer[self._current:self._current+length] = xy[0:length]
+                self._y_buffer[self._current:self._current+length] = y[0:length]
+            else:
+                self._x_buffer[self._current] = xy
+                self._y_buffer[self._current] = y
+            self._current += length
+        else: raise TypeError
+        if self._lost_deviation_ratio is not None:
+            with torch.no_grad():
+                loss = self.loss().item()
+            if self._last_loss == 0 or abs(loss - self._last_loss) / self._last_loss > self._lost_deviation_ratio:
+                print('Launching auto optimization at', self._current, 'iterations')
+                self.optimize()
+
+    _parameters:torch.nn.Parameter
+    _model:Callable[[torch.Tensor, torch.nn.Parameter], torch.Tensor]
+    def model(self, model:Callable[[torch.Tensor, torch.nn.Parameter], torch.Tensor], parameters_amount:int):
+        self._model = model
+        self._parameters = torch.nn.Parameter(torch.ones(parameters_amount))
+    def linear(self):
+        def linear_(x:torch.Tensor, params:torch.nn.Parameter):
+            return x*params[0] + params[1]**2
+        self.model(linear_, 2)
+    def square(self):
+        def square_(x:torch.Tensor, params:torch.nn.Parameter):
+            return x*x*params[0] + x*params[1]**2*torch.sign(params[1]) + params[2]**3
+        self.model(square_, 3)
+    def cubic(self):
+        def cubic_(x:torch.Tensor, params:torch.nn.Parameter):
+            return x*x*x*params[0]/24 + x*x*params[1]/6 + x*params[2]/2 + params[3]
+        self.model(cubic_, 4)
+    def log(self):
+        def log_(x:torch.Tensor, params:torch.nn.Parameter):
+            return params[0]*torch.log(x) + params[1]
+        self.model(log_, 2)
+    def time(self):
+        def time_(x:torch.Tensor, params:torch.nn.Parameter):
+            return (x*x*x*params[0]/6 + x*x*params[1]/2 + x*params[2] + params[3])*(1.0 + params[4]*torch.log(x))
+        self.model(time_, 5)
+    def power(self):
+        def power_(x:torch.Tensor, params:torch.nn.Parameter):
+            return ((x+params[0])**(params[1]))*params[2] + params[3]
+        self.model(power_, 4)
+
+    _loss_function:Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
+    def loss_function(self, loss_function:Callable[[torch.Tensor, torch.Tensor], torch.Tensor]):
+        self._loss_function = loss_function
+    def loss(self):
+        return self._loss_function(self._y_buffer[:self._current], self.predict(self._x_buffer[:self._current]))
+    def mse(self):
+        def mse_(y0:torch.Tensor, y1:torch.Tensor):
+            return torch.mean(torch.square(y0 - y1))
+        self.loss_function(mse_)
+
+    def predict(self, x:Union[float, torch.Tensor]) -> Union[float, torch.Tensor]:
+        if isinstance(x, float):
+            return self._model(torch.tensor(x), self._parameters).item()
+        else:
+            return self._model(x, self._parameters)
+
+    _lost_deviation_ratio:Optional[float]
+    _last_loss:float
+    def optimize(self):
+        with torch.no_grad():
+            prev_loss = self.loss().item()
+        rate = 1.0
+        while 1.0E-12 < rate:
+            if self._parameters.grad is not None: self._parameters.grad.zero_()
+            loss = self.loss()
+            loss.backward()
+            grad = self._parameters.grad
+            with torch.no_grad():
+                while 1.0E-12 < rate:
+                    self._parameters.copy_(self._parameters - grad**3 * rate)
+                    loss = self.loss().item()
+                    if loss < prev_loss:
+                        rate *= 1.123
+                        break
+                    else:
+                        self._parameters.copy_(self._parameters + grad**3 * rate)
+                        rate /= 1.2345
+            prev_loss = loss
+        self._last_loss = prev_loss
 
 Color = int
 class _ColorsList:
@@ -81,65 +205,6 @@ class Style:
 
     def __call__(self, string:str, **kwargs):
         self._logger(string, "".join(self._prefixes + [self._color, self._background_color]), **kwargs)
-
-class EscapePredictor:
-    _total:int
-    _start:float
-
-    _history:list[float]
-    _recalc_after:float
-    _parameters:numpy.ndarray
-    def _recalc_params(self):
-        if not hasattr(self, '_parameters'):
-            self._parameters = numpy.ones(5)
-
-        lam:float = 1000.0
-        while lam >= 1.0E-6:
-            gradients = numpy.zeros(5)
-            indices = numpy.arange(len(self._history))
-            times = self._time(indices)
-            history = numpy.array(self._history)
-            diff = times - history
-
-            gradients[4] = 2*numpy.mean(diff * numpy.log(indices) * (self._parameters[0]*indices**3 + self._parameters[1]*indices**2 + self._parameters[2]*indices + self._parameters[3]))
-            temp = 1 + numpy.log(indices)*self._parameters[4]
-            gradients[3] = 2*numpy.mean(diff * temp)
-            temp *= indices
-            gradients[2] = 2 * numpy.mean(diff * temp)
-            temp *= indices
-            gradients[1] = 2 * numpy.mean(diff * temp)
-            temp *= indices
-            gradients[0] = 2 * numpy.mean(diff * temp)
-
-            loss = numpy.mean(diff**2)
-            while lam >= 1.0E-6:
-                self._parameters -= gradients * lam
-                loss_ = numpy.mean((self._time(indices) - history)**2)
-                if loss_ < loss:
-                    lam *= 1.213412
-                    break
-                else:
-                    self._parameters += gradients * lam
-                    lam /= 2.
-
-    def _time(self, iteration:Union[int,numpy.ndarray]):
-        return (self._parameters[0]*iteration**3 + self._parameters[1]*iteration**2 + self._parameters[2]*iteration + self._parameters[3])*(1.0 + self._parameters[4]*numpy.log(iteration))
-    def _left(self):
-        return self._time(self._total-1)
-
-    def __init__(self, total:int):
-        self._total = total
-    def __iter__(self):
-        self._start = time()
-        self._recalc_after = 0.0
-        self._history = []
-        return self
-    def __next__(self):
-        self._history.append(time() - self._start)
-        if self._history[-1] > self._recalc_after:
-            self._recalc_after += 2.0
-            self._recalc_params()
-        return self._left()
 
 class CycledLogger(Iterable):
     _logger:Logger
