@@ -45,6 +45,17 @@ class Accuracy:
             tensor.to(dtype=self.tensor_complex)
             self._connected_complex.append(tensor)
         else: raise TypeError(f'Тензор {tensor} имеет тип {tensor.dtype}')
+    def disconnect(self, tensor:torch.Tensor):
+        if torch.is_complex(tensor):
+            for i, tensor_ in enumerate(self._connected_complex):
+                if tensor_ is tensor:
+                    self._connected_complex.pop(i)
+                    break
+        else:
+            for i, tensor_ in enumerate(self._connected_float):
+                if tensor_ is tensor:
+                    self._connected_float.pop(i)
+                    break
 
     def __init__(self):
         self._bits = 32
@@ -85,7 +96,7 @@ IntIO   = Union[int, Tuple[int,int], Tuple[int,int,int,int]]
 FloatIO = Union[float, Tuple[float,float], Tuple[float,float,float,float]]
 
 ChangeType = Callable[[], None]
-def _function_combiner(function1:Optional[ChangeType], function2:Optional[ChangeType]):
+def function_combiner(function1:Optional[ChangeType], function2:Optional[ChangeType]):
     if function1 is not None:
         if function2 is not None:
             def combined():
@@ -139,8 +150,8 @@ class XYParams(Generic[ParamType]):
         self._y.value = value
 
     def __init__(self, change_x:ChangeType=None, change_y:ChangeType=None, change:ChangeType=None):
-        change_x = _function_combiner(change, change_x)
-        change_y = _function_combiner(change, change_y)
+        change_x = function_combiner(change, change_x)
+        change_y = function_combiner(change, change_y)
         self._x = Param[ParamType](change_x)
         self._y = Param[ParamType](change_y)
 
@@ -168,8 +179,8 @@ class IOParams(Generic[ParamType]):
         return self._output
 
     def __init__(self, change_input_x:ChangeType=None, change_input_y:ChangeType=None, change_output_x:ChangeType=None, change_output_y:ChangeType=None, change_input:ChangeType=None, change_output:ChangeType=None, change:ChangeType=None):
-        change_input = _function_combiner(change_input, change)
-        change_output = _function_combiner(change_output, change)
+        change_input = function_combiner(change_input, change)
+        change_output = function_combiner(change_output, change)
         self._input   = XYParams[ParamType](change_input_x, change_input_y, change_input)
         self._output  = XYParams[ParamType](change_output_x, change_output_y, change_output)
     def set(self, data:TypeIO):

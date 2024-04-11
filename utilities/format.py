@@ -101,7 +101,7 @@ class EngineeringFormater:
         if not include_letter:
             letter = ''
             space = ''
-        def function(x:float, pos:int):
+        def function(x:float, _:int):
             return f"{round(x*10**(-power), nums)}{space}{letter}"
         return function
     def autoformatter(self, x:Union[float, complex, torch.Tensor, numpy.ndarray], unit:str='', nums:int=3, space:str=' ', include_letter:bool=True, accept_real:bool=True):
@@ -112,7 +112,7 @@ class EngineeringFormater:
             else:
                 letter, power = power
         return self.formatter(letter, power, nums, space, include_letter)
-    def separatedformatter(self, x:Union[float, complex, torch.Tensor, numpy.ndarray], unit:str='', nums:int=3, space:str=' ', accept_real:bool=True):
+    def separatedformatter(self, x:Union[float, complex, torch.Tensor, numpy.ndarray], unit:str='', nums:int=3, accept_real:bool=True):
         letter, power = self.params(x, unit)
         if isinstance(letter, tuple) and isinstance(power, tuple):
             if accept_real:

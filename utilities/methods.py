@@ -1,5 +1,5 @@
 import torch
-from typing import Any, Union, List, Literal
+from typing import Any, Literal
 
 from .basics import IMType, InterpolateModes
 

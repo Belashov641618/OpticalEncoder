@@ -28,16 +28,66 @@ class AbstractElement(torch.nn.Module):
     def device(self):
         return torch.device('cpu')
 
+    _add_pixels:XYParams[int]
+    def _reset_add_pixels(self):
+        self._add_pixels.x = upper_integer(closest_integer((self.length.output.x - self.length.input.x) * self.pixels.input.x / self.length.input.x) / 2)
+        self._add_pixels.y = upper_integer(closest_integer((self.length.output.y - self.length.input.y) * self.pixels.input.y / self.length.input.y) / 2)
+    def _reset_add_pixels_(self):
+        self.delayed.add(self._reset_add_pixels, -100.0)
+    @property
+    def _padding_x(self):
+        return self._add_pixels.x if self._add_pixels.x > 0 else 0
+    @property
+    def _padding_y(self):
+        return self._add_pixels.y if self._add_pixels.y > 0 else 0
+    @property
+    def _paddings(self):
+        return self._padding_x, self._padding_x, self._padding_y, self._padding_y
+    @property
+    def _unpadding_x(self):
+        return -self._add_pixels.x if self._add_pixels.x < 0 else 0
+    @property
+    def _unpadding_y(self):
+        return -self._add_pixels.y if self._add_pixels.y < 0 else 0
+    @property
+    def _unpaddings(self):
+        return self._unpadding_x, self._unpadding_x, self._unpadding_y, self._unpadding_y
+    @property
+    def _total_pixels_x(self):
+        return self.pixels.input.x + 2 * self._padding_x
+    @property
+    def _total_pixels_y(self):
+        return self.pixels.input.y + 2 * self._padding_y
+    @property
+    def _step_x(self):
+        return self.length.input.x / self.pixels.input.x
+    @property
+    def _step_y(self):
+        return self.length.input.y / self.pixels.input.y
+    @property
+    def _total_length_x(self):
+        return self._total_pixels_x * self._step_x
+    @property
+    def _total_length_y(self):
+        return self._total_pixels_y * self._step_y
+
+    interpolation:InterpolateMode
+
     def __init__(self, pixels:IntIO, length:FloatIO, logger:Logger=None):
         super().__init__()
         self.accuracy = Accuracy()
         self.delayed = DelayedFunctions()
 
-        self.pixels = IOParams[int](change_input=self._change_pixels_input, change_output=self._change_pixels_output, change=self._change_pixels)
-        self.length = IOParams[float](change_input=self._change_length_input, change_output=self._change_length_output, change=self._change_length)
+        self.pixels = IOParams[int](change_input=self._change_pixels_input, change_output=self._change_pixels_output, change=function_combiner(self._change_pixels, self._reset_add_pixels_))
+        self.length = IOParams[float](change_input=self._change_length_input, change_output=self._change_length_output, change=function_combiner(self._change_length, self._reset_add_pixels_))
 
         self.pixels.set(pixels)
         self.length.set(length)
+
+        self._add_pixels = XYParams[int](None, None)
+        self._add_pixels.set(0)
+
+        self.interpolation = InterpolateMode(InterpolateModes.bilinear)
 
         if logger is None:
             logger = Logger(False, prefix='Deleted')
@@ -85,6 +135,15 @@ class AbstractPropagator(AbstractOptical):
     @property
     def propagation_buffer(self):
         return self._propagation_buffer
+    def _register_propagation_buffer(self, buffer:torch.Tensor):
+        if buffer.device != self.device:
+            buffer = buffer.to(self.device)
+        if buffer.dtype not in (self.accuracy.tensor_float, self.accuracy.tensor_complex):
+            if torch.is_complex(buffer): buffer = buffer.to(self.accuracy.tensor_complex)
+            else: buffer = buffer.to(self.accuracy.tensor_float)
+        if hasattr(self, '_propagation_buffer'): self.accuracy.disconnect(self._propagation_buffer)
+        self.register_buffer('_propagation_buffer', buffer)
+        self.accuracy.connect(self._propagation_buffer)
     def _recalc_propagation_buffer(self):
         raise NotImplementedError
     @property
@@ -112,3 +171,57 @@ class AbstractPropagator(AbstractOptical):
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)
 
+class AbstractInhomogeneity(AbstractOptical):
+    space_reflection:SpaceParam[float]
+    def _change_space_reflection(self):
+        pass
+
+    space_absorption:SpaceParam[float]
+    def _change_space_absorption(self):
+        pass
+
+    def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, space_reflection:FloatS, space_absorption:FloatS, logger:Logger=None):
+        super().__init__(pixels, length, wavelength, reflection, absorption, logger=logger)
+        self.space_reflection = SpaceParam[float](self._change_space_reflection)
+        self.space_absorption = SpaceParam[float](self._change_space_absorption)
+        self.space_reflection.set(space_reflection)
+        self.space_absorption.set(space_absorption)
+        self.wavelength.connect(self.space_reflection.tensor, self.space_absorption.tensor)
+        self.reflection.connect(self.space_reflection.tensor, self.space_absorption.tensor)
+        self.absorption.connect(self.space_reflection.tensor, self.space_absorption.tensor)
+        self.space_reflection.connect(self.wavelength.tensor, self.reflection.tensor, self.absorption.tensor, self.space_absorption.tensor)
+        self.space_absorption.connect(self.wavelength.tensor, self.reflection.tensor, self.absorption.tensor, self.space_reflection.tensor)
+        self.accuracy.connect(self.space_reflection.tensor)
+        self.accuracy.connect(self.space_absorption.tensor)
+
+    def forward(self, *args, **kwargs):
+        super().forward(*args, **kwargs)
+
+class AbstractMask(AbstractInhomogeneity):
+    _mask_buffer:torch.Tensor
+    def _register_mask_buffer(self, buffer:torch.Tensor):
+        if buffer.device != self.device: buffer = buffer.to(self.device)
+        if buffer.dtype not in (self.accuracy.tensor_float, self.accuracy.tensor_complex):
+            if torch.is_complex(buffer): buffer = buffer.to(self.accuracy.tensor_complex)
+            else: buffer = buffer.to(self.accuracy.tensor_float)
+        if hasattr(self, '_mask_buffer'): self.accuracy.disconnect(self._mask_buffer)
+        self.register_buffer('_mask_buffer', buffer)
+        self.accuracy.connect(self._mask_buffer)
+    def _recalc_mask_buffer(self):
+        raise NotImplementedError
+    @property
+    def device(self):
+        if hasattr(self, '_mask_buffer'):
+            return self._mask_buffer.device
+        else: return super().device
+
+    def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, space_reflection:FloatS, space_absorption:FloatS, logger:Logger=None):
+        super().__init__(pixels, length, wavelength, reflection, absorption, space_reflection, space_absorption, logger=logger)
+
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        super().forward(*args, **kwargs)
+        field = torch.nn.functional.pad(field, self._paddings)
+        field = field * self._mask_buffer
+        field = torch.nn.functional.pad(field, self._unpaddings)
+        field = interpolate(field, (self.pixels.output.x, self.pixels.output.y), mode=self.interpolation.mode)
+        return field

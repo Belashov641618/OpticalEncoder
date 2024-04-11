@@ -56,7 +56,6 @@ class DynamicApproximation:
             with torch.no_grad():
                 loss = self.loss().item()
             if self._last_loss == 0 or abs(loss - self._last_loss) / self._last_loss > self._lost_deviation_ratio:
-                print('Launching auto optimization at', self._current, 'iterations')
                 self.optimize()
 
     _parameters:torch.nn.Parameter

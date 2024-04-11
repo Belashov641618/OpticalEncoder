@@ -2,7 +2,7 @@ import torch
 
 from .uniersal.propagator import rectangle
 
-from elements.propagation import FurrierPropagation
+from elements.propagators import FurrierPropagation
 
 
 
