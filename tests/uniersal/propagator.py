@@ -4,7 +4,7 @@ import torch
 from belashovplot import TiledPlot
 
 from elements.abstracts import AbstractPropagator
-from utilities import Logger, engineering, shifted_log10
+from utilities import Logger, engineering, shifted_log10, scientific
 from parameters import FigureWidthHeight, FontLibrary
 
 def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=None, nx_max:int=3, ny_max:int=3, plot:TiledPlot=None, logger:Logger=None):
@@ -54,8 +54,8 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
         for i, dist in enumerate(numpy.linspace(0, distance, Nz)):
             model.distance = dist
             temp = model.forward(field).squeeze()
-            cutX[i] = temp[model.pixels.output.x // 2, :]
-            cutY[i] = temp[:, model.pixels.output.y // 2]
+            cutY[i] = temp[model.pixels.output.x // 2, :]
+            cutX[i] = temp[:, model.pixels.output.y // 2]
 
         field = field.squeeze().abs().cpu()
         result = result.squeeze().abs().cpu()
@@ -66,8 +66,8 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
     format_y, letter_y = engineering.separatedformatter(length_y / 2, 'м')
     format_z, letter_z = engineering.separatedformatter(distance,     'м')
 
-    (field, result, cutX, cutY), shift = shifted_log10(field, result, cutX, cutY, average=0.5, reduce='mean')
-    plot.description.bottom(f"К амплитудам была применена функция экспозиции: $log_{{10}}(x+{round(shift, 2)})$")
+    (field, result, cutX, cutY), shift = shifted_log10(field, result, cutX, cutY, average=0.5, reduce='min')
+    plot.description.bottom(f"К амплитудам была применена функция экспозиции: $log_{{10}}(x+{scientific(shift, space='', nums=2)})$")
 
     kwargs = {'aspect':'auto'}
     axes = plot.axes.add(0, 0)
@@ -86,8 +86,9 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
     axes.yaxis.set_major_formatter(format_z)
     plot.graph.label.y(letter_z)
     for i in range(1, ny_max+1):
-        axes.axline((0, length_y/2), slope=+1.0/(i*wavelength/height), alpha=0.5, linestyle='--')
-        axes.axline((0, length_y/2), slope=-1.0/(i*wavelength/height), alpha=0.5, linestyle='--')
+        k = numpy.sqrt(1.0 / (i*wavelength/height)**2 - 1)
+        axes.axline((0, 0), slope=+k, alpha=0.5, linestyle='--', color='maroon')
+        axes.axline((0, 0), slope=-k, alpha=0.5, linestyle='--', color='maroon')
 
     axes = plot.axes.add(0, 1)
     plot.graph.title('Срез XZ')
@@ -97,8 +98,9 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
     axes.yaxis.set_major_formatter(format_z)
     plot.graph.label.y(letter_z)
     for i in range(1, nx_max+1):
-        axes.axline((0, length_x/2), slope=+1.0/(i*wavelength/width), alpha=0.5, linestyle='--')
-        axes.axline((0, length_x/2), slope=-1.0/(i*wavelength/width), alpha=0.5, linestyle='--')
+        k = numpy.sqrt(1.0 / (i*wavelength/width)**2 - 1)
+        axes.axline((0, 0), slope=+k, alpha=0.5, linestyle='--', color='maroon')
+        axes.axline((0, 0), slope=-k, alpha=0.5, linestyle='--', color='maroon')
 
     axes = plot.axes.add(1, 1)
     plot.graph.title('Результат')

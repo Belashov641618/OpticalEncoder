@@ -9,9 +9,10 @@ _torch_float = [torch.float, torch.float16, torch.float32, torch.float64]
 _torch_complex = [torch.complex32, torch.complex64, torch.complex128]
 
 
-_decimal_powers         = [-18, -15, -12, -9,  -6,   -3,  0,  +3,  +6,  +9,  +12, +15, +18]
-_decimal_prefixes_eng   = ['а', 'f', 'p', 'n', 'μ',  'm', '', 'k', 'M', 'G', 'T', 'P', 'E']
-_decimal_prefixes_rus   = ['а', 'ф', 'п', 'н', 'мк', 'м', '', 'к', 'М', 'Г', 'Т', 'П', 'Э']
+_decimal_powers         = [-18,         -15,            -12,            -9,             -6,             -3,         0,      +3,         +6,         +9,         +12,        +15,        +18]
+_decimal_prefixes_eng   = ['а',         'f',            'p',            'n',            'μ',            'm',        '',     'k',        'M',        'G',        'T',        'P',        'E']
+_decimal_prefixes_rus   = ['а',         'ф',            'п',            'н',            'мк',           'м',        '',     'к',        'М',        'Г',        'Т',        'П',        'Э']
+_decimal_scientific     = ['·10⁻¹⁸', '·10⁻¹⁵', '·10⁻¹²', '·10⁻⁹', '·10⁻⁶', '·10⁻³', '', '·10³', '·10⁶', '·10⁹', '·10¹²', '·10¹⁵', '·10¹⁸']
 
 class EngineeringFormater:
     _decimal_powers:list[int] = [-18, -15, -12, -9,  -6,   -3,  0,  +3,  +6,  +9,  +12, +15, +18]
@@ -23,7 +24,8 @@ class EngineeringFormater:
         self._decimal_prefixes = _decimal_prefixes_rus
     def eng(self):
         self._decimal_prefixes = _decimal_prefixes_eng
-
+    def scientific(self):
+        self._decimal_prefixes = _decimal_scientific
 
     def _float(self, x:float):
         sign = (2*(x > 0) - 1)
@@ -119,3 +121,6 @@ class EngineeringFormater:
                 letter, power = power
         return self.formatter(letter, power, nums, '', False), letter
 engineering = EngineeringFormater()
+
+scientific = EngineeringFormater()
+scientific.scientific()

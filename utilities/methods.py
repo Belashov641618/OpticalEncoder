@@ -29,27 +29,66 @@ def shifted_log10(*images:torch.Tensor, shift:float=None, average:float=0.5, red
     if len(images) > 0:
         if shift is None:
             param = torch.nn.Parameter(torch.tensor(1.))
-            optimizer = torch.optim.Adam([param], lr=0.02)
-            for i in range(50):
-                optimizer.zero_grad()
-                loss = []
+            def shift_param():
+                return 1.0 / param**2
+            def loss_function():
+                loss_ = []
                 for image in images:
-                    image_ = torch.log10(image.clone() + 1.0 / param**2)
-                    loss.append(torch.mean((image_ - image_.min())/(image_.max() - image_.min())))
-                loss = torch.stack(loss)
-                if   reduce == 'min':   loss = torch.min(loss)
-                elif reduce == 'max':   loss = torch.max(loss)
-                elif reduce == 'mean':  loss = torch.mean(loss)
-                loss = (loss - average)**2
+                    image__ = torch.log10(image + shift_param())
+                    image__ = torch.mean((image__ - image__.min()) / (image__.max() - image__.min()))
+                    loss_.append(image__)
+                loss_ = torch.stack(loss_)
+                if reduce   == 'min':   loss_ = torch.min(loss_)
+                elif reduce == 'max':   loss_ = torch.max(loss_)
+                elif reduce == 'mean':  loss_ = torch.mean(loss_)
+                loss_ = (loss_ - average) ** 2
+                return loss_
+            prev_loss = loss_function().item()
+            rate = 1.0E+8
+            while 1.0E-12 < rate < 1.0E+12:
+                loss = loss_function()
                 loss.backward()
-                optimizer.step()
-            shift = 1. / torch.sqrt(param).item()
+                with torch.no_grad():
+                    while 1.0E-12 < rate < 1.0E+12:
+                        param.copy_(param - param.grad.clone().detach() * rate)
+                        if loss.item() > prev_loss:
+                            param.copy_(param + param.grad.clone().detach() * rate)
+                            rate /= 2.0
+                        else:
+                            rate *= 1.321654987
+                            break
+                param.grad.zero_()
+            shift = shift_param().item()
             results_ = shifted_log10(*images, shift=shift)
             if return_shift:    return results_, shift
             else:               return results_
         else:
             results:list[torch.Tensor] = []
             for image_ in images:
-                results.append(torch.log10(image_ + shift))
+                image_ = torch.log10(image_ + shift)
+                results.append((image_ - image_.min()) / (image_.max() - image_.min()))
             return tuple(results)
     return
+
+def trays_rays(image:torch.Tensor):
+    if len(image.size()) == 2:
+        image = image.unsqueeze(0).unsqueeze(0)
+
+    derivative_x = +image*5/4 + image.roll(+1,dims=2)*2/3 + image.roll(-1,dims=2)*2/3 - image.roll(+2,dims=2)/24 - image.roll(-2,dims=2)/24
+    derivative_y = +image*5/4 + image.roll(+1,dims=3)*2/3 + image.roll(-1,dims=3)*2/3 - image.roll(+2,dims=3)/24 - image.roll(-2,dims=3)/24
+
+    derivative_x = (derivative_x.roll(-2,dims=2) + derivative_x.roll(-1,dims=2) + derivative_x + derivative_x.roll(+1,dims=2) + derivative_x.roll(+2,dims=2))
+    derivative_y = (derivative_y.roll(-2,dims=3) + derivative_y.roll(-1,dims=3) + derivative_y + derivative_y.roll(+1,dims=3) + derivative_y.roll(+2,dims=3))
+
+    mask_x = (derivative_x > derivative_x.roll(+1, dims=2)) * (derivative_x > derivative_x.roll(-1, dims=2))
+    mask_y = (derivative_y > derivative_y.roll(+1, dims=2)) * (derivative_y > derivative_y.roll(-1, dims=2))
+
+    # derivative_x = (image.roll(-2, dims=2) - image.roll(2, dims=2))/12. + (image.roll(+1, dims=2) - image.roll(-1, dims=2))*2./3.
+    # derivative_y = (image.roll(-2, dims=3) - image.roll(2, dims=3))/12. + (image.roll(+1, dims=3) - image.roll(-1, dims=3))*2./3.
+    # mask_x = (0 > derivative_x.roll(+1, dims=2)) * (0 > derivative_x.roll(-1, dims=2))
+    # mask_y = (0 > derivative_y.roll(+1, dims=2)) * (0 > derivative_y.roll(-1, dims=2))
+
+
+    mask = mask_x * mask_y
+
+    return mask
