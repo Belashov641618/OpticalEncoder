@@ -4,6 +4,7 @@ from .basics import ParamSynchronizer, XYParamsSynchronizer, IOParamsSynchronize
 from .basics import SpaceParam, FloatS, SpaceParamGroup
 from .basics import InterpolateMode, InterpolateModes, IMType
 from .basics import function_combiner
+from .datasets import Dataset, LiteralDataSet
 from .loggers import Logger, DynamicApproximation
 from .methods import closest_integer, upper_integer, interpolate, shifted_log10, trays_rays
 from .format import EngineeringFormater, engineering, scientific

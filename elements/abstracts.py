@@ -78,13 +78,13 @@ class AbstractElement(torch.nn.Module):
         self.accuracy = Accuracy()
         self.delayed = DelayedFunctions()
 
-        self.pixels = IOParams[int](change_input=self._change_pixels_input, change_output=self._change_pixels_output, change=function_combiner(self._change_pixels, self._reset_add_pixels_))
-        self.length = IOParams[float](change_input=self._change_length_input, change_output=self._change_length_output, change=function_combiner(self._change_length, self._reset_add_pixels_))
+        self.pixels = IOParams[int](change_input=self._change_pixels_input, change_output=self._change_pixels_output, change=(self._change_pixels, self._reset_add_pixels_))
+        self.length = IOParams[float](change_input=self._change_length_input, change_output=self._change_length_output, change=(self._change_length, self._reset_add_pixels_))
 
         self.pixels.set(pixels)
         self.length.set(length)
 
-        self._add_pixels = XYParams[int](None, None)
+        self._add_pixels = XYParams[int]()
         self._add_pixels.set(0)
 
         self.interpolation = InterpolateMode(InterpolateModes.bilinear)
