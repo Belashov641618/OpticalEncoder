@@ -100,6 +100,15 @@ class AbstractElement(torch.nn.Module):
         pass
 
 class AbstractOptical(AbstractElement):
+    _optical_group:SpaceParamGroup
+    @property
+    def optical_group(self):
+        return self._optical_group
+    @optical_group.setter
+    def optical_group(self, group:SpaceParamGroup):
+        group.merge(self._optical_group)
+        self._optical_group = group
+
     wavelength:SpaceParam[float]
     def _change_wavelength(self):
         pass
@@ -115,14 +124,11 @@ class AbstractOptical(AbstractElement):
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, logger:Logger=None):
         super().__init__(pixels, length, logger=logger)
         self.wavelength = SpaceParam[float](self._change_wavelength)
-        self.reflection = SpaceParam[float](self._change_reflection)
-        self.absorption = SpaceParam[float](self._change_absorption)
+        self.reflection = SpaceParam[float](self._change_reflection, group=self.wavelength.group)
+        self.absorption = SpaceParam[float](self._change_absorption, group=self.wavelength.group)
         self.wavelength.set(wavelength)
         self.reflection.set(reflection)
         self.absorption.set(absorption)
-        self.wavelength.connect(self.reflection.tensor, self.absorption.tensor)
-        self.reflection.connect(self.wavelength.tensor, self.absorption.tensor)
-        self.absorption.connect(self.wavelength.tensor, self.reflection.tensor)
         self.accuracy.connect(self.wavelength.tensor)
         self.accuracy.connect(self.reflection.tensor)
         self.accuracy.connect(self.absorption.tensor)
@@ -182,15 +188,10 @@ class AbstractInhomogeneity(AbstractOptical):
 
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, space_reflection:FloatS, space_absorption:FloatS, logger:Logger=None):
         super().__init__(pixels, length, wavelength, reflection, absorption, logger=logger)
-        self.space_reflection = SpaceParam[float](self._change_space_reflection)
-        self.space_absorption = SpaceParam[float](self._change_space_absorption)
+        self.space_reflection = SpaceParam[float](self._change_space_reflection, group=self.wavelength.group)
+        self.space_absorption = SpaceParam[float](self._change_space_absorption, group=self.wavelength.group)
         self.space_reflection.set(space_reflection)
         self.space_absorption.set(space_absorption)
-        self.wavelength.connect(self.space_reflection.tensor, self.space_absorption.tensor)
-        self.reflection.connect(self.space_reflection.tensor, self.space_absorption.tensor)
-        self.absorption.connect(self.space_reflection.tensor, self.space_absorption.tensor)
-        self.space_reflection.connect(self.wavelength.tensor, self.reflection.tensor, self.absorption.tensor, self.space_absorption.tensor)
-        self.space_absorption.connect(self.wavelength.tensor, self.reflection.tensor, self.absorption.tensor, self.space_reflection.tensor)
         self.accuracy.connect(self.space_reflection.tensor)
         self.accuracy.connect(self.space_absorption.tensor)
 

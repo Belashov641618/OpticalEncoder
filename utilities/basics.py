@@ -113,16 +113,42 @@ def function_combiner(function1:Optional[ChangeType], function2:Optional[ChangeT
         return combined
     else:
         return None
+class ParamSynchronizer:
+    _parameters:list[Param]
+    def __init__(self, *parameters:Param):
+        self._parameters = []
+        self.connect(*parameters)
+    def connect(self, *parameters:Param):
+        for parameter in parameters:
+            self._parameters.append(parameter)
+            def synchronize():
+                self._synchronize(len(self._parameters) - 1)
+            parameter.append_function(synchronize)
+            if self._parameters: parameter.set(self._parameters[0])
+    def _synchronize(self, index:int):
+        for i, parameter in enumerate(self._parameters):
+            if i != index:
+                parameter.set(self._parameters[index].value)
 class Param(Generic[ParamType]):
     _value : Optional[ParamType]
-    _change_function : Optional[ChangeType]
-    def __init__(self, change:ChangeType=None):
-        self._change_function = change
+    _change_functions : list[ChangeType]
+    def append_function(self, *functions:ChangeType):
+        for function in functions:
+            self._change_functions.append(function)
+    def _launch(self):
+        for function in self._change_functions:
+            function()
+
+    def __init__(self, *changes):
         self._value = None
+        self._change_functions = []
+        self.append_function(*changes)
+
     def set(self, value:ParamType):
         if self._value != value:
             self._value = value
-            if self._change_function is not None: self._change_function()
+            self._launch()
+        return self
     def get(self):
         return self._value
     @property
@@ -132,6 +158,17 @@ class Param(Generic[ParamType]):
     def value(self, value:ParamType):
         self.set(value)
 
+class XYParamsSynchronizer:
+    _synchronizer_x:ParamSynchronizer
+    _synchronizer_y:ParamSynchronizer
+    def __init__(self, *parameters:XYParams):
+        self._synchronizer_x = ParamSynchronizer()
+        self._synchronizer_y = ParamSynchronizer()
+        self.connect(*parameters)
+    def connect(self, *parameters:XYParams):
+        for parameter in parameters:
+            self._synchronizer_x.connect(parameter.parameter_x)
+            self._synchronizer_y.connect(parameter.parameter_y)
 class XYParams(Generic[ParamType]):
     _x:Param[ParamType]
     @property
@@ -140,6 +177,9 @@ class XYParams(Generic[ParamType]):
     @x.setter
     def x(self, value:ParamType):
         self._x.value = value
+    @property
+    def parameter_x(self):
+        return self._x
 
     _y:Param[ParamType]
     @property
@@ -148,12 +188,16 @@ class XYParams(Generic[ParamType]):
     @y.setter
     def y(self, value:ParamType):
         self._y.value = value
+    @property
+    def parameter_y(self):
+        return self._y
 
-    def __init__(self, change_x:ChangeType=None, change_y:ChangeType=None, change:ChangeType=None):
-        change_x = function_combiner(change, change_x)
-        change_y = function_combiner(change, change_y)
-        self._x = Param[ParamType](change_x)
-        self._y = Param[ParamType](change_y)
+    def __init__(self, change_x:Union[ChangeType,tuple[ChangeType,...]]=(), change_y:Union[ChangeType,tuple[ChangeType,...]]=(), change:Union[ChangeType,tuple[ChangeType,...]]=()):
+        if not isinstance(change_x, tuple): change_x = (change_x,)
+        if not isinstance(change_y, tuple): change_y = (change_y,)
+        if not isinstance(change,   tuple): change   = (change,)
+        self._x = Param[ParamType](*change, *change_x)
+        self._y = Param[ParamType](*change, *change_y)
 
     def set(self, data:TypeXY):
         if isinstance(data, tuple):
@@ -162,9 +206,21 @@ class XYParams(Generic[ParamType]):
         else:
             self._x.set(data)
             self._y.set(data)
+        return self
     def get(self):
         return self._x.get(), self._y.get()
 
+class IOParamsSynchronizer:
+    _synchronizer_input:XYParamsSynchronizer
+    _synchronizer_output:XYParamsSynchronizer
+    def __init__(self, *parameters:IOParams):
+        self._synchronizer_input = XYParamsSynchronizer()
+        self._synchronizer_output = XYParamsSynchronizer()
+        self.connect(*parameters)
+    def connect(self, *parameters:IOParams):
+        for parameter in parameters:
+            self._synchronizer_input.connect(parameter.parameter_input)
+            self._synchronizer_output.connect(parameter.parameter_output)
 class IOParams(Generic[ParamType]):
     _change         :Optional[ChangeType]
 
@@ -172,17 +228,35 @@ class IOParams(Generic[ParamType]):
     @property
     def input(self):
         return self._input
+    @property
+    def parameter_input(self):
+        return self._input
 
     _output  :XYParams[ParamType]
     @property
     def output(self):
         return self._output
+    @property
+    def parameter_output(self):
+        return self._output
 
-    def __init__(self, change_input_x:ChangeType=None, change_input_y:ChangeType=None, change_output_x:ChangeType=None, change_output_y:ChangeType=None, change_input:ChangeType=None, change_output:ChangeType=None, change:ChangeType=None):
-        change_input = function_combiner(change_input, change)
-        change_output = function_combiner(change_output, change)
-        self._input   = XYParams[ParamType](change_input_x, change_input_y, change_input)
-        self._output  = XYParams[ParamType](change_output_x, change_output_y, change_output)
+    def __init__(self,
+                 change_input_x:Union[ChangeType, tuple[ChangeType,...]]=(),
+                 change_input_y:Union[ChangeType, tuple[ChangeType,...]]=(),
+                 change_output_x:Union[ChangeType, tuple[ChangeType,...]]=(),
+                 change_output_y:Union[ChangeType, tuple[ChangeType,...]]=(),
+                 change_input:Union[ChangeType, tuple[ChangeType,...]]=(),
+                 change_output:Union[ChangeType, tuple[ChangeType,...]]=(),
+                 change:Union[ChangeType, tuple[ChangeType,...]]=()):
+        if not isinstance(change_input_x,   tuple): change_input_x  = (change_input_x,)
+        if not isinstance(change_input_y,   tuple): change_input_y  = (change_input_y,)
+        if not isinstance(change_output_x,  tuple): change_output_x = (change_output_x,)
+        if not isinstance(change_output_y,  tuple): change_output_y = (change_output_y,)
+        if not isinstance(change_input,     tuple): change_input    = (change_input,)
+        if not isinstance(change_output,    tuple): change_output   = (change_output,)
+        if not isinstance(change,           tuple): change          = (change,)
+        self._input   = XYParams[ParamType](change_input_x, change_input_y, (*change_input, *change))
+        self._output  = XYParams[ParamType](change_output_x, change_output_y, (*change_output, *change))
     def set(self, data:TypeIO):
         if isinstance(data, tuple):
             self._input.set(data[0])
@@ -190,12 +264,79 @@ class IOParams(Generic[ParamType]):
         else:
             self._input.set(data)
             self._output.set(data)
+        return self
+
+class SpaceParamGroup:
+    _parameters:list[SpaceParam]
+    def connect(self, *parameters:SpaceParam):
+        for parameter in parameters:
+            if parameter not in self._parameters:
+                parameter.group = self
+                parameter.adjust()
+    def disconnect(self, *parameters:SpaceParam):
+        self._parameters.pop()
+        for parameter in self._parameters:
+            if parameter in parameters:
+                self._parameters.remove(parameter)
+    def stole(self):
+        parameters = self._parameters.copy()
+        self._parameters.clear()
+        return parameters
+
+    def merge(self, other:SpaceParamGroup):
+        for parameter in other.stole():
+            parameter.group = self
+        del other
 
 
+    @property
+    def size(self):
+        maximum = 1
+        for parameter in self._parameters:
+            if parameter.size > maximum:
+                maximum = parameter.size
+        return maximum
+
+    _trigger:bool
+    def adjust(self):
+        if not self._trigger:
+            self._trigger = True
+            size = self.size
+            for parameter in self._parameters:
+                if parameter.size != size:
+                    parameter.linspace(parameter.left, parameter.right, size)
+            self._trigger = False
+    def __init__(self, *parameters:SpaceParam):
+        self._trigger = False
+        self.connect(*parameters)
+class SpaceParamSynchronizer:
+    _parameters:list[SpaceParam]
+    def __init__(self, *parameters:SpaceParam):
+        self._parameters = []
+        self.connect(*parameters)
+    def connect(self, *parameters:SpaceParam):
+        for parameter in parameters:
+            self._parameters.append(parameter)
+            def synchronize():
+                self._synchronize(len(self._parameters) - 1)
+            parameter.append_function(synchronize)
+            if self._parameters: parameter.linspace(self._parameters[0].left, self._parameters[0].right, self._parameters[0].size)
+    def _synchronize(self, index:int):
+        for i, parameter in enumerate(self._parameters):
+            if i != index:
+                parameter.linspace(self._parameters[index].left, self._parameters[index].right, self._parameters[index].size)
 FloatS = Union[float, tuple[float,float,int]]
 class SpaceParam(Generic[ParamType]):
     _value:torch.Tensor
-    _change:Callable
+    _change:list[ChangeType]
+    def append_function(self, *functions:ChangeType):
+        for function in functions:
+            self._change.append(function)
+
+    def _launch(self):
+        for function in self._change:
+            function()
+        self._group.adjust()
 
     @property
     def tensor(self):
@@ -208,7 +349,7 @@ class SpaceParam(Generic[ParamType]):
         return (self.left.item() + self.right.item()) / 2
 
     @property
-    def length(self):
+    def size(self):
         return self._value.size(0)
     @property
     def left(self):
@@ -218,7 +359,7 @@ class SpaceParam(Generic[ParamType]):
         return self._value[-1]
 
     def value(self, value:ParamType):
-        self.linspace(value, value, self.size())
+        self.linspace(value, value, self._group.size)
     def linspace(self, value0:ParamType, value1:ParamType, N:int):
         if value0 != value1:
             temp = torch.linspace(value0, value1, N, device=self._value.device, dtype=self._value.dtype)
@@ -226,36 +367,37 @@ class SpaceParam(Generic[ParamType]):
             temp = torch.ones(N, device=self._value.device, dtype=self._value.dtype) * value0
         if temp != self._value:
             self._value = temp
-            self._change()
+            self._launch()
     def set(self, data:Union[ParamType, tuple[ParamType,ParamType,int]]):
         self._value = torch.tensor(0.)
         if isinstance(data, tuple):
             self.linspace(*data)
         else:
             self.value(data)
-    def recount(self, N:int):
-        self.linspace(self.left, self.right, N)
 
-    _connections:list[SpaceParam]
+    _group:SpaceParamGroup
+    @property
+    def group(self):
+        return self._group
+    @group.setter
+    def group(self, group_:SpaceParamGroup):
+        self._group.disconnect(self)
+        self._group = group_
+        self._group.connect(self)
     def connect(self, *space_params:SpaceParam):
-        if not hasattr(self, '_connections'):
-            self._connections = []
-        for param in space_params:
-            self._connections.append(param)
+        self._group.connect(*space_params)
     def adjust(self):
-        for param in self._connections:
-            if param.length != self.length:
-                param.recount(self.length)
-    def size(self):
-        maximum:int = 1
-        for param in self._connections:
-            if maximum < param.length:
-                maximum = param.length
-        return maximum
+        size = self.group.size
+        if self.size != size:
+            self.linspace(self.left, self.right, size)
 
-    def __init__(self, change:Callable):
-        self._change = change
-        self._connections = []
+    def __init__(self, *change:ChangeType, group:SpaceParamGroup=None):
+        self._change = []
+        self.append_function(*change)
+        if group is None:
+            group = SpaceParamGroup()
+        self._group = group
+        self.connect(self)
 
 
 IMType = Literal['nearest','linear','bilinear','bicubic','trilinear','area','nearest-exact']

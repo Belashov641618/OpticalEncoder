@@ -1,13 +1,15 @@
 import numpy
 import torch
 
+from typing import Optional
+
 from belashovplot import TiledPlot
 
-from elements.abstracts import AbstractPropagator
+from elements.abstracts import AbstractPropagator, AbstractMask
 from utilities import Logger, engineering, shifted_log10, scientific
 from parameters import FigureWidthHeight, FontLibrary
 
-def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=None, nx_max:int=3, ny_max:int=3, plot:TiledPlot=None, logger:Logger=None):
+def rectangle_propagation(model:AbstractPropagator, Nz:int, width:float=None, height:float=None, nx_max:int=3, ny_max:int=3, plot:TiledPlot=None, logger:Logger=None):
     if logger is None:
         logger = Logger(False)
 
@@ -46,7 +48,7 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
         mask = (-width/2 <= x_mesh) * (x_mesh <= +width/2) * (-height/2 <= y_mesh) * (y_mesh <= +height/2)
         if torch.sum(mask) <= 4: raise ValueError(f'Параметры щели width и/или height слишком малы\nwidth: {width} из критических: {2*length_x/pixels_x}\nheight: {height} из критических: {2*length_y/pixels_y}')
         field = mask * torch.ones((pixels_x, pixels_y), dtype=model.accuracy.tensor_complex, device=model.device)
-        field = field.expand(1, model.wavelength.length, -1, -1)
+        field = field.expand(1, model.wavelength.size, -1, -1)
         result = model.forward(field)
         cutX = torch.zeros((Nz, model.pixels.output.y), dtype=model.accuracy.tensor_complex, device=model.device)
         cutY = torch.zeros((Nz, model.pixels.output.x), dtype=model.accuracy.tensor_complex, device=model.device)
@@ -112,6 +114,5 @@ def rectangle(model:AbstractPropagator, Nz:int, width:float=None, height:float=N
 
     return plot
 
-
-
-
+def mask_lightening(mask:AbstractMask, propagator2:AbstractPropagator, propagator1:Optional[AbstractPropagator]=None, logger:Logger=None):
+    pass
