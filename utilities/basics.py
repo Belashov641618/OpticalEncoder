@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import copy
+
 import torch
 from typing import List, Callable, Tuple, Any, Generic, TypeVar, Optional, Union, Literal
+from functools import partial
 
 class DelayedFunctions:
     _delayed_functions : List[Tuple[Callable, float, Any, Any]]
@@ -85,8 +88,6 @@ class Accuracy:
     def get(self):
         return self._bits
 
-
-
 ParamType = TypeVar('ParamType')
 TypeXY  = Union[ParamType, Tuple[ParamType,ParamType]]
 IntXY   = Union[int, Tuple[int,int]]
@@ -113,22 +114,7 @@ def function_combiner(function1:Optional[ChangeType], function2:Optional[ChangeT
         return combined
     else:
         return None
-class ParamSynchronizer:
-    _parameters:list[Param]
-    def __init__(self, *parameters:Param):
-        self._parameters = []
-        self.connect(*parameters)
-    def connect(self, *parameters:Param):
-        for parameter in parameters:
-            self._parameters.append(parameter)
-            def synchronize():
-                self._synchronize(len(self._parameters) - 1)
-            parameter.append_function(synchronize)
-            if self._parameters: parameter.set(self._parameters[0])
-    def _synchronize(self, index:int):
-        for i, parameter in enumerate(self._parameters):
-            if i != index:
-                parameter.set(self._parameters[index].value)
+
 class Param(Generic[ParamType]):
     _value : Optional[ParamType]
     _change_functions : list[ChangeType]
@@ -158,17 +144,6 @@ class Param(Generic[ParamType]):
     def value(self, value:ParamType):
         self.set(value)
 
-class XYParamsSynchronizer:
-    _synchronizer_x:ParamSynchronizer
-    _synchronizer_y:ParamSynchronizer
-    def __init__(self, *parameters:XYParams):
-        self._synchronizer_x = ParamSynchronizer()
-        self._synchronizer_y = ParamSynchronizer()
-        self.connect(*parameters)
-    def connect(self, *parameters:XYParams):
-        for parameter in parameters:
-            self._synchronizer_x.connect(parameter.parameter_x)
-            self._synchronizer_y.connect(parameter.parameter_y)
 class XYParams(Generic[ParamType]):
     _x:Param[ParamType]
     @property
@@ -210,17 +185,6 @@ class XYParams(Generic[ParamType]):
     def get(self):
         return self._x.get(), self._y.get()
 
-class IOParamsSynchronizer:
-    _synchronizer_input:XYParamsSynchronizer
-    _synchronizer_output:XYParamsSynchronizer
-    def __init__(self, *parameters:IOParams):
-        self._synchronizer_input = XYParamsSynchronizer()
-        self._synchronizer_output = XYParamsSynchronizer()
-        self.connect(*parameters)
-    def connect(self, *parameters:IOParams):
-        for parameter in parameters:
-            self._synchronizer_input.connect(parameter.parameter_input)
-            self._synchronizer_output.connect(parameter.parameter_output)
 class IOParams(Generic[ParamType]):
     _change         :Optional[ChangeType]
 
@@ -309,22 +273,6 @@ class SpaceParamGroup:
     def __init__(self, *parameters:SpaceParam):
         self._trigger = False
         self.connect(*parameters)
-class SpaceParamSynchronizer:
-    _parameters:list[SpaceParam]
-    def __init__(self, *parameters:SpaceParam):
-        self._parameters = []
-        self.connect(*parameters)
-    def connect(self, *parameters:SpaceParam):
-        for parameter in parameters:
-            self._parameters.append(parameter)
-            def synchronize():
-                self._synchronize(len(self._parameters) - 1)
-            parameter.append_function(synchronize)
-            if self._parameters: parameter.linspace(self._parameters[0].left, self._parameters[0].right, self._parameters[0].size)
-    def _synchronize(self, index:int):
-        for i, parameter in enumerate(self._parameters):
-            if i != index:
-                parameter.linspace(self._parameters[index].left, self._parameters[index].right, self._parameters[index].size)
 FloatS = Union[float, tuple[float,float,int]]
 class SpaceParam(Generic[ParamType]):
     _value:torch.Tensor
