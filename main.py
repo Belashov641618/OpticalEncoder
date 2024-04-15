@@ -12,7 +12,7 @@ if __name__ == '__main__':
     from elements.modulators import Lens
     from tests.Composition import propagation
 
-    N = 512
+    N = 255
     length = 1.0E-3
     wavelength = 500.0E-9
     focus = 100.0E-3
@@ -23,4 +23,4 @@ if __name__ == '__main__':
 
     model = CompositeModel(propagation1, lens, propagation2).to(torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
 
-    propagation(model, 'Flowers')
+    propagation(model, 'MNIST')

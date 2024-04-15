@@ -35,6 +35,7 @@ class CompositeModel(torch.nn.Module):
         super().__init__()
         self._init_elements(*elements)
         self._init_optical()
+        self._init_propagators()
 
     def _forward(self, field:torch.Tensor):
         for element in self._elements:
@@ -62,8 +63,8 @@ class CompositeModel(torch.nn.Module):
     def volume(self, field:torch.Tensor, pixels_x:int, pixels_y:int, pixels_z:int, interpolation:IMType=InterpolateModes.bilinear):
         with torch.no_grad():
             result = torch.zeros((pixels_z, pixels_x, pixels_y), dtype=field.dtype, device=torch.device('cpu'))
-            result[0] =  interpolate(field.squeeze(), (pixels_x, pixels_y), interpolation).cpu()
-            distance_array = torch.linspace(0, self.max_length_x, pixels_z, device=field.device)[1:]
+            result[0] = interpolate(field, (pixels_x, pixels_y), interpolation).squeeze().cpu()
+            distance_array = torch.linspace(0, self.total_length, pixels_z, device=field.device)[1:]
             last_index:int = 0
             for element in self._elements:
                 if isinstance(element, AbstractPropagator):
@@ -73,7 +74,7 @@ class CompositeModel(torch.nn.Module):
                             element.distance = element_distance
                             break
                         element.distance = distance
-                        result[last_index+1] = interpolate(element.forward(field).squeeze(), (pixels_x, pixels_y), interpolation).cpu()
+                        result[last_index+1] = interpolate(element.forward(field), (pixels_x, pixels_y), interpolation).squeeze().cpu()
                         last_index += 1
                 field = element.forward(field)
             return result.movedim(0,2)
@@ -96,7 +97,7 @@ class CompositeModel(torch.nn.Module):
         for element in self._elements:
             if isinstance(element, AbstractPropagator):
                 field = element.forward(field)
-                result[iterator] = interpolate(field.squeeze(), (pixels_x, pixels_y), interpolation).cpu()
+                result[iterator] = interpolate(field, (pixels_x, pixels_y), interpolation).squeeze().cpu()
             else:
                 field = element.forward(field)
         return result

@@ -5,8 +5,8 @@ from utilities import *
 
 class Lens(AbstractMask):
     def _recalc_mask_buffer(self):
-        x_array = torch.linspace(-self._total_length_x/2 + self._total_length_x/2, self._total_pixels_x, device=self.device, dtype=self.accuracy.tensor_float)
-        y_array = torch.linspace(-self._total_length_y/2 + self._total_length_y/2, self._total_pixels_y, device=self.device, dtype=self.accuracy.tensor_float)
+        x_array = torch.linspace(-self._total_length_x/2, self._total_length_x/2, self._total_pixels_x, device=self.device, dtype=self.accuracy.tensor_float)
+        y_array = torch.linspace(-self._total_length_y/2, self._total_length_y/2, self._total_pixels_y, device=self.device, dtype=self.accuracy.tensor_float)
         x_mesh, y_mesh = torch.meshgrid(x_array, y_array, indexing='ij')
 
         wavelength = self.wavelength.tensor.reshape(-1,1,1).to(self.device)
