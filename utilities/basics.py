@@ -299,7 +299,8 @@ class SpaceParam(Generic[ParamType]):
 
     @property
     def size(self):
-        print(self._value.size())
+        if len(self._value.size()) == 0:
+            return 1
         return self._value.size(0)
     @property
     def left(self):
@@ -347,7 +348,7 @@ class SpaceParam(Generic[ParamType]):
         if group is None:
             group = SpaceParamGroup()
         self._group = group
-        self.connect(self)
+        self._group.connect(self)
 
 
 IMType = Literal['nearest','linear','bilinear','bicubic','trilinear','area','nearest-exact']

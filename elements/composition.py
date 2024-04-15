@@ -19,11 +19,11 @@ class CompositeModel(torch.nn.Module):
 
     _optical:tuple[AbstractOptical,...]
     def _init_optical(self):
-        self._optical = tuple(*[element for element in self._elements if isinstance(element, AbstractOptical)])
+        self._optical = tuple([element for element in self._elements if isinstance(element, AbstractOptical)])
 
     _propagators:tuple[AbstractPropagator,...]
     def _init_propagators(self):
-        self._propagators = tuple(*[element for element in self._optical if isinstance(element, AbstractPropagator)])
+        self._propagators = tuple([element for element in self._optical if isinstance(element, AbstractPropagator)])
 
     # Дополнительные обёртки TODO
     _wrappers:list[None]
@@ -100,4 +100,3 @@ class CompositeModel(torch.nn.Module):
             else:
                 field = element.forward(field)
         return result
-

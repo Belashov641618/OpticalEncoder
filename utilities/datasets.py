@@ -35,7 +35,7 @@ class Dataset:
             ])
             self._train = DataLoader(datasets.Flowers102(root=DataSetsPath, split='train', transform=transformation, download=True), batch_size=self._batch, shuffle=True)
             self._test  = DataLoader(datasets.Flowers102(root=DataSetsPath, split='test',  transform=transformation, download=True), batch_size=self._batch, shuffle=True)
-        else: raise ValueError
+        else: raise ValueError(f'Dataset is {self._dataset}')
     @property
     def train(self):
         self._delayed.launch()
@@ -55,7 +55,7 @@ class Dataset:
             def get(self): return self._self._dataset
 
             def set(self, dataset:LiteralDataSet):
-                if self._self._dataset != dataset:
+                if not hasattr(self._self, '_dataset') or self._self._dataset != dataset:
                     self._self._delayed.add(self._self._reload)
                 self._self._dataset = dataset
             def __eq__(self, dataset:Union[LiteralDataSet,DatasetSelector]):
@@ -73,7 +73,7 @@ class Dataset:
         return self._batch
     @batch.setter
     def batch(self, size:int):
-        if size != self._batch:
+        if not hasattr(self, '_batch') or size != self._batch:
             self._delayed.add(self._reload)
             self._batch = size
 
@@ -83,7 +83,7 @@ class Dataset:
         return self._width
     @width.setter
     def width(self, pixels:int):
-        if pixels != self._width:
+        if not hasattr(self, '_width') or pixels != self._width:
             self._delayed.add(self._reload)
             self._width = pixels
 
@@ -93,7 +93,7 @@ class Dataset:
         return self._height
     @height.setter
     def height(self, pixels:int):
-        if pixels != self._height:
+        if not hasattr(self, '_height') or pixels != self._height:
             self._delayed.add(self._reload)
             self._height = pixels
 
@@ -103,13 +103,13 @@ class Dataset:
         return self._dtype
     @dtype.setter
     def dtype(self, type:torch.dtype):
-        if type != self._dtype:
+        if not hasattr(self, '_dtype') or type != self._dtype:
             self._delayed.add(self._reload)
             self._dtype = type
 
     def __init__(self, dataset:LiteralDataSet=None, batch:int=None, width:int=None, height:int=None, dtype:torch.dtype=torch.float32):
         self._delayed = DelayedFunctions()
-
+        print(dataset)
         if dataset is not None: self.dataset.set(dataset)
 
         if batch  is not None: self.batch  = batch

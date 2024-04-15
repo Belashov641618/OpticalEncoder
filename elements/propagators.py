@@ -61,7 +61,7 @@ class FurrierPropagation(AbstractPropagator):
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, distance:float, border_ratio:float=0.5, logger:Logger=None):
         super().__init__(pixels, length, wavelength, reflection, absorption, distance, logger=logger)
         self.border_ratio = border_ratio
-        self._pad_pixels = XYParams[int](None, None)
+        self._pad_pixels = XYParams[int]()
         self._pad_pixels.set(0)
         self._reset_all()
         self.delayed.launch()

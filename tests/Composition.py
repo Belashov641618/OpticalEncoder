@@ -7,8 +7,8 @@ from parameters import FigureWidthHeight, FontLibrary
 from elements.composition import CompositeModel
 
 def propagation(model:CompositeModel, field:Union[torch.Tensor, LiteralDataSet]):
-    if isinstance(field, LiteralDataSet):
-        field, _ = Dataset.single(LiteralDataSet, model.pixels[0].x, model.pixels[0].y, model.dtype)
+    if not isinstance(field, torch.Tensor):
+        field, _ = Dataset.single(LiteralDataSet, model.element(0).pixels.input.x, model.element(0).pixels.input.y, model.dtype)
     while len(field.size()) < 4:
         field = field.unsqueeze(0)
     field = field.to(model.dtype)

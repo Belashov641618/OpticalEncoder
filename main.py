@@ -5,7 +5,7 @@ import torch
 
 if __name__ == '__main__':
     # dynamic_approximation()
-    rectangle_diffraction(3, 6, 100)
+    # rectangle_diffraction(3, 6, 100)
 
     from elements.composition import CompositeModel
     from elements.propagators import FurrierPropagation

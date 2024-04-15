@@ -1,6 +1,6 @@
 import torch
 
-from abstracts import AbstractMask
+from elements.abstracts import AbstractMask
 from utilities import *
 
 class Lens(AbstractMask):
