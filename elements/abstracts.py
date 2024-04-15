@@ -1,7 +1,8 @@
 import torch
-
+from typing import Callable, Any, Optional
 from utilities import *
 
+# Элементы
 class AbstractElement(torch.nn.Module):
     logger:Logger
 
@@ -211,6 +212,10 @@ class AbstractMask(AbstractInhomogeneity):
     def _recalc_mask_buffer(self):
         raise NotImplementedError
     @property
+    def mask(self):
+        self.delayed.launch()
+        return self._mask_buffer.clone().detach().squeeze().cpu()
+    @property
     def device(self):
         if hasattr(self, '_mask_buffer'):
             return self._mask_buffer.device
@@ -226,3 +231,20 @@ class AbstractMask(AbstractInhomogeneity):
         field = torch.nn.functional.pad(field, self._unpaddings)
         field = interpolate(field, (self.pixels.output.x, self.pixels.output.y), mode=self.interpolation.mode)
         return field
+
+# Остальное
+class AbstractWrapper(torch.nn.Module):
+    delayed:DelayedFunctions
+    _forward:Optional[Callable[[torch.Tensor, Any, ...], torch.Tensor]]
+    def __init__(self, forward:Callable[[torch.Tensor, Any, ...], torch.Tensor]=None):
+        super().__init__()
+        self.delayed = DelayedFunctions()
+        self._forward = forward
+    def attach_forward(self, forward:Callable[[torch.Tensor, Any, ...], torch.Tensor]):
+        self._forward = forward
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        raise NotImplementedError
+
+
+
+

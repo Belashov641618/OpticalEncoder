@@ -10,7 +10,7 @@ class Lens(AbstractMask):
         x_mesh, y_mesh = torch.meshgrid(x_array, y_array, indexing='ij')
 
         wavelength = self.wavelength.tensor.reshape(-1,1,1).to(self.device)
-        if self.focus.left == self.focus.right:
+        if self.focus.left != self.focus.right:
             # Хроматические аббериации задаются через вариацию фокусного расстояния
             focus = self.focus.tensor.reshape(-1, 1, 1).to(self.device)
             phase = torch.pi * (x_mesh**2 + y_mesh**2) / (wavelength * focus)
@@ -19,9 +19,9 @@ class Lens(AbstractMask):
             reflection = (self.reflection.tensor + 1j*self.absorption.tensor).reshape(-1,1,1).to(self.device)
             space_reflection = (self.space_reflection.tensor + 1j*self.space_absorption.tensor).reshape(-1,1,1).to(self.device)
             phase = torch.pi * (x_mesh ** 2 + y_mesh ** 2) / (self.wavelength.effective * self.focus.effective)
-            height = self.wavelength.effective * (self.reflection.effective - self.space_reflection.effective) * phase / (2.0*torch.pi)
+            height = (self.wavelength.effective / (self.reflection.effective - self.space_reflection.effective)) * phase / (2.0*torch.pi)
             phase = 2*torch.pi*height * (reflection - space_reflection) / wavelength
-        self._register_mask_buffer(torch.exp(1j*phase))
+        self._register_mask_buffer(torch.exp(-1j*phase))
 
     focus:SpaceParam[float]
     def _change_focus(self):

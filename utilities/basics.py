@@ -4,8 +4,6 @@ import copy
 
 import torch
 from typing import List, Callable, Tuple, Any, Generic, TypeVar, Optional, Union, Literal
-from functools import partial
-
 class DelayedFunctions:
     _delayed_functions : List[Tuple[Callable, float, Any, Any]]
     def add(self, function:Callable, priority:float=0., *args, **kwargs):
@@ -18,7 +16,7 @@ class DelayedFunctions:
         """
         if not hasattr(self, '_delayed_functions'):
             self._delayed_functions = [(function, priority, args, kwargs)]
-        elif (function, priority) not in self._delayed_functions:
+        elif (function, priority, args, kwargs) not in self._delayed_functions:
             self._delayed_functions.append((function, priority, args, kwargs))
     def launch(self):
         if hasattr(self, '_delayed_functions'):

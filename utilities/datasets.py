@@ -109,9 +109,8 @@ class Dataset:
 
     def __init__(self, dataset:LiteralDataSet=None, batch:int=None, width:int=None, height:int=None, dtype:torch.dtype=torch.float32):
         self._delayed = DelayedFunctions()
-        print(dataset)
-        if dataset is not None: self.dataset.set(dataset)
 
+        if dataset is not None: self.dataset.set(dataset)
         if batch  is not None: self.batch  = batch
         if width  is not None: self.width  = width
         if height is not None: self.height = height

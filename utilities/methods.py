@@ -2,6 +2,7 @@ import torch
 from typing import Any, Literal
 
 from .basics import IMType, InterpolateModes
+from .filters import Gaussian
 
 def closest_integer(value:float) -> int:
     if value < 0:
@@ -67,8 +68,22 @@ def shifted_log10(*images:torch.Tensor, shift:float=None, average:float=0.5, red
             for image_ in images:
                 image_ = torch.log10(image_ + shift)
                 results.append((image_ - image_.min()) / (image_.max() - image_.min()))
+            if len(results) == 1:
+                return results[0]
             return tuple(results)
     return
+
+def dimension_normalization(image:torch.Tensor, dim:int=0):
+    maximums = image
+    minimums = image
+    for d in range(len(image.size())):
+        if d != dim:
+            maximums, _ = torch.max(maximums, dim=d, keepdim=True)
+            minimums, _ = torch.min(minimums, dim=d, keepdim=True)
+
+    image = (image - minimums) / (maximums - minimums)
+    return image
+
 
 def trays_rays(image:torch.Tensor):
     if len(image.size()) == 2:
