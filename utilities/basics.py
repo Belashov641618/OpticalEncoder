@@ -236,9 +236,9 @@ class SpaceParamGroup:
         for parameter in parameters:
             if parameter not in self._parameters:
                 parameter.group = self
+                self._parameters.append(parameter)
                 parameter.adjust()
     def disconnect(self, *parameters:SpaceParam):
-        self._parameters.pop()
         for parameter in self._parameters:
             if parameter in parameters:
                 self._parameters.remove(parameter)
@@ -272,6 +272,7 @@ class SpaceParamGroup:
             self._trigger = False
     def __init__(self, *parameters:SpaceParam):
         self._trigger = False
+        self._parameters = []
         self.connect(*parameters)
 FloatS = Union[float, tuple[float,float,int]]
 class SpaceParam(Generic[ParamType]):
@@ -298,6 +299,7 @@ class SpaceParam(Generic[ParamType]):
 
     @property
     def size(self):
+        print(self._value.size())
         return self._value.size(0)
     @property
     def left(self):
@@ -331,7 +333,6 @@ class SpaceParam(Generic[ParamType]):
     def group(self, group_:SpaceParamGroup):
         self._group.disconnect(self)
         self._group = group_
-        self._group.connect(self)
     def connect(self, *space_params:SpaceParam):
         self._group.connect(*space_params)
     def adjust(self):
@@ -340,6 +341,7 @@ class SpaceParam(Generic[ParamType]):
             self.linspace(self.left, self.right, size)
 
     def __init__(self, *change:ChangeType, group:SpaceParamGroup=None):
+        self._value = torch.zeros(1, dtype=torch.float32)
         self._change = []
         self.append_function(*change)
         if group is None:

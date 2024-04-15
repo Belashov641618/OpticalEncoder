@@ -36,26 +36,10 @@ class CompositeModel(torch.nn.Module):
         self._init_elements(*elements)
         self._init_optical()
 
-    def _forward(self, field:torch.Tensor, distance:float=None):
-        if distance is None:
-            for element in self._elements:
-                field = element.forward(field)
-            return field
-        else:
-            for element in self._elements:
-                if isinstance(element, AbstractPropagator):
-                    if distance - element.distance > distance:
-                        field = element.forward(field)
-                        distance -= element.distance
-                    else:
-                        element_distance = element.distance
-                        element.distance = distance
-                        field = element.forward(field)
-                        element.distance = element_distance
-                        return field
-                else:
-                    field = element.forward(field)
-            return field
+    def _forward(self, field:torch.Tensor):
+        for element in self._elements:
+            field = element.forward(field)
+        return field
 
     def forward(self, field:torch.Tensor):
         return self._forward(field)
@@ -63,24 +47,57 @@ class CompositeModel(torch.nn.Module):
     # Дополнительные методы
     @property
     def device(self):
-        return self._elements[0].device
+        if self._propagators:
+            return self._propagators[0].device
+        else:
+            return torch.device('cpu')
+    @property
+    def dtype(self):
+        return self._elements[0].accuracy.tensor_complex
     @property
     def total_length(self):
         return sum([element.distance for element in self._propagators])
 
     # Методы получения расширенных данных
-    def volume(self, field:torch.Tensor):
-        pass
-    def profile(self, field:torch.Tensor, profile_function:Callable[[torch.Tensor], torch.Tensor], orientation:Literal['xz','yz']='xz', pixels_xy:int=512, steps:int=255):
-        while len(field.size()) < 4: field.unsqueeze(0)
+    def volume(self, field:torch.Tensor, pixels_x:int, pixels_y:int, pixels_z:int, interpolation:IMType=InterpolateModes.bilinear):
+        with torch.no_grad():
+            result = torch.zeros((pixels_z, pixels_x, pixels_y), dtype=field.dtype, device=torch.device('cpu'))
+            result[0] =  interpolate(field.squeeze(), (pixels_x, pixels_y), interpolation).cpu()
+            distance_array = torch.linspace(0, self.max_length_x, pixels_z, device=field.device)[1:]
+            last_index:int = 0
+            for element in self._elements:
+                if isinstance(element, AbstractPropagator):
+                    element_distance = element.distance
+                    for distance in distance_array[last_index:]:
+                        if distance > element_distance:
+                            element.distance = element_distance
+                            break
+                        element.distance = distance
+                        result[last_index+1] = interpolate(element.forward(field).squeeze(), (pixels_x, pixels_y), interpolation).cpu()
+                        last_index += 1
+                field = element.forward(field)
+            return result.movedim(0,2)
 
-        step_x = self.max_length_x / pixels_xy
-        step_y = self.max_length_y / pixels_xy
+    def profile(self, field:torch.Tensor, orientation:Literal['xz','yz']='xz', reduce:Literal['select','mean','min','max']='select', pixels_xy:int=255, pixels_z:int=255, interpolation:IMType=InterpolateModes.bilinear):
+        volume = self.volume(field, pixels_xy, pixels_xy, pixels_z, interpolation)
+        if reduce == 'mean':
+            plane = (torch.mean(volume, dim=1) if orientation == 'xz' else torch.mean(volume, dim=0))
+        elif reduce == 'max':
+            plane = (torch.max(volume, dim=1) if orientation == 'xz' else torch.max(volume, dim=0))
+        elif reduce == 'min':
+            plane = (torch.min(volume, dim=1) if orientation == 'xz' else torch.min(volume, dim=0))
+        else:
+            plane = (volume[:, pixels_xy // 2, :] if orientation == 'xz' else volume[pixels_xy // 2, :, :])
+        return plane
 
+    def planes(self, field:torch.Tensor, pixels_x:int=255, pixels_y:int=255, interpolation:IMType=InterpolateModes.bilinear):
+        result = torch.zeros((len(self._propagators), pixels_x, pixels_y), dtype=field.dtype, device=field.device)
+        iterator:int = 0
+        for element in self._elements:
+            if isinstance(element, AbstractPropagator):
+                field = element.forward(field)
+                result[iterator] = interpolate(field.squeeze(), (pixels_x, pixels_y), interpolation).cpu()
+            else:
+                field = element.forward(field)
+        return result
 
-
-        data = torch.zeros()
-
-        distances = numpy.linspace(0, self.total_length, steps)
-        for distance in distances:
-            pass
