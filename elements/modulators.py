@@ -1,8 +1,9 @@
 import torch
 
-from elements.abstracts import AbstractMask
+from elements.abstracts import AbstractMask, AbstractModulator, AbstractInhomogeneity
 from utilities import *
 
+# Статические маски
 class Lens(AbstractMask):
     def _recalc_mask_buffer(self):
         x_array = torch.linspace(-self._total_length_x/2, self._total_length_x/2, self._total_pixels_x, device=self.device, dtype=self.accuracy.tensor_float)
@@ -51,3 +52,39 @@ class Lens(AbstractMask):
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         return super().forward(field, *args, **kwargs)
+
+
+# Простые модуляторы
+class AmplitudeModulator(AbstractModulator):
+    def _multiplier(self):
+        parameters = interpolate(self._normalized(), (self.pixels.input.x, self.pixels.input.y), InterpolateModes.nearest)
+        coefficients = torch.nn.functional.pad(parameters, self._paddings_difference).to(self.accuracy.tensor_complex)
+        return coefficients
+
+    def __init__(self, pixels:IntIO, length:FloatIO, mask_pixels:IntXY, logger:Logger=None):
+        super().__init__(pixels, length, mask_pixels, logger=logger)
+
+class PhaseModulator(AbstractModulator):
+    def _multiplier(self):
+        parameters = interpolate(self._normalized(), (self.pixels.input.x, self.pixels.input.y), InterpolateModes.nearest)
+        coefficients = torch.exp(2j*torch.pi*torch.nn.functional.pad(parameters, self._paddings_difference))
+        return coefficients
+
+    def __init__(self, pixels:IntIO, length:FloatIO, mask_pixels:IntXY, logger:Logger=None):
+        super().__init__(pixels, length, mask_pixels, logger=logger)
+
+# Физические модуляторы
+class PerfectHeightModulator(AbstractModulator, AbstractInhomogeneity):
+    @property
+    def _max_height(self):
+        return torch.max(self.wavelength.tensor / (self.reflection.tensor - self.space_reflection.tensor))
+
+    def _heights(self):
+        return interpolate(self._normalized() * self._max_height, (self.pixels.input.x, self.pixels.input.y), InterpolateModes.nearest)
+
+    def _multiplier(self):
+        return torch.exp(2j*torch.pi*self._heights()*(self.reflection.tensor - self.space_reflection.tensor + 1j*(self.absorption.tensor - self.space_absorption.tensor)))
+
+    def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, space_reflection:FloatS, space_absorption:FloatS, mask_pixels:IntXY, logger:Logger=None):
+        AbstractInhomogeneity.__init__(self, pixels, length, wavelength, reflection, absorption, space_reflection, space_absorption, logger=logger)
+        AbstractModulator.__init__(self, pixels, length, mask_pixels, logger=logger)

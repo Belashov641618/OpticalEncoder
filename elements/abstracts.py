@@ -54,6 +54,9 @@ class AbstractElement(torch.nn.Module):
     def _unpaddings(self):
         return self._unpadding_x, self._unpadding_x, self._unpadding_y, self._unpadding_y
     @property
+    def _paddings_difference(self):
+        return self._padding_x + self._unpadding_x, self._padding_x + self._unpadding_x, self._padding_y + self._unpadding_y, self._padding_y + self._unpadding_y
+    @property
     def _total_pixels_x(self):
         return self.pixels.input.x + 2 * self._padding_x
     @property
@@ -199,6 +202,47 @@ class AbstractInhomogeneity(AbstractOptical):
     def forward(self, *args, **kwargs):
         super().forward(*args, **kwargs)
 
+class AbstractModulator(AbstractElement):
+    mask_pixels:XYParams[int]
+    _mask_parameters:torch.nn.Parameter
+    def _register_mask_parameters(self, parameters:torch.Tensor):
+        if parameters.device != self.device: parameters = parameters.to(self.device)
+        if parameters.dtype not in (self.accuracy.tensor_float, self.accuracy.tensor_complex):
+            if torch.is_complex(parameters): parameters = parameters.to(self.accuracy.tensor_complex)
+            else: parameters = parameters.to(self.accuracy.tensor_float)
+        if hasattr(self, '_mask_parameters'):
+            self._mask_parameters.copy_(parameters)
+        else:
+            self._mask_parameters = torch.nn.Parameter(parameters)
+            self.accuracy.connect(self._mask_parameters)
+    def _recalc_mask_parameters(self):
+        parameters = torch.normal(0., 1.0, (self.mask_pixels.x, self.mask_pixels.y))
+        self._register_mask_parameters(parameters)
+    def _normalized(self) -> torch.Tensor:
+        return torch.sigmoid(self._mask_parameters)
+    def _multiplier(self) -> torch.Tensor:
+        raise NotImplementedError
+    @property
+    def properties(self):
+        return self._mask_parameters.clone().detach().cpu()
+    @property
+    def device(self):
+        if hasattr(self, '_mask_parameters'):
+            return self._mask_parameters.device
+        else: return super().device
+
+    def __init__(self, pixels:IntIO, length:FloatIO, mask_pixels:IntXY, logger:Logger=None):
+        super().__init__(pixels, length, logger=logger)
+        self.mask_pixels = XYParams[int](self._recalc_mask_parameters).set(mask_pixels)
+        self.delayed.launch()
+
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        super().forward(*args, **kwargs)
+        field = torch.nn.functional.pad(field, self._paddings_difference)
+        field = field * self._multiplier()
+        field = interpolate(field, (self.pixels.output.x, self.pixels.output.y), mode=self.interpolation.mode)
+        return field
+
 class AbstractMask(AbstractInhomogeneity):
     _mask_buffer:torch.Tensor
     def _register_mask_buffer(self, buffer:torch.Tensor):
@@ -221,15 +265,21 @@ class AbstractMask(AbstractInhomogeneity):
             return self._mask_buffer.device
         else: return super().device
 
+    @property
+    def _total_pixels_x(self):
+        return super()._total_pixels_x + 2*self._unpadding_x
+    @property
+    def _total_pixels_y(self):
+        return super()._total_pixels_y + 2*self._unpadding_y
+
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, space_reflection:FloatS, space_absorption:FloatS, logger:Logger=None, finalize:bool=True):
         super().__init__(pixels, length, wavelength, reflection, absorption, space_reflection, space_absorption, logger=logger)
         if finalize: self.delayed.launch()
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)
-        field = torch.nn.functional.pad(field, self._paddings)
+        field = torch.nn.functional.pad(field, self._paddings_difference)
         field = field * self._mask_buffer
-        field = torch.nn.functional.pad(field, self._unpaddings)
         field = interpolate(field, (self.pixels.output.x, self.pixels.output.y), mode=self.interpolation.mode)
         return field
 

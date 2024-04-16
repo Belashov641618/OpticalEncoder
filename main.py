@@ -14,7 +14,7 @@ if __name__ == '__main__':
     from tests.Composition import propagation
     from elements.wrappers import Incoherent, CudaMemoryChunker
 
-    N = 512
+    N = 200
     length = 5.0E-3
     wavelength = 500.0E-9
     focus = 600.0E-3
@@ -36,6 +36,4 @@ if __name__ == '__main__':
     incoherent = Incoherent(length / 15, 0.001, 1.0, 50, N, length)
     model.wrap(incoherent)
 
-
-
-    propagation(model, 'MNIST')
+    propagation(model, 'Flowers')
