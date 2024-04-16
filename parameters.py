@@ -8,8 +8,11 @@ if not os.path.exists(DataSetsPath):
     os.mkdir(DataSetsPath)
 
 # Дефолтные параметры графиков
-FigureWidthHeight = (8.3, 11.7)
+FigureWidthHeight = (16.5, 11.7)
 FontLibrary = belashovplot.FontLibraryClass()
+FontLibrary.MultiplyFontSize(0.7)
+FontLibrary.SynchronizeFont('DejaVu Sans')
+FontLibrary.Fonts.SmallCaption.FontSize *= 0.7
 
 if __name__ == '__main__':
     print(DataSetsPath)
