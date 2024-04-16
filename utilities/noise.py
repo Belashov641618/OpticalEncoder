@@ -6,10 +6,12 @@ from utilities.filters import Gaussian
 from utilities import distribution
 
 # Различные генераторы многомерных шумов
-class Generator:
+class Generator(torch.nn.Module):
     """
     Базовый класс любого генератора
     """
+    def __init__(self):
+        super().__init__()
     @property
     def dims(self):
         raise NotImplementedError
@@ -46,7 +48,8 @@ class FourierMask(Generator):
         return self._mask.numel()
 
     def __init__(self, mask:torch.Tensor):
-        self._mask = mask
+        super().__init__()
+        self.register_buffer('_mask', mask)
 
     def sample(self) -> torch.Tensor:
         spectrum = torch.rand(self.size, device=self.device, dtype=self.dtype)*torch.exp(2j*torch.pi*torch.rand(self.size, device=self.device, dtype=self.dtype)) * self._mask
@@ -55,9 +58,6 @@ class FourierMask(Generator):
 
 # Функции строящие определённый генератор
 def gaussian(areas:Union[Iterable[float],float], counts:Union[Iterable[int],int], limits:Union[Iterable[Tuple[float,float]],Tuple[float, float]]=None, device:torch.device=None, generator:bool=True) -> Union[torch.Tensor, FourierMask]:
-    print(areas)
-    print(counts)
-    print(limits)
     sigmas_:Tuple[float, ...]
     if isinstance(areas, float):    sigmas_ = (areas,)
     else:                           sigmas_ = tuple(areas)
@@ -112,38 +112,40 @@ class Normalizer(Generator):
     @staticmethod
     def _compare_function(a:torch.Tensor, b:torch.Tensor):
         return torch.mean(torch.abs(a-b)**2)
-    _parameters : torch.nn.Parameter
+    _params : torch.nn.Parameter
     def _function(self, x:torch.Tensor):
         raise NotImplementedError
     def difference(self):
         return self._compare_function(self._function(torch.linspace(0, 1, self._steps, device=self._generator.device)), self.distribution())
     def optimize(self):
-        rate:float = 100.0
-        self._parameters.requires_grad_(True)
-        while rate >= 1.0E-12:
-            loss = self.difference()
-            loss.backward()
-            grad = self._parameters.grad
-            with torch.no_grad():
-                while rate >= 1.0E-12:
-                    self._parameters.copy_(self._parameters - grad * rate)
-                    new_loss = self.difference().item()
-                    if loss.item() > new_loss:
-                        rate *= 1.234213521
-                        break
-                    else:
-                        self._parameters.copy_(self._parameters + grad * rate)
-                        rate /= 2.0
-            self._parameters.grad.zero_()
-            print(new_loss, rate)
-        self._parameters.requires_grad_(False)
-        print(self._parameters)
+        with torch.enable_grad():
+            rate:float = 100.0
+            self._params.requires_grad_(True)
+            while rate >= 1.0E-12:
+                loss = self.difference()
+                loss.backward()
+                grad = self._params.grad
+                with torch.no_grad():
+                    while rate >= 1.0E-12:
+                        self._params.copy_(self._params - grad * rate)
+                        new_loss = self.difference().item()
+                        if loss.item() > new_loss:
+                            rate *= 1.234213521
+                            break
+                        else:
+                            self._params.copy_(self._params + grad * rate)
+                            rate /= 2.0
+                self._params.grad.zero_()
+                print(new_loss, rate)
+            self._params.requires_grad_(False)
+            print(self._params)
 
     def __init__(self, generator:Generator, steps:int=None):
+        super().__init__()
         if steps is None: steps = int(math.sqrt(generator.numel()))
         self._generator = generator
         self._steps = steps
-    def sample(self):
+    def sample(self) -> torch.Tensor:
         return self._function(self._limited())
     def function(self):
         array = torch.linspace(0, 1, self._steps, device=self._generator.device)
@@ -166,11 +168,10 @@ class Normalizer(Generator):
 
 class GaussianNormalizer(Normalizer):
     def _function(self, x:torch.Tensor):
-        return 0.5*(torch.erf((x-self._parameters[1])/(self._parameters[0]*1.41421356)) + self._parameters[3])*self._parameters[2]
-        # return 0.5*(torch.erf((x-self._parameters[1])/(self._parameters[0]*1.41421356)) + 1)*self._parameters[2] + self._parameters[3]
+        return 0.5*(torch.erf((x-self._params[1])/(self._params[0]*1.41421356)) + self._params[3])*self._params[2]
     def __init__(self, generator:Generator, steps:int=None):
         super().__init__(generator, steps)
-        self._parameters = torch.nn.Parameter(torch.tensor((0.14, 0.5, 1.0, 1.0), device=self._generator.device, dtype=self._generator.dtype))
+        self._params = torch.nn.Parameter(torch.tensor((0.14, 0.5, 1.0, 1.0), device=self._generator.device, dtype=self._generator.dtype))
 
 def normalize(generator:Generator, steps:int=None) -> Normalizer:
     normalizers = [

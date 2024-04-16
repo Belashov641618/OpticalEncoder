@@ -12,9 +12,9 @@ if __name__ == '__main__':
     from elements.propagators import FurrierPropagation
     from elements.modulators import Lens
     from tests.Composition import propagation
-    from elements.wrappers import Incoherent
+    from elements.wrappers import Incoherent, CudaMemoryChunker
 
-    N = 128
+    N = 512
     length = 5.0E-3
     wavelength = 500.0E-9
     focus = 600.0E-3
@@ -29,10 +29,13 @@ if __name__ == '__main__':
     lens2 = Lens(N, length, wavelength, 1.5, 0.0, 1.0, 0.0, focus)
     propagation4 = FurrierPropagation(N, length, wavelength, 1.0, 0.0, 2 * focus, border_ratio=1.0)
 
-    model = CompositeModel(propagation1, lens1, propagation2, propagation3, lens2, propagation4).to(torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
-    incoherent = Incoherent(length/15, 0.001, 1.0, 50, N, length)
+    model = CompositeModel(propagation1, lens1, propagation2, propagation3, lens2, propagation4)
+    model.to('cuda' if torch.cuda.is_available() else 'cpu')
+    chunker = CudaMemoryChunker()
+    model.wrap(chunker)
+    incoherent = Incoherent(length / 15, 0.001, 1.0, 50, N, length)
     model.wrap(incoherent)
-    incoherent.delayed.launch()
-    incoherent.show()
+
+
 
     propagation(model, 'MNIST')

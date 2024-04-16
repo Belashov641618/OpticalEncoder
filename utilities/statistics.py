@@ -2,10 +2,12 @@ import torch
 
 from typing import Union
 
-def autocorrelation(a:torch.Tensor, dims:Union[int,tuple[int,...]], mean_dim:int):
+def autocorrelation(tensor:torch.Tensor, dims:Union[int,tuple[int,...]], mean_dim:int, split:int=1):
     if isinstance(dims, int): dims = (dims, )
 
-    a = a - torch.mean(a, dim=mean_dim, keepdim=True)
+    tensor = tensor.cpu()
+
+    a = tensor - torch.mean(tensor, dim=mean_dim, keepdim=True)
     a = a / torch.sqrt(torch.sum(a**2, dim=mean_dim, keepdim=True)/(a.size(mean_dim) - 1))
 
     paddings  = [0 for i in range(2*len(a.size()))]
@@ -18,14 +20,31 @@ def autocorrelation(a:torch.Tensor, dims:Union[int,tuple[int,...]], mean_dim:int
         paddings_[2*dim + 1] = -paddings[2*dim + 1]
         multiplier *= a.size(dim)
 
-    a = torch.nn.functional.pad(a, paddings)
-    spectrum    = torch.fft.fftshift(torch.fft.fftn(a, dim=dims))
-    convolution = torch.fft.ifftshift(torch.fft.ifftn(spectrum*spectrum.conj(), dim=dims)).abs()
-    convolution = torch.nn.functional.pad(convolution, paddings_)
+    try:
+        result = []
+        for data in torch.chunk(a, split, dim=mean_dim):
+            data = data.to(torch.device('cuda' if torch.cuda.is_available() else 'cpu'))
+            data = torch.nn.functional.pad(data, paddings)
+            spectrum    = torch.fft.fftshift(torch.fft.fftn(data, dim=dims))
+            convolution = torch.fft.ifftshift(torch.fft.ifftn(spectrum*spectrum.conj(), dim=dims)).abs()
+            convolution = torch.nn.functional.pad(convolution, paddings_)
+            result.append(convolution.cpu())
+        convolution = torch.cat(result, dim=mean_dim)
+        result = torch.sum(convolution, dim=mean_dim) / (a.size(mean_dim) - 1)
+        return result
+    except torch.cuda.OutOfMemoryError as error:
+        if a.size(mean_dim) >= split*2:
+            print(f'Out of Memory Error, split:{split*2}')
+            return autocorrelation(tensor, dims, mean_dim, split*2)
+        else:
+            print(f'Out of Memory Error, resizing')
+            for dim in dims:
+                tensor = tensor.swapdims(0, dim)
+                tensor = tensor[::2]
+                tensor = tensor.swapdims(0, dim)
+            return autocorrelation(tensor, dims, mean_dim, split)
 
-    result = torch.sum(convolution, dim=mean_dim) / (a.size(mean_dim) - 1)
 
-    return result
 
 def correlation_circle(correlation:torch.Tensor, limits:tuple[tuple[float,float],...]=None, percent:float=0.7):
     if limits is None: limits = tuple([(0, correlation.size(i)) for i in range(len(correlation.size()))])

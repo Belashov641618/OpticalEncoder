@@ -43,10 +43,11 @@ class Lens(AbstractMask):
         self.delayed.add(self._recalc_mask_buffer)
 
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, space_reflection:FloatS, space_absorption:FloatS, focus:FloatS, logger:Logger=None):
-        super().__init__(pixels, length, wavelength, reflection, absorption, space_reflection, space_absorption, logger=logger)
+        super().__init__(pixels, length, wavelength, reflection, absorption, space_reflection, space_absorption, logger=logger, finalize=False)
         self.focus = SpaceParam[float](self._change_focus, group=self.wavelength.group)
         self.focus.set(focus)
         self.accuracy.connect(self.focus.tensor)
+        self.delayed.launch()
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         return super().forward(field, *args, **kwargs)

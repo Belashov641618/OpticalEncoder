@@ -221,8 +221,9 @@ class AbstractMask(AbstractInhomogeneity):
             return self._mask_buffer.device
         else: return super().device
 
-    def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, space_reflection:FloatS, space_absorption:FloatS, logger:Logger=None):
+    def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, space_reflection:FloatS, space_absorption:FloatS, logger:Logger=None, finalize:bool=True):
         super().__init__(pixels, length, wavelength, reflection, absorption, space_reflection, space_absorption, logger=logger)
+        if finalize: self.delayed.launch()
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)

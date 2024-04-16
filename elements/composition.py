@@ -1,7 +1,7 @@
 import numpy
 import torch
 
-from typing import Literal, Callable
+from typing import Literal
 
 from elements.abstracts import AbstractElement, AbstractOptical, AbstractPropagator, AbstractWrapper
 from utilities import *
@@ -11,6 +11,8 @@ class CompositeModel(torch.nn.Module):
     _elements:tuple[AbstractElement,...]
     def _init_elements(self, *elements:AbstractElement):
         self._elements = elements
+        for i, element in enumerate(self._elements):
+            self.add_module(f'Element{i}', element)
     @property
     def count(self):
         return len(self._elements)
@@ -28,6 +30,7 @@ class CompositeModel(torch.nn.Module):
     # Дополнительные обёртки
     _wrappers:list[AbstractWrapper]
     def wrap(self, wrapper:AbstractWrapper):
+        wrapper = wrapper.to(self.device)
         if not self._wrappers:
             wrapper.attach_forward(self._forward)
             self._wrappers = [wrapper]
@@ -62,7 +65,7 @@ class CompositeModel(torch.nn.Module):
 
     def forward(self, field:torch.Tensor, *args, distance:float=None, elements:int=None, **kwargs):
         if self._wrappers:
-            return self._wrappers[0].forward(field, *args, distance=distance, elements=elements, **kwargs)
+            return self._wrappers[-1].forward(field, *args, distance=distance, elements=elements, **kwargs)
         else:
             return self._forward(field, *args, distance=distance, elements=elements, **kwargs)
 
@@ -104,13 +107,13 @@ class CompositeModel(torch.nn.Module):
         return plane
 
     def planes(self, field:torch.Tensor, pixels_x:int=255, pixels_y:int=255, interpolation:IMType=InterpolateModes.bilinear):
-        result = torch.zeros((len(self._elements)+1, pixels_x, pixels_y), dtype=field.dtype, device=field.device)
+        result = torch.zeros((len(self._elements)+1, pixels_x, pixels_y), dtype=field.dtype)
         if self._wrappers:
             def forward_(field_:torch.Tensor, *args, **kwargs):
                 return field_
-            self._wrappers[-1].attach_forward(forward_)
-            result[0] = interpolate(self._wrappers[0].forward(field), (pixels_x, pixels_y), interpolation).squeeze().cpu()
-            self._wrappers[-1].attach_forward(self._forward)
+            self._wrappers[0].attach_forward(forward_)
+            result[0] = interpolate(self._wrappers[-1].forward(field), (pixels_x, pixels_y), interpolation).squeeze().cpu()
+            self._wrappers[0].attach_forward(self._forward)
         else:
             result[0] = interpolate(field, (pixels_x, pixels_y), interpolation).squeeze().cpu()
         for i in range(self.count):

@@ -10,10 +10,34 @@ from utilities import *
 from parameters import FigureWidthHeight, FontLibrary
 
 class CudaMemoryChunker(AbstractWrapper):
-    def __init__(self):
+    _chunks:int
+    _sub_chunks:int
+    def __init__(self, chunks:int=1, sub_chunks:int=1):
         super().__init__()
+        self._chunks:int = chunks
+        self._sub_chunks:int = sub_chunks
+
     def forward(self, field:torch.Tensor, *args, **kwargs):
-        pass
+        try:
+            results = []
+            for part_ in torch.chunk(field, self._chunks, dim=0):
+                results_ = []
+                for part in torch.chunk(part_, self._sub_chunks, dim=1):
+                    results__ = self._forward(part, *args, **kwargs)
+                    results_.append(results__)
+                results.append(torch.cat(results_, dim=1))
+            field = torch.cat(results, dim=0)
+            return field
+        except torch.cuda.OutOfMemoryError as error:
+            print('Memory error happened')
+            if self._chunks < field.shape[0]:
+                self._chunks += 1
+                print(f'Splitting batches to {self._chunks} chunks')
+            elif self._sub_chunks < field.shape[1]:
+                self._sub_chunks += 1
+                print(f'Splitting channels to {self._sub_chunks} chunks')
+            else: raise error
+            return self._forward(field, *args, **kwargs)
 
 
 class Incoherent(AbstractWrapper):
@@ -76,6 +100,7 @@ class Incoherent(AbstractWrapper):
         return field
 
 
+
     def show(self):
         with torch.no_grad():
             sample = self._generator.sample()
@@ -115,7 +140,7 @@ class Incoherent(AbstractWrapper):
 
         axes = plot.axes.add(1,1)
         axes.grid(True)
-        axes.plot(numpy.linspace(0,self.length.x,self.pixels.x), autocorr[:,self.pixels.y//2])
+        axes.plot(numpy.linspace(0,self.length.x,autocorr.size(0)), autocorr[:,autocorr.size(1)//2])
         axes.axvline(position[0]-radius, linestyle='--', color='maroon')
         axes.axvline(position[0]+radius, linestyle='--', color='maroon')
         plot.graph.title('Срез автокорреляции')
