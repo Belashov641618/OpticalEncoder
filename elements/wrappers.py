@@ -36,8 +36,10 @@ class CudaMemoryChunker(AbstractWrapper):
             elif self._sub_chunks < field.shape[1]:
                 self._sub_chunks += 1
                 print(f'Splitting channels to {self._sub_chunks} chunks')
-            else: raise error
-            return self._forward(field, *args, **kwargs)
+            else:
+                print(f'Nothing to do with memory error')
+                raise error
+        return self.forward(field, *args, **kwargs)
 
 
 class Incoherent(AbstractWrapper):

@@ -2,6 +2,7 @@ import numpy
 import torch
 
 from typing import Literal
+from tqdm import tqdm
 
 from elements.abstracts import AbstractElement, AbstractOptical, AbstractPropagator, AbstractWrapper
 from utilities import *
@@ -89,7 +90,7 @@ class CompositeModel(torch.nn.Module):
             result = torch.zeros((pixels_z, pixels_x, pixels_y), dtype=field.dtype, device=torch.device('cpu'))
             result[0] = interpolate(field, (pixels_x, pixels_y), interpolation).squeeze().cpu()
             distance_array = numpy.linspace(0., self.total_length, pixels_z)[1:]
-            for i, distance in enumerate(distance_array, 1):
+            for i, distance in tqdm(enumerate(distance_array, 1), total=len(distance_array)):
                 distance:float
                 result[i] = interpolate(self.forward(field, distance=distance), (pixels_x, pixels_y), interpolation).squeeze().cpu()
             return result.movedim(0,2)
@@ -116,6 +117,6 @@ class CompositeModel(torch.nn.Module):
             self._wrappers[0].attach_forward(self._forward)
         else:
             result[0] = interpolate(field, (pixels_x, pixels_y), interpolation).squeeze().cpu()
-        for i in range(self.count):
+        for i in tqdm(range(self.count), total=self.count):
             result[i+1] = interpolate(self.forward(field, elements=i), (pixels_x, pixels_y), interpolation).squeeze().cpu()
         return result

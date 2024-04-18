@@ -6,13 +6,13 @@ from utilities import *
 from parameters import FigureWidthHeight, FontLibrary
 from elements.composition import CompositeModel
 
-def propagation(model:CompositeModel, field:Union[torch.Tensor, LiteralDataSet]):
+def propagation(model:CompositeModel, field:Union[torch.Tensor, LiteralDataSet], steps:int=64):
     with torch.no_grad():
         if not isinstance(field, torch.Tensor): field, _ = Dataset.single(field, model.element(0).pixels.input.x, model.element(0).pixels.input.y, model.dtype)
         while len(field.size()) < 4: field = field.unsqueeze(0)
         field = field.to(model.device, model.dtype)
         planes = model.planes(field, model.element(0).pixels.input.x, model.element(0).pixels.input.y)
-        profile = model.profile(field, pixels_xy=model.element(0).pixels.input.x, pixels_z=model.element(0).pixels.input.x, reduce='mean')
+        profile = model.profile(field, pixels_xy=model.element(0).pixels.input.x, pixels_z=steps, reduce='mean')
         if hasattr(profile, 'abs'): profile = profile.abs()
 
     cols = planes.size(0)

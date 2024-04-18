@@ -218,6 +218,8 @@ class AbstractModulator(AbstractElement):
     def _recalc_mask_parameters(self):
         parameters = torch.normal(0., 1.0, (self.mask_pixels.x, self.mask_pixels.y))
         self._register_mask_parameters(parameters)
+    def _reset_mask_parameters(self):
+        self.delayed.add(self._recalc_mask_parameters)
     def _normalized(self) -> torch.Tensor:
         return torch.sigmoid(self._mask_parameters)
     def _multiplier(self) -> torch.Tensor:
@@ -233,7 +235,7 @@ class AbstractModulator(AbstractElement):
 
     def __init__(self, pixels:IntIO, length:FloatIO, mask_pixels:IntXY, logger:Logger=None):
         super().__init__(pixels, length, logger=logger)
-        self.mask_pixels = XYParams[int](self._recalc_mask_parameters).set(mask_pixels)
+        self.mask_pixels = XYParams[int](self._reset_mask_parameters).set(mask_pixels)
         self.delayed.launch()
 
     def forward(self, field:torch.Tensor, *args, **kwargs):

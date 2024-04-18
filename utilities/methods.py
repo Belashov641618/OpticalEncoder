@@ -21,10 +21,16 @@ def upper_integer(value:float) -> int:
     return integer
 
 def interpolate(field:torch.Tensor, size:Any, mode:IMType=InterpolateModes.nearest):
+    trigger = True
+    for length0, length1 in zip(reversed(field.size()), size):
+        trigger *= (length0 == length1)
+    if trigger: return field
+
+    align = (True if mode in ['linear', 'bilinear', 'bicubic', 'trilinear'] else False)
     if field.dtype in [torch.complex32, torch.complex64, torch.complex128]:
-        return torch.nn.functional.interpolate(field.real, size, mode=mode, antialias=False, align_corners=True) + 1j*torch.nn.functional.interpolate(field.imag, size, mode=mode, antialias=False, align_corners=True)
+        return torch.nn.functional.interpolate(field.real, size, mode=mode, antialias=False, align_corners=True) + 1j*torch.nn.functional.interpolate(field.imag, size, mode=mode, antialias=False, align_corners=align)
     else:
-        return torch.nn.functional.interpolate(field, size, mode=mode, antialias=False, align_corners=True)
+        return torch.nn.functional.interpolate(field, size, mode=mode, antialias=False, align_corners=align)
 
 def shifted_log10(*images:torch.Tensor, shift:float=None, average:float=0.5, reduce:Literal['mean','max','min']='mean', return_shift:bool=True):
     if len(images) > 0:
