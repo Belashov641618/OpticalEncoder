@@ -8,4 +8,5 @@ from .datasets import Dataset, LiteralDataSet
 from .loggers import Logger, DynamicApproximation
 from .methods import closest_integer, upper_integer, interpolate, shifted_log10, trays_rays, dimension_normalization
 from .format import EngineeringFormater, engineering, scientific
+from . import filters
 from belashovplot import TiledPlot

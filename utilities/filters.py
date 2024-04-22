@@ -7,6 +7,10 @@ _sqrt2pi = math.sqrt(2*math.pi)
 
 class Filter:
     @staticmethod
+    def _fix_parameters(*parameters):
+        parameters_fixed = [(parameter, ) if isinstance(parameter, float) else tuple(parameter) if parameter is not None else None for parameter in parameters]
+        return tuple(parameters_fixed)
+    @staticmethod
     def _fix_coordinates(dims:int, *coordinates:torch.Tensor) -> Tuple[torch.Tensor, ...]:
         if len(coordinates) != dims: raise ValueError('Amount of coordinates must equal the number of dimensions')
 
@@ -17,6 +21,10 @@ class Filter:
             elif not all(coord.size() == size for coord in coordinates):
                 raise ValueError(f'Coordinates must have the same size')
         return coordinates
+
+    @property
+    def dims(self):
+        raise NotImplementedError
 
     def __call__(self, *coordinates) -> torch.Tensor:
         raise NotImplementedError
@@ -65,4 +73,34 @@ class Gaussian(Filter):
         result = torch.ones(coordinates[0].size(), dtype=coordinates[0].dtype, device=coordinates[0].device) * self._normalization
         for multiplier, mean, coordinate in zip(self._multipliers, self._means, coordinates):
             result *= torch.exp(multiplier * (mean - coordinate)**2)
+        return result
+
+class Window(Filter):
+    _positions0:Tuple[float, ...]
+    _positions1:Tuple[float, ...]
+    @property
+    def dims(self):
+        return len(self._positions0)
+
+    def __init__(self, positions0:Union[Iterable[float],float]=None, positions1:Union[Iterable[float],float]=None, centers:Union[Iterable[float],float]=None, sizes:Union[Iterable[float],float]=None):
+        positions0, positions1, centers, sizes = self._fix_parameters(positions0, positions1, centers, sizes)
+        if positions0 is not None and positions1 is not None:
+            self._positions0 = positions0
+            self._positions1 = positions1
+        elif positions0 is not None and sizes is not None:
+            self._positions0 = positions0
+            self._positions1 = tuple([position0 + size for position0, size in zip(positions0, sizes)])
+        elif positions1 is not None and sizes is not None:
+            self._positions1 = positions1
+            self._positions0 = tuple([position1 - size for position1, size in zip(positions1, sizes)])
+        elif centers is not None and sizes is not None:
+            self._positions0 = tuple([center - size/2 for center, size in zip(centers, sizes)])
+            self._positions1 = tuple([center + size/2 for center, size in zip(centers, sizes)])
+        else: raise AttributeError
+
+    def __call__(self, *coordinates:torch.Tensor):
+        coordinates = self._fix_coordinates(self.dims, *coordinates)
+        result = torch.ones(coordinates[0].size(), dtype=coordinates[0].dtype, device=coordinates[0].device)
+        for position0, position1, coordinate in zip(self._positions0, self._positions1, coordinates):
+            result *= (position0 <= coordinate) * (coordinates <= position1)
         return result

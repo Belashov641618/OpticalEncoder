@@ -103,20 +103,30 @@ class AbstractElement(torch.nn.Module):
     def memory(self):
         pass
 
-class AbstractOptical(AbstractElement):
-    _optical_group:SpaceParamGroup
+class AbstractSpectral(AbstractElement):
+    _optical_group: SpaceParamGroup
     @property
     def optical_group(self):
         return self._optical_group
     @optical_group.setter
-    def optical_group(self, group:SpaceParamGroup):
+    def optical_group(self, group: SpaceParamGroup):
         group.merge(self._optical_group)
         self._optical_group = group
 
-    wavelength:SpaceParam[float]
+    wavelength: SpaceParam[float]
     def _change_wavelength(self):
         pass
 
+    def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, logger:Logger=None):
+        super().__init__(pixels, length, logger=logger)
+        self.wavelength = SpaceParam[float](self._change_wavelength)
+        self.wavelength.set(wavelength)
+        self.accuracy.connect(self.wavelength.tensor)
+
+    def forward(self, *args, **kwargs):
+        super().forward(*args, **kwargs)
+
+class AbstractOptical(AbstractSpectral):
     reflection:SpaceParam[float]
     def _change_reflection(self):
         pass
@@ -126,14 +136,11 @@ class AbstractOptical(AbstractElement):
         pass
 
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, logger:Logger=None):
-        super().__init__(pixels, length, logger=logger)
-        self.wavelength = SpaceParam[float](self._change_wavelength)
+        super().__init__(pixels, length, wavelength, logger=logger)
         self.reflection = SpaceParam[float](self._change_reflection, group=self.wavelength.group)
         self.absorption = SpaceParam[float](self._change_absorption, group=self.wavelength.group)
-        self.wavelength.set(wavelength)
         self.reflection.set(reflection)
         self.absorption.set(absorption)
-        self.accuracy.connect(self.wavelength.tensor)
         self.accuracy.connect(self.reflection.tensor)
         self.accuracy.connect(self.absorption.tensor)
 
@@ -284,6 +291,45 @@ class AbstractMask(AbstractInhomogeneity):
         field = field * self._mask_buffer
         field = interpolate(field, (self.pixels.output.x, self.pixels.output.y), mode=self.interpolation.mode)
         return field
+
+class AbstractDetectors(AbstractSpectral):
+    _spectral_buffer:torch.Tensor
+    _spectral_filter:Param[filters.Filter]
+    def _register_spectral_buffer(self, buffer:torch.Tensor):
+        if buffer.device != self.device: buffer = buffer.to(self.device)
+        if buffer.dtype != self.accuracy.tensor_float: buffer = buffer.to(self.accuracy.tensor_float)
+        if hasattr(self, '_spectral_buffer'): self.accuracy.disconnect(self._spectral_buffer)
+        self.register_buffer('_spectral_buffer', buffer)
+        self.accuracy.connect(self._spectral_buffer)
+    def _recalc_spectral_buffer(self):
+        self._register_spectral_buffer(self._spectral_filter.value(self.wavelength.tensor))
+    def _attach_recalc_spectral_buffer(self):
+        self.delayed.add(self._recalc_spectral_buffer)
+    @property
+    def spectral(self):
+        self.delayed.launch()
+        return self._spectral_buffer.clone().detach().cpu()
+    @spectral.setter
+    def spectral(self, filter:filters.Filter):
+        self._spectral_filter.value = filter
+    @property
+    def device(self):
+        if hasattr(self, '_spectral_buffer'):
+            return self._spectral_buffer.device
+        else:
+            return super().device
+
+    def _change_wavelength(self):
+        super()._change_wavelength()
+        self.delayed.add(self._recalc_spectral_buffer)
+
+    def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, spectral_filter:filters.Filter, logger:Logger=None):
+        super().__init__(pixels, length, wavelength, logger=logger)
+        self._spectral_filter = Param[filters.Filter](self._attach_recalc_spectral_buffer)
+        self._spectral_filter.set(spectral_filter)
+
+    def forward(self, *args, **kwargs):
+        super().forward(*args, **kwargs)
 
 # Остальное
 class AbstractWrapper(torch.nn.Module):

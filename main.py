@@ -27,49 +27,49 @@ if __name__ == '__main__':
     lens = Lens(N, length, wavelength, 1.5, 0.0, 1.0, 0.0, focus)
     modulator = PhaseModulator(N, length, N)
 
-    model = CompositeModel(propagation, modulator, propagation)
+    model = CompositeModel(propagation, lens, propagation)
     model.to('cuda' if torch.cuda.is_available() else 'cpu')
     chunker = CudaMemoryChunker()
     model.wrap(chunker)
     incoherent = Incoherent(length / 20, 0.001, 1.0, 64, N, length)
     model.wrap(incoherent)
 
-    propagation_test(model, 'STL10')
+    propagation_test(model, 'MNIST')
 
-    def loss(image1:torch.Tensor, image0:torch.Tensor):
-        return torch.mean((image0 - image1)**2)
-    dataset = Dataset('STL10', 64, N, N, torch.complex64)
-
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.5)
-    for images, labels in tqdm(dataset.train):
-        images = images.to(model.device)
-        loss_value = loss(images.abs() ** 2, model.forward(images).abs())
-        optimizer.zero_grad()
-        loss_value.backward()
-        optimizer.step()
-
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.05)
-    for images, labels in tqdm(dataset.train):
-        images = images.to(model.device)
-        loss_value = loss(images.abs() ** 2, model.forward(images).abs())
-        optimizer.zero_grad()
-        loss_value.backward()
-        optimizer.step()
-
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
-    for images, labels in tqdm(dataset.train):
-        images = images.to(model.device)
-        loss_value = loss(images.abs() ** 2, model.forward(images).abs())
-        optimizer.zero_grad()
-        loss_value.backward()
-        optimizer.step()
-
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
-    for images, labels in tqdm(dataset.train):
-        images = images.to(model.device)
-        loss_value = loss(images.abs() ** 2, model.forward(images).abs())
-        optimizer.zero_grad()
-        loss_value.backward()
-        optimizer.step()
-
-    propagation_test(model, 'STL10')
+    # def loss(image1:torch.Tensor, image0:torch.Tensor):
+    #     return torch.mean((image0 - image1)**2)
+    # dataset = Dataset('MNIST', 64, N, N, torch.complex64)
+    #
+    # optimizer = torch.optim.Adam(model.parameters(), lr=0.5)
+    # for images, labels in tqdm(dataset.train):
+    #     images = images.to(model.device)
+    #     loss_value = loss(images.abs() ** 2, model.forward(images).abs())
+    #     optimizer.zero_grad()
+    #     loss_value.backward()
+    #     optimizer.step()
+    #
+    # optimizer = torch.optim.Adam(model.parameters(), lr=0.05)
+    # for images, labels in tqdm(dataset.train):
+    #     images = images.to(model.device)
+    #     loss_value = loss(images.abs() ** 2, model.forward(images).abs())
+    #     optimizer.zero_grad()
+    #     loss_value.backward()
+    #     optimizer.step()
+    #
+    # optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
+    # for images, labels in tqdm(dataset.train):
+    #     images = images.to(model.device)
+    #     loss_value = loss(images.abs() ** 2, model.forward(images).abs())
+    #     optimizer.zero_grad()
+    #     loss_value.backward()
+    #     optimizer.step()
+    #
+    # optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
+    # for images, labels in tqdm(dataset.train):
+    #     images = images.to(model.device)
+    #     loss_value = loss(images.abs() ** 2, model.forward(images).abs())
+    #     optimizer.zero_grad()
+    #     loss_value.backward()
+    #     optimizer.step()
+    #
+    # propagation_test(model, 'STL10')

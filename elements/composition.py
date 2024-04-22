@@ -1,10 +1,10 @@
 import numpy
 import torch
 
-from typing import Literal
+from typing import Literal, Union
 from tqdm import tqdm
 
-from elements.abstracts import AbstractElement, AbstractOptical, AbstractPropagator, AbstractWrapper
+from elements.abstracts import AbstractElement, AbstractOptical, AbstractPropagator, AbstractWrapper, AbstractDetectors
 from utilities import *
 
 class CompositeModel(torch.nn.Module):
@@ -57,8 +57,6 @@ class CompositeModel(torch.nn.Module):
                     field = element.forward(field)
                     element.distance = element_distance
                     return field
-                else:
-                    field = element.forward(field)
             field = element.forward(field)
             if elements is not None and i == elements:
                 return field
@@ -119,4 +117,28 @@ class CompositeModel(torch.nn.Module):
             result[0] = interpolate(field, (pixels_x, pixels_y), interpolation).squeeze().cpu()
         for i in tqdm(range(self.count), total=self.count):
             result[i+1] = interpolate(self.forward(field, elements=i), (pixels_x, pixels_y), interpolation).squeeze().cpu()
+        return result
+
+_OpticalModels = Union[CompositeModel]
+class HybridModel(torch.nn.Module):
+    _optical_model:_OpticalModels
+    _detectors:AbstractDetectors
+    _electronic_model:torch.nn.Module
+    @property
+    def device(self):
+        return self._optical_model.device
+
+    def __init__(self, optical:_OpticalModels, detectors:AbstractDetectors, electronic:torch.nn.Module):
+        super().__init__()
+        self._optical_model = optical
+        self._detectors = detectors
+        self._electronic_model = electronic
+        self.add_module('optical', self._optical_model)
+        self.add_module('detectors', self._detectors)
+        self.add_module('electronic', self._electronic_model)
+
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        field = self._optical_model.forward(field)
+        signals = self._detectors.forward(field)
+        result = self._electronic_model.forward(signals)
         return result

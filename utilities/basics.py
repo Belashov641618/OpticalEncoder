@@ -323,6 +323,7 @@ class SpaceParam(Generic[ParamType]):
             self.linspace(*data)
         else:
             self.value(data)
+        return self
 
     _group:SpaceParamGroup
     @property
