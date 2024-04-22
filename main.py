@@ -34,11 +34,11 @@ if __name__ == '__main__':
     incoherent = Incoherent(length / 20, 0.001, 1.0, 64, N, length)
     model.wrap(incoherent)
 
-    propagation_test(model, 'MNIST')
+    propagation_test(model, 'STL10')
 
     def loss(image1:torch.Tensor, image0:torch.Tensor):
         return torch.mean((image0 - image1)**2)
-    dataset = Dataset('MNIST', 64, N, N, torch.complex64)
+    dataset = Dataset('STL10', 64, N, N, torch.complex64)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.5)
     for images, labels in tqdm(dataset.train):
@@ -72,4 +72,4 @@ if __name__ == '__main__':
         loss_value.backward()
         optimizer.step()
 
-    propagation_test(model, 'MNIST')
+    propagation_test(model, 'STL10')

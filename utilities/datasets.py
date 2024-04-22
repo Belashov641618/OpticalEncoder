@@ -10,7 +10,7 @@ from typing import Literal, Union
 from utilities import *
 from parameters import DataSetsPath
 
-LiteralDataSet = Literal['MNIST', 'Flowers']
+LiteralDataSet = Literal['MNIST', 'Flowers', 'STL10']
 class Dataset:
     _delayed : DelayedFunctions
 
@@ -35,6 +35,15 @@ class Dataset:
             ])
             self._train = DataLoader(datasets.Flowers102(root=DataSetsPath, split='train', transform=transformation, download=True), batch_size=self._batch, shuffle=True)
             self._test  = DataLoader(datasets.Flowers102(root=DataSetsPath, split='test',  transform=transformation, download=True), batch_size=self._batch, shuffle=True)
+        elif self._dataset == 'STL10':
+            transformation = transforms.Compose([
+                transforms.Grayscale(),
+                transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True),
+                transforms.ToTensor(),
+                transforms.ConvertImageDtype(self._dtype)
+            ])
+            self._train = DataLoader(datasets.STL10(root=DataSetsPath, split='train', transform=transformation, download=True), batch_size=self._batch, shuffle=True)
+            self._test  = DataLoader(datasets.STL10(root=DataSetsPath, split='test',  transform=transformation, download=True), batch_size=self._batch, shuffle=True)
         else: raise ValueError(f'Dataset is {self._dataset}')
     @property
     def train(self):
