@@ -228,7 +228,7 @@ class AbstractModulator(AbstractElement):
     def _reset_mask_parameters(self):
         self.delayed.add(self._recalc_mask_parameters)
     def _normalized(self) -> torch.Tensor:
-        return torch.sigmoid(self._mask_parameters)
+        return torch.sigmoid(self._mask_parameters.unsqueeze(0).unsqueeze(0))
     def _multiplier(self) -> torch.Tensor:
         raise NotImplementedError
     @property

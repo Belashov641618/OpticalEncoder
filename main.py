@@ -27,8 +27,8 @@ if __name__ == '__main__':
 
     propagation = FurrierPropagation(N, length, wavelength, 1.0, 0.0, 2*focus, border_ratio=1.0)
     lens = Lens(N, length, wavelength, 1.5, 0.0, 1.0, 0.0, focus)
-    modulator = PhaseModulator(N, length, N)
-    optical = CompositeModel(propagation, lens, propagation)
+    modulator = PhaseModulator(N, length, N//2)
+    optical = CompositeModel(propagation, modulator, propagation)
     optical.to('cuda' if torch.cuda.is_available() else 'cpu')
     chunker = CudaMemoryChunker()
     optical.wrap(chunker)

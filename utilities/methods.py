@@ -26,9 +26,9 @@ def interpolate(field:torch.Tensor, size:Any, mode:IMType=InterpolateModes.neare
         trigger *= (length0 == length1)
     if trigger: return field
 
-    align = (True if mode in ['linear', 'bilinear', 'bicubic', 'trilinear'] else False)
+    align = (True if mode in ['linear', 'bilinear', 'bicubic', 'trilinear'] else None)
     if field.dtype in [torch.complex32, torch.complex64, torch.complex128]:
-        return torch.nn.functional.interpolate(field.real, size, mode=mode, antialias=False, align_corners=True) + 1j*torch.nn.functional.interpolate(field.imag, size, mode=mode, antialias=False, align_corners=align)
+        return torch.nn.functional.interpolate(field.real, size, mode=mode, antialias=False, align_corners=align) + 1j*torch.nn.functional.interpolate(field.imag, size, mode=mode, antialias=False, align_corners=align)
     else:
         return torch.nn.functional.interpolate(field, size, mode=mode, antialias=False, align_corners=align)
 
