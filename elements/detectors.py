@@ -67,6 +67,10 @@ class ClassificationDetectors(AbstractDetectors):
         super()._change_length()
         self.delayed.add(self._recalc_detectors_buffer)
 
+    __wavelength:torch.Tensor
+    def _change_wavelength(self):
+        self.register_buffer('__wavelength', self.wavelength.tensor)
+
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, detectors:int, detector_filter:filters.Filter, spectral_filter:filters.Filter, logger:Logger=None):
         super().__init__(pixels, length, wavelength, spectral_filter, logger=logger)
         self._detectors_filter = Param[filters.Filter](self._attach_recalc_detectors_buffer)
@@ -78,7 +82,7 @@ class ClassificationDetectors(AbstractDetectors):
         super().forward(*args, **kwargs)
 
         field = torch.nn.functional.pad(torch.abs(field), self._paddings_difference)
-        field = field.reshape(*field.shape[:2], 1, 1, *field.shape[2:]) * (self.wavelength.tensor.reshape(1, -1, 1, 1) * self._detectors_buffer.reshape(self._detectors_buffer.shape[0], 1, *self._detectors_buffer.shape[1:]))
+        field = field.reshape(*field.shape[:2], 1, 1, *field.shape[2:]) * (self.__wavelength.reshape(1, -1, 1, 1) * self._detectors_buffer.reshape(self._detectors_buffer.shape[0], 1, *self._detectors_buffer.shape[1:]))
         field = torch.sum(field, dim=(3,4,5))
 
         return field
