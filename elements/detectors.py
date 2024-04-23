@@ -77,12 +77,13 @@ class ClassificationDetectors(AbstractDetectors):
         self._detectors_filter.set(detector_filter)
         self._detectors = Param[int](self._attach_recalc_detectors_buffer)
         self._detectors.set(detectors)
+        self.delayed.launch()
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)
 
         field = torch.nn.functional.pad(torch.abs(field), self._paddings_difference)
-        field = field.reshape(field.shape[0], 1, *field.shape[3:]) * (self._wavelength_buffer.reshape(1, -1, 1, 1) * self._detectors_buffer.reshape(self._detectors_buffer.shape[0], 1, *self._detectors_buffer.shape[1:]))
+        field = field.reshape(field.shape[0], 1, *field.shape[1:]) * (self._wavelength_buffer.reshape(1, -1, 1, 1) * self._detectors_buffer.reshape(self._detectors_buffer.shape[0], 1, *self._detectors_buffer.shape[1:]))
         field = torch.sum(field, dim=(2,3,4))
 
         return field
