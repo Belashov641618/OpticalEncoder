@@ -161,9 +161,7 @@ class HybridModel(torch.nn.Module):
             results = results.squeeze().cpu()
 
         total = planes.size(0)
-        print(total)
-        units = total // 2
-        print(units)
+        units = (total - 1) // 2
         
         kwargs = {'aspect':'auto'}
         for col, plane in enumerate(planes[1:-1]):
