@@ -40,6 +40,7 @@ class CompositeModel(torch.nn.Module):
         else:
             wrapper.attach_forward(self._wrappers[-1].forward)
             self._wrappers.append(wrapper)
+        self.add_module(f'Wrapper{len(self._wrappers)-1}', wrapper)
 
     # Основные методы
     def __init__(self, *elements:AbstractElement):
