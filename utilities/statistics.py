@@ -51,7 +51,11 @@ def correlation_circle(correlation:torch.Tensor, limits:tuple[tuple[float,float]
     if len(limits) != len(correlation.size()): raise ValueError
 
     with torch.no_grad():
-        center_index = torch.unravel_index(correlation.argmax(), correlation.shape)
+        if hasattr(torch, 'unravel_index'):
+            center_index = torch.unravel_index(correlation.argmax(), correlation.shape)
+        else:
+            flattened_index = correlation.argmax()
+            center_index = (flattened_index // correlation.shape[1], flattened_index % correlation.shape[1])
         arrays = [torch.linspace(limit0, limit1, correlation.size(i)) for i, (limit0, limit1) in enumerate(limits)]
         centers = [array[index].item() for array, index in zip(arrays, center_index)]
         arrays = [array - array[index] for array, index in zip(arrays, center_index)]
