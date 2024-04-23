@@ -40,6 +40,7 @@ class ClassificationDetectors(AbstractDetectors):
             for col in range(cols_):
                 x0 = shift_x * (col + 1)
                 filters_array[i] = self._detectors_filter.value(x_array_0 - x0, y_array_0 - y0)
+                i += 1
 
         self._register_detectors_buffer(filters_array)
     def _attach_recalc_detectors_buffer(self):
@@ -77,10 +78,10 @@ class ClassificationDetectors(AbstractDetectors):
         super().forward(*args, **kwargs)
 
         field = torch.nn.functional.pad(torch.abs(field), self._paddings_difference)
-        field = field.reshape(-1, -1, 1, 1, -1, -1) * (self.wavelength.tensor.reshape(1, -1, 1, 1) * self._detectors_buffer.reshape(-1, 1, -1, -1))
+        field = field.reshape(*field.shape[:2], 1, 1, *field.shape[2:]) * (self.wavelength.tensor.reshape(1, -1, 1, 1) * self._detectors_buffer.reshape(self._detectors_buffer.shape[0], 1, *self._detectors_buffer.shape[1:]))
         field = torch.sum(field, dim=(3,4,5))
 
         return field
 
 class MatrixDetectors(AbstractDetectors):
-    raise NotImplementedError
+    pass

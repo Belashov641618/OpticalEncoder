@@ -102,5 +102,5 @@ class Window(Filter):
         coordinates = self._fix_coordinates(self.dims, *coordinates)
         result = torch.ones(coordinates[0].size(), dtype=coordinates[0].dtype, device=coordinates[0].device)
         for position0, position1, coordinate in zip(self._positions0, self._positions1, coordinates):
-            result *= (position0 <= coordinate) * (coordinates <= position1)
+            result *= (position0 <= coordinate) * (coordinate <= position1)
         return result

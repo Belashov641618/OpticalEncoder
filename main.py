@@ -11,14 +11,16 @@ if __name__ == '__main__':
     # dynamic_approximation()
     # rectangle_diffraction(3, 6, 100)
 
-    from elements.composition import CompositeModel
+    from elements.composition import CompositeModel, HybridModel
     from elements.propagators import FurrierPropagation
     from elements.modulators import Lens, PhaseModulator, AmplitudeModulator
     from tests.Composition import propagation as propagation_test
     from elements.wrappers import Incoherent, CudaMemoryChunker
     from utilities.datasets import Dataset
+    from elements.detectors import ClassificationDetectors
+    from utilities.filters import Window, Gaussian
 
-    N = 128
+    N = 80
     length = 5.0E-3
     wavelength = 500.0E-9
     focus = 300.0E-3
@@ -26,15 +28,42 @@ if __name__ == '__main__':
     propagation = FurrierPropagation(N, length, wavelength, 1.0, 0.0, 2*focus, border_ratio=1.0)
     lens = Lens(N, length, wavelength, 1.5, 0.0, 1.0, 0.0, focus)
     modulator = PhaseModulator(N, length, N)
-
-    model = CompositeModel(propagation, lens, propagation)
-    model.to('cuda' if torch.cuda.is_available() else 'cpu')
+    optical = CompositeModel(propagation, lens, propagation)
+    optical.to('cuda' if torch.cuda.is_available() else 'cpu')
     chunker = CudaMemoryChunker()
-    model.wrap(chunker)
+    optical.wrap(chunker)
     incoherent = Incoherent(length / 20, 0.001, 1.0, 64, N, length)
-    model.wrap(incoherent)
+    optical.wrap(incoherent)
 
-    propagation_test(model, 'MNIST')
+    detectors_amount = 30
+
+    spectral_filter = Window(centers=wavelength, sizes=300.0E-9)
+    detectors_filter = Gaussian((length/30, length/30), (0,0))
+    detectors = ClassificationDetectors(N, length, wavelength, detectors_amount, detectors_filter, spectral_filter)
+    detectors.to(optical.device)
+
+    from belashovplot import TiledPlot
+    from parameters import FigureWidthHeight, FontLibrary
+    plot = TiledPlot(*FigureWidthHeight)
+    plot.FontLibrary = FontLibrary
+    plot.axes.add(0,0).imshow(torch.sum(detectors.filter, dim=0), aspect='auto')
+    plot.show()
+
+    layers_structure = [detectors_amount, detectors_amount, 15, 10]
+    layers = []
+    for nodes0, nodes1 in zip(layers_structure[:-1], layers_structure[1:]):
+        layers.append(torch.nn.Linear(nodes0, nodes1))
+        layers.append(torch.nn.Sigmoid())
+    electronic = torch.nn.Sequential(*layers)
+    electronic.to(optical.device)
+
+    model = HybridModel(optical, detectors, electronic)
+    dataset = Dataset('MNIST', 64, N, N, torch.complex64)
+
+    image, _ = Dataset.single('MNIST', N, N, torch.complex64)
+    model.visualize(image)
+
+    # propagation_test(model, 'MNIST')
 
     # def loss(image1:torch.Tensor, image0:torch.Tensor):
     #     return torch.mean((image0 - image1)**2)

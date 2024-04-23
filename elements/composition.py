@@ -3,9 +3,11 @@ import torch
 
 from typing import Literal, Union
 from tqdm import tqdm
+from math import sqrt
 
 from elements.abstracts import AbstractElement, AbstractOptical, AbstractPropagator, AbstractWrapper, AbstractDetectors
 from utilities import *
+from parameters import FigureWidthHeight, FontLibrary
 
 class CompositeModel(torch.nn.Module):
     # Группы модулей
@@ -142,3 +144,42 @@ class HybridModel(torch.nn.Module):
         signals = self._detectors.forward(field)
         result = self._electronic_model.forward(signals)
         return result
+
+    def visualize(self, image:torch.Tensor):
+
+        plot = TiledPlot(*FigureWidthHeight)
+        plot.FontLibrary = FontLibrary
+        plot.title('Гибридная модель')
+
+        with torch.no_grad():
+            planes = self._optical_model.planes(image)
+            signals = self._detectors.forward(self._optical_model.forward(image))
+            results = self._electronic_model.forward(signals)
+
+            planes = planes.cpu()
+            signals = signals.squeeze().cpu()
+            results = results.squeeze().cpu()
+
+        total = planes.size(0)
+        units = upper_integer((total - 2) / 2)
+
+        kwargs = {'aspect':'auto'}
+        for col, plane in enumerate(planes[1:-1]):
+            plane:torch.Tensor
+            axes = plot.axes.add(col, 0)
+            axes.imshow(plane.abs(), **kwargs)
+
+        axes = plot.axes.add((0,1), (units-1,units))
+        axes.imshow(planes[0].abs(), **kwargs)
+
+        axes = plot.axes.add((units,1), (2*units-1,units))
+        axes.imshow(planes[-1].abs(), **kwargs)
+
+        axes = plot.axes.add((0,units+1), (units-1, 2*units))
+        print(numpy.arange(0, len(signals)), signals)
+        axes.bar(numpy.arange(0, len(signals)), signals)
+
+        axes = plot.axes.add((units, units+1), (2*units-1, 2*units))
+        axes.bar(numpy.arange(0, len(results)), results)
+
+        plot.show()
