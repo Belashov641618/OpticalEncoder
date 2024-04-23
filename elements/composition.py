@@ -161,8 +161,10 @@ class HybridModel(torch.nn.Module):
             results = results.squeeze().cpu()
 
         total = planes.size(0)
-        units = upper_integer((total - 2) / 2)
-
+        print(total)
+        units = total // 2
+        print(units)
+        
         kwargs = {'aspect':'auto'}
         for col, plane in enumerate(planes[1:-1]):
             plane:torch.Tensor
@@ -176,7 +178,6 @@ class HybridModel(torch.nn.Module):
         axes.imshow(planes[-1].abs(), **kwargs)
 
         axes = plot.axes.add((0,units+1), (units-1, 2*units))
-        print(numpy.arange(0, len(signals)), signals)
         axes.bar(numpy.arange(0, len(signals)), signals)
 
         axes = plot.axes.add((units, units+1), (2*units-1, 2*units))
