@@ -100,7 +100,7 @@ class MatrixDetectors(AbstractDetectors):
         self.register_buffer('_detectors_buffer', buffer)
         self.accuracy.connect(self._detectors_buffer)
     def _recalc_detectors_buffer(self):
-        ratio = 0.99
+        ratio = 0.95
         x_array_0 = torch.linspace(-self.length.input.x/2, self.length.input.x/2, self._total_pixels_x)
         y_array_0 = torch.linspace(-self.length.input.y/2, self.length.input.y/2, self._total_pixels_y)
         filter = self._detectors_filter.value(x_array_0, y_array_0)
