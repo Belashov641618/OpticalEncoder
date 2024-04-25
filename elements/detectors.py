@@ -123,7 +123,7 @@ class MatrixDetectors(AbstractDetectors):
 
         paddings, dx, dy = self._convolution_params
 
-        result = torch.zeros((self.pixels.input.x, self.pixels.input.y))
+        result = torch.zeros((self.pixels.input.x, self.pixels.input.y), device=self.device)
         result = torch.nn.functional.pad(result, self._paddings_difference)
         result = torch.nn.functional.pad(result, paddings)
 
