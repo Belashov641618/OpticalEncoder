@@ -1,6 +1,6 @@
 import torch
 
-from elements.abstracts import AbstractMask, AbstractModulator, AbstractInhomogeneity
+from elements.abstracts import AbstractMask, AbstractModulator, AbstractInhomogeneity, AbstractElement
 from utilities import *
 
 # Статические маски
@@ -90,3 +90,36 @@ class PerfectHeightModulator(AbstractModulator, AbstractInhomogeneity):
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, space_reflection:FloatS, space_absorption:FloatS, mask_pixels:IntXY, logger:Logger=None):
         AbstractInhomogeneity.__init__(self, pixels, length, wavelength, reflection, absorption, space_reflection, space_absorption, logger=logger)
         AbstractModulator.__init__(self, pixels, length, mask_pixels, logger=logger)
+
+# Маска
+class Mask(AbstractElement):
+    _mask_buffer:torch.Tensor
+    def _register_mask_buffer(self, buffer:torch.Tensor):
+        if buffer.device != self.device: buffer = buffer.to(self.device)
+        if buffer.dtype not in (self.accuracy.tensor_float, self.accuracy.tensor_complex):
+            if torch.is_complex(buffer): buffer = buffer.to(self.accuracy.tensor_complex)
+            else: buffer = buffer.to(self.accuracy.tensor_float)
+        if hasattr(self, '_mask_buffer'): self.accuracy.disconnect(self._mask_buffer)
+        self.register_buffer('_mask_buffer', buffer)
+        self.accuracy.connect(self._mask_buffer)
+    @property
+    def device(self):
+        if hasattr(self, '_mask_buffer'):
+            return self._mask_buffer.device
+        else:
+            return super().device
+    @property
+    def buffer(self):
+        return self._mask_buffer
+    @buffer.setter
+    def buffer(self, data:torch.Tensor):
+        self._register_mask_buffer(data)
+
+    def __init__(self, pixels:IntIO, length:FloatIO, logger:Logger=None):
+        super().__init__(pixels, length, logger)
+        self._register_mask_buffer(torch.ones((self.pixels.input.x, self.pixels.input.y)))
+
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        super().forward(*args, **kwargs)
+
+        return field * self._mask_buffer
