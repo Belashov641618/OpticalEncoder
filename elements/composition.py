@@ -153,7 +153,7 @@ class HybridModel(torch.nn.Module):
         plot.title('Гибридная модель')
 
         with torch.no_grad():
-            planes = self._optical_model.planes(image)
+            planes = self._optical_model.planes(image, self._optical_model.element(0).pixels.input.x, self._optical_model.element(0).pixels.input.y)
             signals = self._detectors.forward(self._optical_model.forward(image))
             results = self._electronic_model.forward(signals)
 
