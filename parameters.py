@@ -10,7 +10,7 @@ if not os.path.exists(DataSetsPath):
 # Дефолтные параметры графиков
 FigureWidthHeight = (16.5*0.7, 11.7*0.7)
 FontLibrary = belashovplot.FontLibraryClass()
-FontLibrary.MultiplyFontSize(0.7)
+FontLibrary.MultiplyFontSize(1.0)
 FontLibrary.SynchronizeFont('DejaVu Sans')
 FontLibrary.Fonts.SmallCaption.FontSize *= 0.7
 

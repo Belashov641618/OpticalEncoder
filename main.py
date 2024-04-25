@@ -17,7 +17,7 @@ if __name__ == '__main__':
     from tests.Composition import propagation as propagation_test
     from elements.wrappers import Incoherent, CudaMemoryChunker
     from utilities.datasets import Dataset
-    from elements.detectors import ClassificationDetectors
+    from elements.detectors import ClassificationDetectors, MatrixDetectors
     from utilities.filters import Window, Gaussian
 
     N = 80
@@ -35,21 +35,21 @@ if __name__ == '__main__':
     incoherent = Incoherent(length / 20, 0.001, 1.0, 64, N, length)
     optical.wrap(incoherent)
 
-    detectors_amount = 30
+    detectors_amount = 7
 
     spectral_filter = Window(centers=wavelength, sizes=300.0E-9)
     detectors_filter = Gaussian((length/30, length/30), (0,0))
-    detectors = ClassificationDetectors(N, length, wavelength, detectors_amount, detectors_filter, spectral_filter)
+    detectors = MatrixDetectors(N, length, wavelength, detectors_amount, detectors_filter, spectral_filter)
     detectors.to(optical.device)
 
     from belashovplot import TiledPlot
     from parameters import FigureWidthHeight, FontLibrary
     plot = TiledPlot(*FigureWidthHeight)
     plot.FontLibrary = FontLibrary
-    plot.axes.add(0,0).imshow(torch.sum(detectors.filter, dim=0), aspect='auto')
+    plot.axes.add(0,0).imshow(detectors.filter, aspect='auto')
     plot.show()
 
-    layers_structure = [detectors_amount, detectors_amount, 15, 10]
+    layers_structure = [detectors_amount**2, detectors_amount**2, 15, 10]
     layers = []
     for nodes0, nodes1 in zip(layers_structure[:-1], layers_structure[1:]):
         layers.append(torch.nn.Linear(nodes0, nodes1))
