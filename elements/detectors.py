@@ -137,7 +137,7 @@ class MatrixDetectors(AbstractDetectors):
         paddings_ = [-pad0-pad0 for pad0, pad1 in zip(self._paddings_difference, paddings)]
         result = torch.nn.functional.pad(result, paddings_)
 
-        return result
+        return result.clone().detach().cpu()
 
     @filter.setter
     def filter(self, filter:filters.Filter):
