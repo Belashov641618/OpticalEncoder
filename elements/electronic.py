@@ -77,8 +77,8 @@ class ResNet(torch.nn.Module):
         x = self.layer2(x)
         x = self.layer3(x)
 
-        x = self.pool(x)
-        x = x.reshape(x.size(0), -1)
+        x = self.pool.forward(x)
+        x = x.view(x.size(0), -1)
         x = self.linear(x)
 
         return x
