@@ -202,8 +202,7 @@ class MatrixDetectors(AbstractDetectors):
         kernel = self._detectors_buffer.repeat(1, self.wavelength.size, 1, 1) * self._spectral_buffer.reshape(1, -1, 1, 1)
         signals = torch.nn.functional.conv2d(field, kernel, stride=(dx, dy), groups=self.wavelength.size)
         signals = signals[:,:,0:self._detectors.x,0:self._detectors.y]*self._step_x*self._step_y
-        signals = torch.mean(signals, dim=1)
-        signals.unsqueeze(1)
+        signals = torch.mean(signals, dim=1).unsqueeze(1)
         return signals
 
 
