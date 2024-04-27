@@ -55,7 +55,7 @@ def confusion(model:torch.nn.Module, dataset:Dataset, classes:int=10):
         for images, labels in iterator:
             images = images.to(device)
             labels = labels.to(device)
-            values, indexes = torch.max(model.forward(images, labels), dim=1)
+            values, indexes = torch.max(model.forward(images), dim=1)
             for label, index in zip(labels, indexes):
                 matrix[label.item(), index.item()] += 1
     return matrix
