@@ -38,7 +38,7 @@ class ResNet(torch.nn.Module):
     layer1 : torch.nn.Sequential
     layer2 : torch.nn.Sequential
     layer3 : torch.nn.Sequential
-    pool = torch.nn.AvgPool2d
+    pool : torch.nn.AvgPool2d
     linear : torch.nn.Linear
     channels : int
     def __init__(self, layers:list[int], in_channels:int, classes:int, block:torch.nn.Module=ResidualBlock, channels:int=64):
@@ -77,7 +77,7 @@ class ResNet(torch.nn.Module):
         x = self.layer2(x)
         x = self.layer3(x)
 
-        x = self.pool.forward(x)
+        x = self.pool(x)
         x = x.view(x.size(0), -1)
         x = self.linear(x)
 
