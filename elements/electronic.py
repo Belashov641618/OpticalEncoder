@@ -71,15 +71,24 @@ class ResNet(torch.nn.Module):
         return torch.nn.Sequential(*layers)
 
     def forward(self, x:torch.Tensor):
+        print(x.shape)
         x = self.conv(x)
+        print(x.shape)
         x = self.layer0(x)
+        print(x.shape)
         x = self.layer1(x)
+        print(x.shape)
         x = self.layer2(x)
+        print(x.shape)
         x = self.layer3(x)
+        print(x.shape)
 
         x = self.pool(x)
+        print(x.shape)
         x = x.view(x.size(0), -1)
+        print(x.shape)
         x = self.linear(x)
+        print(x.shape)
 
         return x
 
