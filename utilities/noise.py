@@ -136,9 +136,7 @@ class Normalizer(Generator):
                             self._params.copy_(self._params + grad * rate)
                             rate /= 2.0
                 self._params.grad.zero_()
-                print(new_loss, rate)
             self._params.requires_grad_(False)
-            print(self._params)
 
     def __init__(self, generator:Generator, steps:int=None):
         super().__init__()
