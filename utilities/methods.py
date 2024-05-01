@@ -16,7 +16,7 @@ def upper_integer(value:float) -> int:
     if value < 0:
         return -upper_integer(-value)
     integer = int(value)
-    if integer - value > 0:
+    if value - integer > 0:
         integer += 1
     return integer
 
