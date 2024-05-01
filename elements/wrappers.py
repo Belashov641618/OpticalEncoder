@@ -74,6 +74,10 @@ class Incoherent(AbstractWrapper):
     pixels:XYParams[int]
     length:XYParams[float]
 
+    def sample(self):
+        self.delayed.launch()
+        return self._generator.sample()
+
     def __init__(self, spatial_coherence:float, time_coherence:float, time:float, samples:int, pixels:IntXY, length:FloatXY):
         super().__init__()
         self._spatial_coherence = Param[float](self._delayed_generator_reset).set(spatial_coherence)

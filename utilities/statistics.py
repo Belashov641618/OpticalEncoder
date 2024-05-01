@@ -62,11 +62,11 @@ def correlation_circle(correlation:torch.Tensor, limits:tuple[tuple[float,float]
         r_mesh = torch.zeros(correlation.size())
         for mesh in torch.meshgrid(*arrays,indexing='ij'):
             r_mesh += mesh**2
-        integral = torch.sum(correlation)
+        integral = torch.sum(correlation) * (limits[0][1] - limits[0][0]) * (limits[1][1] - limits[1][0])
         maximum = torch.max(correlation)
     def function(r:float) -> torch.Tensor:
         mask = r_mesh < r**2
-        return torch.sum(correlation*mask)/torch.sum(mask)/maximum < percent
+        return torch.min(torch.where(mask, correlation, maximum)) / maximum < percent
 
     radius0 = 0
     radius1 = 2*max([limit1 - limit0 for limit0, limit1 in limits])

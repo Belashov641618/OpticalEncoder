@@ -34,7 +34,7 @@ def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimize
         if running_loss == 0:   running_loss = loss.item()
         else:                   running_loss = (1.0 - running_loss_proportion)*running_loss + running_loss_proportion*loss.item()
 
-        if time() - time_start >= 10.0:
+        if time() - time_start >= 10.0 and i >= 3:
             time_start = time()
             history_slice = history[:i+1]
             iteration_slice = numpy.arange(0, i+1)
