@@ -1,0 +1,7 @@
+\babel@toc {russian}{}\relax 
+\contentsline {section}{Введение}{2}{section*.2}%
+\contentsline {section}{Основная часть}{4}{section*.3}%
+\contentsline {subsection}{\numberline {1}Обзор литературы}{4}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1}Основы нейроморфного подхода}{4}{subsubsection.1.1.1}%
+\contentsline {paragraph}{\numberline {1.1.1}Актуальность}{4}{paragraph.1.1.1.1}%
+\contentsline {paragraph}{\numberline {1.1.2}Классические нейронные сети}{5}{paragraph.1.1.1.2}%
