@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  6 MAY 2024 00:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  6 MAY 2024 19:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -453,11 +453,42 @@ Package graphics Info: Driver file: pdftex.def on input line 107.
 )
 (c:/TexLive/2024/texmf-dist/tex/latex/tools/indentfirst.sty
 Package: indentfirst 2023/07/02 v1.03 Indent first paragraph (DPC)
+)
+(c:/TexLive/2024/texmf-dist/tex/latex/tools/array.sty
+Package: array 2023/10/16 v2.5g Tabular extension package (FMi)
+\col@sep=\dimen167
+\ar@mcellbox=\box54
+\extrarowheight=\dimen168
+\NC@list=\toks28
+\extratabsurround=\skip55
+\backup@length=\skip56
+\ar@cellbox=\box55
+)
+(c:/TexLive/2024/texmf-dist/tex/latex/placeins/placeins.sty
+Package: placeins 2005/04/18  v 2.2
+)
+(c:/TexLive/2024/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2023/08/05 v3.6o Customizing captions (AR)
+
+(c:/TexLive/2024/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
+\caption@tempdima=\dimen169
+\captionmargin=\dimen170
+\caption@leftmargin=\dimen171
+\caption@rightmargin=\dimen172
+\caption@width=\dimen173
+\caption@indent=\dimen174
+\caption@parindent=\dimen175
+\caption@hangindent=\dimen176
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count283
+\c@continuedfloat=\count284
 ))
 (c:/TexLive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-04-11 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count283
-\l__pdf_internal_box=\box54
+\l__color_backend_stack_int=\count285
+\l__pdf_internal_box=\box56
 )
 (./LateX.aux)
 \openout1 = `LateX.aux'.
@@ -481,17 +512,17 @@ LaTeX Font Info:    ... okay on input line 3.
 LaTeX Info: Redefining \th on input line 3.
  (c:/TexLive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count284
-\scratchdimen=\dimen167
-\scratchbox=\box55
-\nofMPsegments=\count285
-\nofMParguments=\count286
-\everyMPshowfont=\toks28
-\MPscratchCnt=\count287
-\MPscratchDim=\dimen168
-\MPnumerator=\count288
-\makeMPintoPDFobject=\count289
-\everyMPtoPDFconversion=\toks29
+\scratchcounter=\count286
+\scratchdimen=\dimen177
+\scratchbox=\box57
+\nofMPsegments=\count287
+\nofMParguments=\count288
+\everyMPshowfont=\toks29
+\MPscratchCnt=\count289
+\MPscratchDim=\dimen178
+\MPnumerator=\count290
+\makeMPintoPDFobject=\count291
+\everyMPtoPDFconversion=\toks30
 ) (c:/TexLive/2024/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -535,53 +566,126 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-(./parts/TitlePage.tex
-LaTeX Font Info:    Trying to load font information for U+msa on input line 20.
-
- (c:/TexLive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 20.
-
-
-(c:/TexLive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
+(./parts/TitlePage.tex [1
 
 
 {c:/TexLive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/TexLive/2024/
-texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc}]) (./LateX.toc)
+texmf-dist/fonts/enc/dvips/cm-super/cm-super-t2a.enc}]) (./LateX.toc
+LaTeX Font Info:    Trying to load font information for U+msa on input line 5.
+ (c:/TexLive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 5.
+
+(c:/TexLive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+))
 \tf@toc=\write3
 \openout3 = `LateX.toc'.
 
- (./parts/Введение.tex) (./parts/Обзор литературы.tex)
+
+(./parts/Введение.tex) (./parts/Обзор литературы.tex
+(./parts/Обзор литературы/Нейронные сети.tex
+[1]
+<figures/SGD.jpg, id=25, 303.23077pt x 202.15384pt>
+File: figures/SGD.jpg Graphic file (type jpg)
+<use figures/SGD.jpg>
+Package pdftex.def Info: figures/SGD.jpg  used on input line 21.
+(pdftex.def)             Requested size: 323.09735pt x 215.40483pt.
+<figures/NNArchitectures.png, id=26, 3888.5275pt x 1656.1875pt>
+File: figures/NNArchitectures.png Graphic file (type png)
+<use figures/NNArchitectures.png>
+Package pdftex.def Info: figures/NNArchitectures.png  used on input line 28.
+(pdftex.def)             Requested size: 538.49013pt x 229.33754pt.
+ (./figures/ArchitecturesTable.tex
+Overfull \hbox (2.48628pt too wide) in paragraph at lines 18--18
+[]|\T2A/cmr/m/n/10 �����������-�������������� 
+ []
+
+) [2 <./figures/SGD.jpg>]
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[3 <./figures/NNArchitectures.png>]
+<figures/PublicationsAI.png, id=34, 1469.49pt x 664.73344pt>
+File: figures/PublicationsAI.png Graphic file (type png)
+<use figures/PublicationsAI.png>
+Package pdftex.def Info: figures/PublicationsAI.png  used on input line 40.
+(pdftex.def)             Requested size: 538.49013pt x 243.59435pt.
+<figures/PerfomanceGPUCPU.png, id=36, 1668.9853pt x 712.91344pt>
+File: figures/PerfomanceGPUCPU.png Graphic file (type png)
+<use figures/PerfomanceGPUCPU.png>
+Package pdftex.def Info: figures/PerfomanceGPUCPU.png  used on input line 46.
+(pdftex.def)             Requested size: 538.49013pt x 230.01888pt.
+<figures/ParametersANN.png, id=37, 853.1875pt x 454.69875pt>
+File: figures/ParametersANN.png Graphic file (type png)
+<use figures/ParametersANN.png>
+Package pdftex.def Info: figures/ParametersANN.png  used on input line 51.
+(pdftex.def)             Requested size: 538.49013pt x 287.0029pt.
+<figures/OpenAI.jpg, id=38, 1736.4875pt x 885.3075pt>
+File: figures/OpenAI.jpg Graphic file (type jpg)
+<use figures/OpenAI.jpg>
+Package pdftex.def Info: figures/OpenAI.jpg  used on input line 57.
+(pdftex.def)             Requested size: 538.49013pt x 274.53705pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+)
+(./parts/Обзор литературы/Оптические вычислит�
+�ли.tex [4] [5 <./figures/PublicationsAI.png> <./figures/PerfomanceGPUCPU.png
+>] [6 <./figures/ParametersANN.png> <./figures/OpenAI.jpg>]))
 (./parts/Оригинальная часть.tex)
-(./parts/Заключение.tex) (./LateX.bbl [1]) [2] (./LateX.aux)
+(./parts/Заключение.tex) (./LateX.bbl [7
+
+]) [8] (./LateX.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-04-11>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 6324 strings out of 474049
- 96082 string characters out of 5746278
- 1929754 words of memory out of 5000000
- 28640 multiletter control sequences out of 15000+600000
- 570380 words of font info for 64 fonts, out of 8000000 for 9000
+ 7901 strings out of 474049
+ 127546 string characters out of 5746278
+ 1942754 words of memory out of 5000000
+ 30182 multiletter control sequences out of 15000+600000
+ 581995 words of font info for 88 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 77i,8n,82p,339b,271s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Tex
-Live/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><c:/TexLive/2024/
-texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><c:/TexLive/2024/texmf-dist
-/fonts/type1/public/cm-super/sfcc1440.pfb><c:/TexLive/2024/texmf-dist/fonts/typ
-e1/public/cm-super/sfrm1200.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/
-cm-super/sfrm1440.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/s
-fsl1200.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfxc2074.pf
-b>
-Output written on LateX.pdf (3 pages, 111444 bytes).
+ 77i,11n,82p,1764b,422s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/Tex
+Live/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/TexLive/2024
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/TexLive/2024/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/TexLive/2024/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr12.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmr8.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmsy10.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.
+pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb><c:/Te
+xLive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb><c:/TexLive/2024
+/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><c:/TexLive/2024/texmf-dis
+t/fonts/type1/public/cm-super/sfbx1440.pfb><c:/TexLive/2024/texmf-dist/fonts/ty
+pe1/public/cm-super/sfbx1728.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public
+/cm-super/sfcc1440.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/
+sfrm1000.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200.p
+fb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb><c:/Tex
+Live/2024/texmf-dist/fonts/type1/public/cm-super/sfsl1200.pfb><c:/TexLive/2024/
+texmf-dist/fonts/type1/public/cm-super/sfti1095.pfb><c:/TexLive/2024/texmf-dist
+/fonts/type1/public/cm-super/sfti1200.pfb><c:/TexLive/2024/texmf-dist/fonts/typ
+e1/public/cm-super/sfxc2074.pfb>
+Output written on LateX.pdf (9 pages, 2007970 bytes).
 PDF statistics:
- 55 PDF objects out of 1000 (max. 8388607)
- 33 compressed objects within 1 object stream
+ 150 PDF objects out of 1000 (max. 8388607)
+ 87 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 31 words of extra memory for PDF output out of 10000 (max. 10000000)
 
