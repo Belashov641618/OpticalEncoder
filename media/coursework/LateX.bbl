@@ -1,0 +1,56 @@
+\begin{thebibliography}{1}
+
+\bibitem{Russia}
+Указ Президента Российской Федерации от
+  10.10.2019 № 490 "О развитии искусственного
+  интеллекта в Российской Федерации"
+\newblock publication.pravo.gov.ru 2019-2030.
+
+\bibitem{rosenblatt1958perceptron}
+Frank Rosenblatt,  The perceptron: a probabilistic model for information
+  storage and organization in the brain.
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Psychological
+  review\hspace{0.2em}--\hspace{0.2em} 1958.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}65, \No6.--\hspace{0.5em}p.\hspace{0.2em}386.
+
+\bibitem{block1962perceptron}
+Hans-Dieter Block,  The perceptron: A model for brain functioning. i
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Reviews of Modern
+  Physics\hspace{0.2em}--\hspace{0.2em} 1962.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}34, \No1.--\hspace{0.5em}p.\hspace{0.2em}123.
+
+\bibitem{amini2018spatial}
+Alexander Amini, Ava Soleimany, Sertac Karaman, Daniela Rus,  Spatial
+  uncertainty sampling for end-to-end control
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} arXiv preprint
+  arXiv:1805.04829\hspace{0.2em}--\hspace{0.2em}
+  2018.\hspace{0.2em}--\hspace{0.2em} , .
+
+\bibitem{leijnen2020neural}
+Stefan Leijnen, Fjodor~van Veen
+\newblock The neural network zoo
+\newblock In:  {\em Proceedings} V.~47 page~9. MDPI 2020.
+
+\bibitem{zhang2021ai}
+Daniel Zhang, Saurabh Mishra, Erik Brynjolfsson, John Etchemendy, Deep Ganguli,
+  Barbara Grosz, Terah Lyons, James Manyika, Juan~Carlos Niebles, Michael
+  Sellitto, others,  The ai index 2021 annual report
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} arXiv preprint
+  arXiv:2103.06312\hspace{0.2em}--\hspace{0.2em}
+  2021.\hspace{0.2em}--\hspace{0.2em} , .
+
+\bibitem{sun2019summarizing}
+Yifan Sun, Nicolas~Bohm Agostini, Shi Dong, David Kaeli,  Summarizing cpu and
+  gpu design trends with product data
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} arXiv preprint
+  arXiv:1911.11313\hspace{0.2em}--\hspace{0.2em}
+  2019.\hspace{0.2em}--\hspace{0.2em} , .
+
+\bibitem{bernstein2021freely}
+Liane Bernstein, Alexander Sludds, Ryan Hamerly, Vivienne Sze, Joel Emer, Dirk
+  Englund,  Freely scalable and reconfigurable optical hardware for deep
+  learning \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Scientific
+  reports\hspace{0.2em}--\hspace{0.2em} 2021.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}11, \No1.--\hspace{0.5em}p.\hspace{0.2em}3144.
+
+\end{thebibliography}
