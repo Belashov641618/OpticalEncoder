@@ -4,8 +4,11 @@
 \contentsline {subsection}{\numberline {2.1}Нейронные сети}{1}{}%
 \contentsline {paragraph}{Идея нейронной сети}{1}{}%
 \contentsline {paragraph}{Современные тенденции в области нейронных сетей}{4}{}%
-\contentsline {subsection}{\numberline {2.2}Оптические вычислители}{7}{}%
-\contentsline {section}{\numberline {3}Оригинальная часть}{7}{}%
-\contentsline {section}{\numberline {4}Заключение}{7}{}%
-\par \vspace {1pc}\hbox to \textwidth {\noindent \bf {\large Список литературы} \hfill \hspace {1em}8}
+\contentsline {subsection}{\numberline {2.2}Оптические вычислители}{8}{}%
+\contentsline {paragraph}{Оптические корреляторы}{8}{}%
+\contentsline {paragraph}{Оптическое сжатие информации}{9}{}%
+\contentsline {paragraph}{Дифракционные нейронные сети}{13}{}%
+\contentsline {section}{\numberline {3}Оригинальная часть}{13}{}%
+\contentsline {section}{\numberline {4}Заключение}{13}{}%
+\par \vspace {1pc}\hbox to \textwidth {\noindent \bf {\large Список литературы} \hfill \hspace {1em}14}
 \contentsfinish 

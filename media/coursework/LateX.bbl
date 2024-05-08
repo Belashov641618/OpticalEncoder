@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{Russia}
 Указ Президента Российской Федерации от
@@ -52,5 +52,128 @@ Liane Bernstein, Alexander Sludds, Ryan Hamerly, Vivienne Sze, Joel Emer, Dirk
   learning \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Scientific
   reports\hspace{0.2em}--\hspace{0.2em} 2021.\hspace{0.2em}--\hspace{0.2em}
   Vol.\hspace{0.2em}11, \No1.--\hspace{0.5em}p.\hspace{0.2em}3144.
+
+\bibitem{powell2008quantum}
+James~R Powell,  The quantum limit to moore's law
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Proceedings of the
+  IEEE\hspace{0.2em}--\hspace{0.2em} 2008.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}96, \No8.--\hspace{0.5em}p.\hspace{0.2em}1247--1248.
+
+\bibitem{danowitz2014exploring}
+Andrew Danowitz
+\newblock {\em Exploring abstract interfaces in system-on-chip integration}
+\newblock PhD thesis Stanford University 2014.
+
+\bibitem{khan2021advancements}
+Fatima~Hameed Khan, Muhammad~Adeel Pasha, Shahid Masud,  Advancements in
+  microprocessor architecture for ubiquitous ai—an overview on history,
+  evolution, and upcoming challenges in ai implementation
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em}
+  Micromachines\hspace{0.2em}--\hspace{0.2em}
+  2021.\hspace{0.2em}--\hspace{0.2em} Vol.\hspace{0.2em}12,
+  \No6.--\hspace{0.5em}p.\hspace{0.2em}665.
+
+\bibitem{indiveri2015memory}
+Giacomo Indiveri, Shih-Chii Liu,  Memory and information processing in
+  neuromorphic systems \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em}
+  Proceedings of the IEEE\hspace{0.2em}--\hspace{0.2em}
+  2015.\hspace{0.2em}--\hspace{0.2em} Vol.\hspace{0.2em}103,
+  \No8.--\hspace{0.5em}p.\hspace{0.2em}1379--1397.
+
+\bibitem{solli2015analog}
+Daniel~R Solli, Bahram Jalali,  Analog optical computing
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Nature
+  Photonics\hspace{0.2em}--\hspace{0.2em} 2015.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}9, \No11.--\hspace{0.5em}p.\hspace{0.2em}704--706.
+
+\bibitem{mcmahon2023physics}
+Peter~L McMahon,  The physics of optical computing
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Nature Reviews
+  Physics\hspace{0.2em}--\hspace{0.2em} 2023.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}5, \No12.--\hspace{0.5em}p.\hspace{0.2em}717--734.
+
+\bibitem{wu2022analog}
+Jiamin Wu, Xing Lin, Yuchen Guo, Junwei Liu, Lu~Fang, Shuming Jiao, Qionghai
+  Dai,  Analog optical computing for artificial intelligence
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em}
+  Engineering\hspace{0.2em}--\hspace{0.2em} 2022.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}10, p.\hspace{0.2em}133--145.
+
+\bibitem{lugt1964signal}
+A~Vander Lugt,  Signal detection by complex spatial filtering
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} IEEE Transactions on
+  information theory\hspace{0.2em}--\hspace{0.2em}
+  1964.\hspace{0.2em}--\hspace{0.2em} Vol.\hspace{0.2em}10,
+  \No2.--\hspace{0.5em}p.\hspace{0.2em}139--145.
+
+\bibitem{goncharov2019features}
+DS~Goncharov, E~Yu Zlokazov, EK~Petrova, NM~Ponomarev, RS~Starikov,  Features
+  of the implementation of holographic invariant correlation filters based on a
+  phase liquid-crystal space-time light modulator
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Bulletin of the Lebedev
+  Physics Institute\hspace{0.2em}--\hspace{0.2em}
+  2019.\hspace{0.2em}--\hspace{0.2em} Vol.\hspace{0.2em}46,
+  p.\hspace{0.2em}126--129.
+
+\bibitem{weaver1966technique}
+CS~Weaver, Joseph~W Goodman,  A technique for optically convolving two
+  functions \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Applied
+  optics\hspace{0.2em}--\hspace{0.2em} 1966.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}5, \No7.--\hspace{0.5em}p.\hspace{0.2em}1248--1249.
+
+\bibitem{alfalou2009optical}
+Ayman Alfalou, C~Brosseau,  Optical image compression and encryption methods
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Advances in Optics and
+  Photonics\hspace{0.2em}--\hspace{0.2em} 2009.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}1, \No3.--\hspace{0.5em}p.\hspace{0.2em}589--636.
+
+\bibitem{goodman2005introduction}
+Joseph~W Goodman,  {\em Introduction to Fourier optics}.\hspace{0.2em}
+  --\hspace{0.2em}
+\newblock Roberts and Company publishers,  2005.
+
+\bibitem{alkholidi2008real}
+A~Alkholidi, A~Cottour, Ayman Alfalou, H~Hamam, G~Keryer,  Real-time optical 2d
+  wavelet transform based on the jpeg2000 standards
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} The European Physical
+  Journal-Applied Physics\hspace{0.2em}--\hspace{0.2em}
+  2008.\hspace{0.2em}--\hspace{0.2em} Vol.\hspace{0.2em}44,
+  \No3.--\hspace{0.5em}p.\hspace{0.2em}261--272.
+
+\bibitem{lawson2002image}
+Stuart Lawson, Jian Zhu,  Image compression using wavelets and jpeg2000: a
+  tutorial \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Electronics \&
+  Communication Engineering Journal\hspace{0.2em}--\hspace{0.2em}
+  2002.\hspace{0.2em}--\hspace{0.2em} Vol.\hspace{0.2em}14,
+  \No3.--\hspace{0.5em}p.\hspace{0.2em}112--121.
+
+\bibitem{alkholidi2007new}
+Abdulsalam Alkholidi, Ayman Alfalou, Habib Hamam,  A new approach for optical
+  colored image compression using the jpeg standards
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Signal
+  Processing\hspace{0.2em}--\hspace{0.2em} 2007.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}87, \No4.--\hspace{0.5em}p.\hspace{0.2em}569--583.
+
+\bibitem{velez2016optical}
+Alejandro Velez, John~Fredy Barrera, Sorayda Trejos, Myrian Tebaldi, Roberto
+  Torroba,  Optical field data compression by opto-digital means
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Journal of
+  Optics\hspace{0.2em}--\hspace{0.2em} 2016.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}18, \No12.--\hspace{0.5em}p.\hspace{0.2em}125701.
+
+\bibitem{trejos2016optical}
+Sorayda Trejos, John~Fredy Barrera, Alejandro Velez, Myrian Tebaldi, Roberto
+  Torroba,  Optical approach for the efficient data volume handling in
+  experimentally encrypted data
+  \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Journal of
+  Optics\hspace{0.2em}--\hspace{0.2em} 2016.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}18, \No6.--\hspace{0.5em}p.\hspace{0.2em}065702.
+
+\bibitem{amador2007random}
+Jos{\'e}~J Amador,  Random projection and orthonormality for lossy image
+  compression \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Image and
+  Vision Computing\hspace{0.2em}--\hspace{0.2em}
+  2007.\hspace{0.2em}--\hspace{0.2em} Vol.\hspace{0.2em}25,
+  \No5.--\hspace{0.5em}p.\hspace{0.2em}754--766.
 
 \end{thebibliography}
