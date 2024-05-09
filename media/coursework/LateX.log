@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  8 MAY 2024 04:35
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  9 MAY 2024 22:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -451,6 +451,9 @@ Package graphics Info: Driver file: pdftex.def on input line 107.
 \c@tatafigure=\count281
 \c@tatatable=\count282
 )
+(c:/TexLive/2024/texmf-dist/tex/latex/setspace/setspace.sty
+Package: setspace 2022/12/04 v6.7b set line spacing
+)
 (c:/TexLive/2024/texmf-dist/tex/latex/tools/indentfirst.sty
 Package: indentfirst 2023/07/02 v1.03 Indent first paragraph (DPC)
 )
@@ -540,15 +543,15 @@ e
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: truedimen 
-* h-part:(L,W,R)=(85.35826pt, 538.49013pt, 28.45274pt)
-* v-part:(T,H,B)=(56.9055pt, 808.72917pt, 56.9055pt)
-* \paperwidth=652.30113pt
-* \paperheight=922.54018pt
-* \textwidth=538.49013pt
-* \textheight=808.72917pt
-* \oddsidemargin=6.46182pt
-* \evensidemargin=6.46182pt
-* \topmargin=-53.86473pt
+* h-part:(L,W,R)=(85.35826pt, 398.6314pt, 28.45274pt)
+* v-part:(T,H,B)=(56.9055pt, 610.929pt, 56.9055pt)
+* \paperwidth=512.4424pt
+* \paperheight=724.74pt
+* \textwidth=398.6314pt
+* \textheight=610.929pt
+* \oddsidemargin=23.37805pt
+* \evensidemargin=23.37805pt
+* \topmargin=-36.9485pt
 * \headheight=12.0pt
 * \headsep=19.8738pt
 * \topskip=12.0pt
@@ -557,9 +560,9 @@ e
 * \marginparsep=7.0pt
 * \columnsep=10.0pt
 * \skip\footins=10.8pt plus 4.0pt minus 2.0pt
-* \hoffset=0.0085pt
-* \voffset=0.0085pt
-* \mag=916
+* \hoffset=0.01427pt
+* \voffset=0.01427pt
+* \mag=1166
 * \@twocolumnfalse
 * \@twosidefalse
 * \@mparswitchfalse
@@ -588,47 +591,43 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 (./parts/–í–≤–µ–¥–µ–Ω–∏–µ.tex) (./parts/–û–±–∑–æ—Ä –ª–∏—Ç–µ—Ä–∞—Ç—É—Ä—ã.tex
 (./parts/–û–±–∑–æ—Ä –ª–∏—Ç–µ—Ä–∞—Ç—É—Ä—ã/–ù–µ–π—Ä–æ–Ω–Ω—ã–µ —Å–µ—Ç–∏.tex
-[1]
-<figures/SGD.jpg, id=25, 303.23077pt x 202.15384pt>
+[1] [2]
+<figures/SGD.jpg, id=28, 303.23077pt x 202.15384pt>
 File: figures/SGD.jpg Graphic file (type jpg)
 <use figures/SGD.jpg>
 Package pdftex.def Info: figures/SGD.jpg  used on input line 21.
-(pdftex.def)             Requested size: 323.09735pt x 215.40483pt.
-<figures/NNArchitectures.png, id=26, 3888.5275pt x 1656.1875pt>
+(pdftex.def)             Requested size: 239.18126pt x 159.45917pt.
+<figures/NNArchitectures.png, id=29, 3888.5275pt x 1656.1875pt>
 File: figures/NNArchitectures.png Graphic file (type png)
 <use figures/NNArchitectures.png>
 Package pdftex.def Info: figures/NNArchitectures.png  used on input line 28.
-(pdftex.def)             Requested size: 538.49013pt x 229.33754pt.
+(pdftex.def)             Requested size: 398.6314pt x 169.77295pt.
  (./figures/ArchitecturesTable.tex
-Overfull \hbox (2.48628pt too wide) in paragraph at lines 18--18
-[]|\T2A/cmr/m/n/10 √ÂÌÂ‡ÚË‚ÌÓ-ÒÓÒÚˇÁ‡ÚÂÎ¸Ì˚Â 
+Overfull \hbox (4.63058pt too wide) in paragraph at lines 18--18
+[]|\T2A/cmr/m/n/6 √ÂÌÂ‡ÚË‚ÌÓ-ÒÓÒÚˇÁ‡ÚÂÎ¸Ì˚Â 
  []
 
-) [2 <./figures/SGD.jpg>]
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[3 <./figures/NNArchitectures.png>]
-<figures/PublicationsAI.png, id=34, 1469.49pt x 664.73344pt>
+) [3 <./figures/SGD.jpg>] [4 <./figures/NNArchitectures.png>]
+<figures/PublicationsAI.png, id=39, 1469.49pt x 664.73344pt>
 File: figures/PublicationsAI.png Graphic file (type png)
 <use figures/PublicationsAI.png>
 Package pdftex.def Info: figures/PublicationsAI.png  used on input line 40.
-(pdftex.def)             Requested size: 538.49013pt x 243.59435pt.
-<figures/PerfomanceGPUCPU.png, id=36, 1668.9853pt x 712.91344pt>
+(pdftex.def)             Requested size: 398.6314pt x 180.3223pt.
+<figures/PerfomanceGPUCPU.png, id=41, 1668.9853pt x 712.91344pt>
 File: figures/PerfomanceGPUCPU.png Graphic file (type png)
 <use figures/PerfomanceGPUCPU.png>
 Package pdftex.def Info: figures/PerfomanceGPUCPU.png  used on input line 46.
-(pdftex.def)             Requested size: 538.49013pt x 230.01888pt.
-<figures/ParametersANN.png, id=37, 853.1875pt x 454.69875pt>
+(pdftex.def)             Requested size: 398.6314pt x 170.27597pt.
+<figures/ParametersANN.png, id=42, 853.1875pt x 454.69875pt>
 File: figures/ParametersANN.png Graphic file (type png)
 <use figures/ParametersANN.png>
 Package pdftex.def Info: figures/ParametersANN.png  used on input line 51.
-(pdftex.def)             Requested size: 538.49013pt x 287.0029pt.
-<figures/OpenAI.jpg, id=38, 1736.4875pt x 885.3075pt>
+(pdftex.def)             Requested size: 398.6314pt x 212.45264pt.
+<figures/OpenAI.jpg, id=43, 1736.4875pt x 885.3075pt>
 File: figures/OpenAI.jpg Graphic file (type jpg)
 <use figures/OpenAI.jpg>
 Package pdftex.def Info: figures/OpenAI.jpg  used on input line 57.
-(pdftex.def)             Requested size: 538.49013pt x 274.53705pt.
+(pdftex.def)             Requested size: 398.6314pt x 203.22469pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
@@ -636,76 +635,111 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
+[5 <./figures/PublicationsAI.png>]
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<figures/WattD.png, id=39, 1165.35374pt x 626.34pt>
+<figures/WattD.png, id=48, 1165.35374pt x 626.34pt>
 File: figures/WattD.png Graphic file (type png)
 <use figures/WattD.png>
 Package pdftex.def Info: figures/WattD.png  used on input line 67.
-(pdftex.def)             Requested size: 538.49013pt x 289.42921pt.
+(pdftex.def)             Requested size: 398.6314pt x 214.25255pt.
 )
 (./parts/–û–±–∑–æ—Ä –ª–∏—Ç–µ—Ä–∞—Ç—É—Ä—ã/–û–ø—Ç–∏—á–µ—Å–∫–∏–µ –≤—ã—á–∏—Å–ª–∏—Ç–
-µ–ª–∏.tex [4]
+µ–ª–∏.tex [6 <./figures/PerfomanceGPUCPU.png> <./figures/ParametersANN.png>]
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[5 <./figures/PublicationsAI.png> <./figures/PerfomanceGPUCPU.png>] [6 <./figur
-es/ParametersANN.png> <./figures/OpenAI.jpg>] [7 <./figures/WattD.png>]
-<figures/VLC.png, id=64, 853.1875pt x 315.1775pt>
+[7 <./figures/OpenAI.jpg>] [8 <./figures/WattD.png>]
+<figures/VLC.png, id=67, 853.1875pt x 315.1775pt>
 File: figures/VLC.png Graphic file (type png)
 <use figures/VLC.png>
-Package pdftex.def Info: figures/VLC.png  used on input line 12.
-(pdftex.def)             Requested size: 430.79373pt x 159.14174pt.
-<figures/JTC.png, id=65, 839.38594pt x 806.26219pt>
+Package pdftex.def Info: figures/VLC.png  used on input line 13.
+(pdftex.def)             Requested size: 318.90633pt x 117.81134pt.
+<figures/JTC.png, id=68, 839.38594pt x 806.26219pt>
 File: figures/JTC.png Graphic file (type png)
 <use figures/JTC.png>
-Package pdftex.def Info: figures/JTC.png  used on input line 17.
-(pdftex.def)             Requested size: 350.01529pt x 336.20421pt.
+Package pdftex.def Info: figures/JTC.png  used on input line 18.
+(pdftex.def)             Requested size: 259.10797pt x 248.88068pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[8
 
- <./figures/VLC.png>] [9 <./figures/JTC.png>]
-<figures/JPEG2000.png, id=75, 969.6225pt x 525.46312pt>
+LaTeX Font Warning: Command \tiny invalid in math mode on input line 25.
+
+LaTeX Font Info:    Calculating math sizes for size <> on input line 62.
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <> not available
+(Font)              size <5> substituted on input line 62.
+
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <0.7> not available
+(Font)              size <5> substituted on input line 62.
+
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <0.5> not available
+(Font)              size <5> substituted on input line 62.
+
+
+LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <> not available
+(Font)              size <5> substituted on input line 62.
+
+
+LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <0.7> not available
+(Font)              size <5> substituted on input line 62.
+
+
+LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <0.5> not available
+(Font)              size <5> substituted on input line 62.
+
+
+LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <> not available
+(Font)              size <5> substituted on input line 62.
+
+
+LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <0.7> not available
+(Font)              size <5> substituted on input line 62.
+
+
+LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <0.5> not available
+(Font)              size <5> substituted on input line 62.
+
+[9 <./figures/VLC.png>] [10 <./figures/JTC.png>]
+<figures/JPEG2000.png, id=83, 969.6225pt x 525.46312pt>
 File: figures/JPEG2000.png Graphic file (type png)
 <use figures/JPEG2000.png>
-Package pdftex.def Info: figures/JPEG2000.png  used on input line 96.
-(pdftex.def)             Requested size: 430.79373pt x 233.45752pt.
-<figures/VLCERMS.png, id=76, 621.07031pt x 568.37344pt>
+Package pdftex.def Info: figures/JPEG2000.png  used on input line 98.
+(pdftex.def)             Requested size: 318.90633pt x 172.82607pt.
+<figures/VLCERMS.png, id=84, 621.07031pt x 568.37344pt>
 File: figures/VLCERMS.png Graphic file (type png)
 <use figures/VLCERMS.png>
-Package pdftex.def Info: figures/VLCERMS.png  used on input line 103.
-(pdftex.def)             Requested size: 215.39276pt x 197.11243pt.
-<figures/VLCSNR.png, id=77, 605.26125pt x 595.47469pt>
+Package pdftex.def Info: figures/VLCERMS.png  used on input line 105.
+(pdftex.def)             Requested size: 159.45012pt x 145.91765pt.
+<figures/VLCSNR.png, id=85, 605.26125pt x 595.47469pt>
 File: figures/VLCSNR.png Graphic file (type png)
 <use figures/VLCSNR.png>
-Package pdftex.def Info: figures/VLCSNR.png  used on input line 108.
-(pdftex.def)             Requested size: 204.62245pt x 201.31384pt.
+Package pdftex.def Info: figures/VLCSNR.png  used on input line 110.
+(pdftex.def)             Requested size: 151.47711pt x 149.02277pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[10 <./figures/JPEG2000.png>]
-<figures/JPEG.png, id=82, 1675.00781pt x 326.72063pt>
+[11 <./figures/JPEG2000.png>]
+<figures/JPEG.png, id=90, 1675.00781pt x 326.72063pt>
 File: figures/JPEG.png Graphic file (type png)
 <use figures/JPEG.png>
-Package pdftex.def Info: figures/JPEG.png  used on input line 118.
-(pdftex.def)             Requested size: 430.79373pt x 84.02805pt.
-<figures/JPEGres.png, id=83, 1086.30844pt x 815.29594pt>
+Package pdftex.def Info: figures/JPEG.png  used on input line 120.
+(pdftex.def)             Requested size: 318.90633pt x 62.2022pt.
+<figures/JPEGres.png, id=91, 1086.30844pt x 815.29594pt>
 File: figures/JPEGres.png Graphic file (type png)
 <use figures/JPEGres.png>
-Package pdftex.def Info: figures/JPEGres.png  used on input line 123.
-(pdftex.def)             Requested size: 376.94144pt x 282.90709pt.
-<figures/JPEGres2.png, id=84, 627.84563pt x 882.29625pt>
+Package pdftex.def Info: figures/JPEGres.png  used on input line 125.
+(pdftex.def)             Requested size: 279.04076pt x 209.42166pt.
+<figures/JPEGres2.png, id=92, 627.84563pt x 882.29625pt>
 File: figures/JPEGres2.png Graphic file (type png)
 <use figures/JPEGres2.png>
-Package pdftex.def Info: figures/JPEGres2.png  used on input line 128.
+Package pdftex.def Info: figures/JPEGres2.png  used on input line 130.
 (pdftex.def)             Requested size: 627.84409pt x 882.2941pt.
 
 
@@ -714,57 +748,126 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[11 <./figures/VLCERMS.png> <./figures/VLCSNR.png> <./figures/JPEG.png>]
-[12 <./figures/JPEGres.png> <./figures/JPEGres2.png>]
-<figures/RandomProjRes.png, id=97, 1212.78094pt x 813.0375pt>
+[12 <./figures/VLCERMS.png> <./figures/VLCSNR.png> <./figures/JPEG.png>]
+[13 <./figures/JPEGres.png>]
+<figures/RandomProjRes.png, id=104, 1212.78094pt x 813.0375pt>
 File: figures/RandomProjRes.png Graphic file (type png)
 <use figures/RandomProjRes.png>
-Package pdftex.def Info: figures/RandomProjRes.png  used on input line 137.
-(pdftex.def)             Requested size: 430.79373pt x 288.7978pt.
-))
-(./parts/–û—Ä–∏–≥–∏–Ω–∞–ª—å–Ω–∞—è —á–∞—Å—Ç—å.tex)
-(./parts/–ó–∞–∫–ª—é—á–µ–Ω–∏–µ.tex) (./LateX.bbl [13
+Package pdftex.def Info: figures/RandomProjRes.png  used on input line 139.
+(pdftex.def)             Requested size: 318.90633pt x 213.79152pt.
 
- <./figures/RandomProjRes.png>] [14]) [15] (./LateX.aux)
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[14 <./figures/JPEGres2.png>] [15 <./figures/RandomProjRes.png>]
+<figures/ClassicD2NN.png, id=113, 1486.80469pt x 645.91313pt>
+File: figures/ClassicD2NN.png Graphic file (type png)
+<use figures/ClassicD2NN.png>
+Package pdftex.def Info: figures/ClassicD2NN.png  used on input line 159.
+(pdftex.def)             Requested size: 318.90633pt x 138.54337pt.
+<figures/FD2NN.png, id=114, 831.85782pt x 620.3175pt>
+File: figures/FD2NN.png Graphic file (type png)
+<use figures/FD2NN.png>
+Package pdftex.def Info: figures/FD2NN.png  used on input line 168.
+(pdftex.def)             Requested size: 318.90633pt x 237.80547pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+)
+(./parts/–û–±–∑–æ—Ä –ª–∏—Ç–µ—Ä–∞—Ç—É—Ä—ã/–ù–µ–∫–æ–≥–µ—Ä–µ–Ω—Ç–Ω–æ–µ –∏–∑–ª—É—á–
+µ–Ω–∏–µ.tex [16 <./figures/ClassicD2NN.png>]))
+(./parts/–û—Ä–∏–≥–∏–Ω–∞–ª—å–Ω–∞—è —á–∞—Å—Ç—å.tex)
+(./parts/–ó–∞–∫–ª—é—á–µ–Ω–∏–µ.tex) (./LateX.bbl [17 <./figures/FD2NN.png>]
+[18]
+Underfull \hbox (badness 3713) in paragraph at lines 4--8
+\T2A/cmr/m/n/12 ‡Á-‚Ë-ÚËË ËÒ-ÍÛÒ-ÒÚ‚ÂÌ-ÌÓ-„Ó ËÌ-ÚÂÎ-ÎÂÍ-Ú‡ ‚ –ÓÒ-ÒËÈ-ÒÍÓÈ ‘Â-‰
+Â-‡-ˆËË"
+ []
+
+
+Underfull \hbox (badness 2790) in paragraph at lines 23--28
+[]\T2A/cmr/m/n/12 Alexander Amini, Ava Soleimany, Sertac Karaman, Daniela Rus,
+ []
+
+
+Underfull \hbox (badness 2285) in paragraph at lines 43--48
+\T2A/cmr/m/n/12 cpu and gpu design trends with product data  $\OML/cmm/m/it/12 
+= =$  \T2A/cmr/m/n/12 arXiv preprint
+ []
+
+
+Underfull \hbox (badness 1371) in paragraph at lines 63--66
+[]\T2A/cmr/m/n/12 Andrew Danowitz  \T2A/cmr/m/it/12 Exploring abstract interfac
+es in system-on-^^?chip
+ []
+
+
+Underfull \hbox (badness 2707) in paragraph at lines 68--75
+[]\T2A/cmr/m/n/12 Fatima Hameed Khan, Muhammad Adeel Pasha, Shahid Masud,
+ []
+
+
+Underfull \hbox (badness 1881) in paragraph at lines 68--75
+\T2A/cmr/m/n/12 Advancements in microprocessor architecture for ubiquitous ai^^
+Van
+ []
+
+
+Underfull \hbox (badness 5374) in paragraph at lines 68--75
+\T2A/cmr/m/n/12 overview on history, evolution, and upcoming challenges in ai
+ []
+
+[19] [20]) [21] (./LateX.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-04-11>
  ***********
+
+
+LaTeX Font Warning: Size substitutions with differences
+(Font)              up to 4.5pt have occurred.
+
  ) 
 Here is how much of TeX's memory you used:
- 8011 strings out of 474049
- 129993 string characters out of 5746278
- 1945754 words of memory out of 5000000
- 30290 multiletter control sequences out of 15000+600000
- 583601 words of font info for 90 fonts, out of 8000000 for 9000
+ 8096 strings out of 474049
+ 132230 string characters out of 5746278
+ 1938754 words of memory out of 5000000
+ 30368 multiletter control sequences out of 15000+600000
+ 584497 words of font info for 94 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  77i,12n,82p,1832b,422s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/Tex
-Live/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/TexLive/2024
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/TexLive/2024/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/TexLive/2024/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmmi8.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmr12.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmr6.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pf
-b><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/Tex
-Live/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/TexLive/2024/
-texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb><c:/TexLive/2024/texmf-dist
-/fonts/type1/public/cm-super/sfbx1095.pfb><c:/TexLive/2024/texmf-dist/fonts/typ
-e1/public/cm-super/sfbx1200.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/
-cm-super/sfbx1440.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/s
-fbx1728.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfcc1440.pf
-b><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb><c:/TexL
-ive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb><c:/TexLive/2024/t
-exmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb><c:/TexLive/2024/texmf-dist/
-fonts/type1/public/cm-super/sfrm1440.pfb><c:/TexLive/2024/texmf-dist/fonts/type
-1/public/cm-super/sfsl1200.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/c
-m-super/sfti0800.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sf
-ti1095.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb
-><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfxc2074.pfb>
-Output written on LateX.pdf (16 pages, 5433009 bytes).
+Live/2024/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><c:/TexLive/
+2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/TexLive/2024/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/TexLive/2024/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmmi5.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmmi6.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmmi8.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mr12.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c
+:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/TexLive/2
+024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/TexLive/2024/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/TexLive/2024/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmsy5.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmsy6.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmsy8.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx060
+0.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb><c:/
+TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><c:/TexLive/20
+24/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><c:/TexLive/2024/texmf-d
+ist/fonts/type1/public/cm-super/sfbx1728.pfb><c:/TexLive/2024/texmf-dist/fonts/
+type1/public/cm-super/sfcc1440.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/publ
+ic/cm-super/sfrm0600.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-supe
+r/sfrm0800.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200
+.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb><c:/T
+exLive/2024/texmf-dist/fonts/type1/public/cm-super/sfsl1200.pfb><c:/TexLive/202
+4/texmf-dist/fonts/type1/public/cm-super/sfti0800.pfb><c:/TexLive/2024/texmf-di
+st/fonts/type1/public/cm-super/sfti1095.pfb><c:/TexLive/2024/texmf-dist/fonts/t
+ype1/public/cm-super/sfti1200.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/publi
+c/cm-super/sfxc2074.pfb>
+Output written on LateX.pdf (22 pages, 7715162 bytes).
 PDF statistics:
- 213 PDF objects out of 1000 (max. 8388607)
- 114 compressed objects within 2 object streams
+ 261 PDF objects out of 1000 (max. 8388607)
+ 142 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 81 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 91 words of extra memory for PDF output out of 10000 (max. 10000000)
 

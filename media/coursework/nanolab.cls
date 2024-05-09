@@ -4,7 +4,10 @@
 
 \NeedsTeXFormat{LaTeX2e}[1998/12/01]
 \ProvidesClass{nanolab}[2008/06/18]
+
+%\LoadClass[a4paper,14pt,oneside,titlepage]{extbook}
 \LoadClass[a4paper,12pt, oneside,titlepage]{book}
+
 \RequirePackage[utf8]{inputenc}%for WiN
 \RequirePackage[T2A]{fontenc}
 \RequirePackage[english,russian]{babel}
@@ -16,6 +19,7 @@
 \RequirePackage{ifpdf}
 \RequirePackage{cite}
 \RequirePackage{xcolor}
+
 
 \hfuzz=3pt \emergencystretch=8pt
 
@@ -31,10 +35,10 @@
 \PassOptionsToPackage{mag=1083}{geometry} %% Размер шрифта=13 (mag=1083) 
 } 
 \DeclareOption{diploma}{
-\PassOptionsToPackage{mag=1166}{geometry} %% Размер шрифта=11 (mag=916) 
+\PassOptionsToPackage{mag=916}{geometry} %% Размер шрифта=11 (mag=916) 
 } 
 \DeclareOption{kursovaya}{
-\PassOptionsToPackage{mag=916}{geometry} %% Размер шрифта=11 (mag=916) 
+\PassOptionsToPackage{mag=1166}{geometry} %% Размер шрифта=11 (mag=916) 
 } 
 \DeclareOption{draft}{
 \PassOptionsToPackage{mag=750}{geometry} %% Размер шрифта=9 (mag=750) 
@@ -42,7 +46,7 @@
 \ProcessOptions\relax
 \RequirePackage[hmargin={3cm,1cm}, vmargin={2cm, 2cm}, a4paper,truedimen]{geometry}
 
-\linespread{1.3} %% Расстояние между строк
+\linespread{1.5} %% Расстояние между строк
 \pagestyle{headings}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
