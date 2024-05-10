@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  10 MAY 2024 05:00
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  10 MAY 2024 09:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -615,14 +615,11 @@ Overfull \hbox (4.63058pt too wide) in paragraph at lines 18--18
 []|\T2A/cmr/m/n/6 Генеративно-состязательные 
  []
 
-)
+) [3]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[3] [4 <./figures/SGD.jpg> <./figures/NNArchitectures.png>]
+[4 <./figures/SGD.jpg> <./figures/NNArchitectures.png>]
 <figures/PublicationsAI.png, id=37, 1469.49pt x 664.73344pt>
 File: figures/PublicationsAI.png Graphic file (type png)
 <use figures/PublicationsAI.png>
@@ -798,10 +795,6 @@ Overfull \hbox (17.32684pt too wide) in paragraph at lines 29--31
 n/12 )$
  []
 
-
-LaTeX Warning: Reference `par:SpatialIncoherence' on page 21 undefined on input
- line 53.
-
 [21] [22])) (./parts/Р—Р°РєР»СЋС‡РµРЅРёРµ.tex) (./LateX.bbl [23]
 Underfull \hbox (badness 3713) in paragraph at lines 4--8
 \T2A/cmr/m/n/12 раз-ви-тии ис-кус-ствен-но-го ин-тел-лек-та в Рос-сий-ской Фе-д
@@ -852,9 +845,6 @@ LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 4.5pt have occurred.
 
 
-LaTeX Warning: There were undefined references.
-
-
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
@@ -865,7 +855,7 @@ Here is how much of TeX's memory you used:
  30392 multiletter control sequences out of 15000+600000
  584497 words of font info for 94 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 77i,12n,82p,2717b,422s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 77i,12n,82p,2714b,422s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/Tex
 Live/2024/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><c:/TexLive/
 2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/TexLive/2024/texm
@@ -893,7 +883,7 @@ exLive/2024/texmf-dist/fonts/type1/public/cm-super/sfsl1200.pfb><c:/TexLive/202
 st/fonts/type1/public/cm-super/sfti1095.pfb><c:/TexLive/2024/texmf-dist/fonts/t
 ype1/public/cm-super/sfti1200.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/publi
 c/cm-super/sfxc2074.pfb>
-Output written on LateX.pdf (27 pages, 7744320 bytes).
+Output written on LateX.pdf (27 pages, 7744603 bytes).
 PDF statistics:
  277 PDF objects out of 1000 (max. 8388607)
  153 compressed objects within 2 object streams
