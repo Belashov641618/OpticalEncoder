@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  9 MAY 2024 22:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  10 MAY 2024 05:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -493,7 +493,11 @@ File: l3backend-pdftex.def 2024-04-11 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count285
 \l__pdf_internal_box=\box56
 )
-(./LateX.aux)
+(./LateX.aux
+
+LaTeX Warning: Label `eq:Int2' multiply defined.
+
+)
 \openout1 = `LateX.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 3.
@@ -597,45 +601,52 @@ File: figures/SGD.jpg Graphic file (type jpg)
 <use figures/SGD.jpg>
 Package pdftex.def Info: figures/SGD.jpg  used on input line 21.
 (pdftex.def)             Requested size: 239.18126pt x 159.45917pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 <figures/NNArchitectures.png, id=29, 3888.5275pt x 1656.1875pt>
 File: figures/NNArchitectures.png Graphic file (type png)
 <use figures/NNArchitectures.png>
 Package pdftex.def Info: figures/NNArchitectures.png  used on input line 28.
 (pdftex.def)             Requested size: 398.6314pt x 169.77295pt.
- (./figures/ArchitecturesTable.tex
+(./figures/ArchitecturesTable.tex
 Overfull \hbox (4.63058pt too wide) in paragraph at lines 18--18
 []|\T2A/cmr/m/n/6 Генеративно-состязательные 
  []
 
-) [3 <./figures/SGD.jpg>] [4 <./figures/NNArchitectures.png>]
-<figures/PublicationsAI.png, id=39, 1469.49pt x 664.73344pt>
+)
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[3] [4 <./figures/SGD.jpg> <./figures/NNArchitectures.png>]
+<figures/PublicationsAI.png, id=37, 1469.49pt x 664.73344pt>
 File: figures/PublicationsAI.png Graphic file (type png)
 <use figures/PublicationsAI.png>
 Package pdftex.def Info: figures/PublicationsAI.png  used on input line 40.
 (pdftex.def)             Requested size: 398.6314pt x 180.3223pt.
-<figures/PerfomanceGPUCPU.png, id=41, 1668.9853pt x 712.91344pt>
+<figures/PerfomanceGPUCPU.png, id=39, 1668.9853pt x 712.91344pt>
 File: figures/PerfomanceGPUCPU.png Graphic file (type png)
 <use figures/PerfomanceGPUCPU.png>
 Package pdftex.def Info: figures/PerfomanceGPUCPU.png  used on input line 46.
 (pdftex.def)             Requested size: 398.6314pt x 170.27597pt.
-<figures/ParametersANN.png, id=42, 853.1875pt x 454.69875pt>
+<figures/ParametersANN.png, id=40, 853.1875pt x 454.69875pt>
 File: figures/ParametersANN.png Graphic file (type png)
 <use figures/ParametersANN.png>
 Package pdftex.def Info: figures/ParametersANN.png  used on input line 51.
 (pdftex.def)             Requested size: 398.6314pt x 212.45264pt.
-<figures/OpenAI.jpg, id=43, 1736.4875pt x 885.3075pt>
+<figures/OpenAI.jpg, id=41, 1736.4875pt x 885.3075pt>
 File: figures/OpenAI.jpg Graphic file (type jpg)
 <use figures/OpenAI.jpg>
 Package pdftex.def Info: figures/OpenAI.jpg  used on input line 57.
 (pdftex.def)             Requested size: 398.6314pt x 203.22469pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
+ [5 <./figures/PublicationsAI.png>]
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[5 <./figures/PublicationsAI.png>]
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
@@ -646,11 +657,8 @@ Package pdftex.def Info: figures/WattD.png  used on input line 67.
 (pdftex.def)             Requested size: 398.6314pt x 214.25255pt.
 )
 (./parts/РћР±Р·РѕСЂ Р»РёС‚РµСЂР°С‚СѓСЂС‹/РћРїС‚РёС‡РµСЃРєРёРµ РІС‹С‡РёСЃР»РёС‚Р
-µР»Рё.tex [6 <./figures/PerfomanceGPUCPU.png> <./figures/ParametersANN.png>]
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[7 <./figures/OpenAI.jpg>] [8 <./figures/WattD.png>]
+µР»Рё.tex [6 <./figures/PerfomanceGPUCPU.png>] [7 <./figures/ParametersANN.png>
+ <./figures/OpenAI.jpg>] [8 <./figures/WattD.png>]
 <figures/VLC.png, id=67, 853.1875pt x 315.1775pt>
 File: figures/VLC.png Graphic file (type png)
 <use figures/VLC.png>
@@ -665,6 +673,7 @@ Package pdftex.def Info: figures/JTC.png  used on input line 18.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
+[9 <./figures/VLC.png>]
 
 LaTeX Font Warning: Command \tiny invalid in math mode on input line 25.
 
@@ -705,7 +714,7 @@ LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <0.7> not available
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <0.5> not available
 (Font)              size <5> substituted on input line 62.
 
-[9 <./figures/VLC.png>] [10 <./figures/JTC.png>]
+[10 <./figures/JTC.png>]
 <figures/JPEG2000.png, id=83, 969.6225pt x 525.46312pt>
 File: figures/JPEG2000.png Graphic file (type png)
 <use figures/JPEG2000.png>
@@ -725,18 +734,22 @@ Package pdftex.def Info: figures/VLCSNR.png  used on input line 110.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[11 <./figures/JPEG2000.png>]
-<figures/JPEG.png, id=90, 1675.00781pt x 326.72063pt>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[11] [12 <./figures/JPEG2000.png> <./figures/VLCERMS.png> <./figures/VLCSNR.png
+>]
+<figures/JPEG.png, id=96, 1675.00781pt x 326.72063pt>
 File: figures/JPEG.png Graphic file (type png)
 <use figures/JPEG.png>
 Package pdftex.def Info: figures/JPEG.png  used on input line 120.
 (pdftex.def)             Requested size: 318.90633pt x 62.2022pt.
-<figures/JPEGres.png, id=91, 1086.30844pt x 815.29594pt>
+<figures/JPEGres.png, id=97, 1086.30844pt x 815.29594pt>
 File: figures/JPEGres.png Graphic file (type png)
 <use figures/JPEGres.png>
 Package pdftex.def Info: figures/JPEGres.png  used on input line 125.
 (pdftex.def)             Requested size: 279.04076pt x 209.42166pt.
-<figures/JPEGres2.png, id=92, 627.84563pt x 882.29625pt>
+<figures/JPEGres2.png, id=98, 627.84563pt x 882.29625pt>
 File: figures/JPEGres2.png Graphic file (type png)
 <use figures/JPEGres2.png>
 Package pdftex.def Info: figures/JPEGres2.png  used on input line 130.
@@ -745,11 +758,9 @@ Package pdftex.def Info: figures/JPEGres2.png  used on input line 130.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
+[13
 
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[12 <./figures/VLCERMS.png> <./figures/VLCSNR.png> <./figures/JPEG.png>]
-[13 <./figures/JPEGres.png>]
+ <./figures/JPEG.png> <./figures/JPEGres.png>]
 <figures/RandomProjRes.png, id=104, 1212.78094pt x 813.0375pt>
 File: figures/RandomProjRes.png Graphic file (type png)
 <use figures/RandomProjRes.png>
@@ -776,10 +787,22 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 )
 (./parts/РћР±Р·РѕСЂ Р»РёС‚РµСЂР°С‚СѓСЂС‹/РќРµРєРѕРіРµСЂРµРЅС‚РЅРѕРµ РёР·Р»СѓС‡Р
-µРЅРёРµ.tex [16 <./figures/ClassicD2NN.png>]))
-(./parts/РћСЂРёРіРёРЅР°Р»СЊРЅР°СЏ С‡Р°СЃС‚СЊ.tex)
-(./parts/Р—Р°РєР»СЋС‡РµРЅРёРµ.tex) (./LateX.bbl [17 <./figures/FD2NN.png>]
-[18]
+µРЅРёРµ.tex [16 <./figures/ClassicD2NN.png>] [17 <./figures/FD2NN.png>]
+[18])) (./parts/РћСЂРёРіРёРЅР°Р»СЊРЅР°СЏ С‡Р°СЃС‚СЊ.tex
+(./parts/РћСЂРёРіРёРЅР°Р»СЊРЅР°СЏ С‡Р°СЃС‚СЊ/РўРµРѕСЂРёС‚РёС‡РµСЃРєРѕРµ РІРІРµР
+ґРµРЅРёРµ.tex [19] [20]
+Overfull \hbox (17.32684pt too wide) in paragraph at lines 29--31
+\OML/cmm/m/it/12 G\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 x; y; []; []\OT1/cmr/m/n/12
+ )$\T2A/cmr/m/n/12 . Обо-зна-чив ре-зуль-тат ко-ге-рент-но-го рас-про-стра-не-н
+ия как $\OML/cmm/m/it/12 E[]\OT1/cmr/m/n/12 ([]\OML/cmm/m/it/12 ; []\OT1/cmr/m/
+n/12 )$
+ []
+
+
+LaTeX Warning: Reference `par:SpatialIncoherence' on page 21 undefined on input
+ line 53.
+
+[21] [22])) (./parts/Р—Р°РєР»СЋС‡РµРЅРёРµ.tex) (./LateX.bbl [23]
 Underfull \hbox (badness 3713) in paragraph at lines 4--8
 \T2A/cmr/m/n/12 раз-ви-тии ис-кус-ствен-но-го ин-тел-лек-та в Рос-сий-ской Фе-д
 е-ра-ции"
@@ -818,7 +841,7 @@ Underfull \hbox (badness 5374) in paragraph at lines 68--75
 \T2A/cmr/m/n/12 overview on history, evolution, and upcoming challenges in ai
  []
 
-[19] [20]) [21] (./LateX.aux)
+[24] [25]) [26] (./LateX.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-04-11>
@@ -828,15 +851,21 @@ L3 programming layer <2024-04-11>
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 4.5pt have occurred.
 
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: There were multiply-defined labels.
+
  ) 
 Here is how much of TeX's memory you used:
- 8096 strings out of 474049
- 132230 string characters out of 5746278
- 1938754 words of memory out of 5000000
- 30368 multiletter control sequences out of 15000+600000
+ 8124 strings out of 474049
+ 133275 string characters out of 5746278
+ 1942754 words of memory out of 5000000
+ 30392 multiletter control sequences out of 15000+600000
  584497 words of font info for 94 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 77i,12n,82p,1832b,422s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 77i,12n,82p,2717b,422s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/Tex
 Live/2024/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><c:/TexLive/
 2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/TexLive/2024/texm
@@ -864,10 +893,10 @@ exLive/2024/texmf-dist/fonts/type1/public/cm-super/sfsl1200.pfb><c:/TexLive/202
 st/fonts/type1/public/cm-super/sfti1095.pfb><c:/TexLive/2024/texmf-dist/fonts/t
 ype1/public/cm-super/sfti1200.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/publi
 c/cm-super/sfxc2074.pfb>
-Output written on LateX.pdf (22 pages, 7715162 bytes).
+Output written on LateX.pdf (27 pages, 7744320 bytes).
 PDF statistics:
- 261 PDF objects out of 1000 (max. 8388607)
- 142 compressed objects within 2 object streams
+ 277 PDF objects out of 1000 (max. 8388607)
+ 153 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  91 words of extra memory for PDF output out of 10000 (max. 10000000)
 
