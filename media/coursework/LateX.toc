@@ -15,8 +15,10 @@
 \contentsline {subsection}{\numberline {3.1}Теоретическое введение и методы}{19}{}%
 \contentsline {paragraph}{Линейная некогерентная система}{19}{}%
 \contentsline {paragraph}{Генерация реализаций некогерентного поля}{21}{}%
-\contentsline {paragraph}{Прохождение света через маску}{22}{}%
-\contentsline {paragraph}{Расчёт когерентного распространения}{22}{}%
-\contentsline {section}{\numberline {4}Заключение}{23}{}%
-\par \vspace {1pc}\hbox to \textwidth {\noindent \bf {\large Список литературы} \hfill \hspace {1em}24}
+\contentsline {paragraph}{Прохождение света через маску}{24}{}%
+\contentsline {paragraph}{Расчёт когерентного распространения}{24}{}%
+\contentsline {paragraph}{Линейная модель и некогерентный свет}{26}{}%
+\contentsline {subsection}{\numberline {3.2}Гибридный оптоэлектронный классификатор изображений}{31}{}%
+\contentsline {section}{\numberline {4}Заключение}{31}{}%
+\par \vspace {1pc}\hbox to \textwidth {\noindent \bf {\large Список литературы} \hfill \hspace {1em}32}
 \contentsfinish 

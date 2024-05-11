@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  10 MAY 2024 09:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  11 MAY 2024 11:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -588,12 +588,17 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 5.
 
 (c:/TexLive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-))
+)
+Overfull \hbox (8.1109pt too wide) in paragraph at lines 21--21
+ [] \T2A/cmr/m/n/12 3.2. |√Ë·Ë‰Ì˚È ÓÔÚÓ-˝ÎÂÍ-ÚÓÌ-Ì˚È ÍÎ‡Ò-ÒË-ÙË-Í‡-ÚÓ ËÁÓ·‡
+ÊÂÌËÈ|   []|   
+ []
+
+)
 \tf@toc=\write3
 \openout3 = `LateX.toc'.
 
-
-(./parts/–í–≤–µ–¥–µ–Ω–∏–µ.tex) (./parts/–û–±–∑–æ—Ä –ª–∏—Ç–µ—Ä–∞—Ç—É—Ä—ã.tex
+ (./parts/–í–≤–µ–¥–µ–Ω–∏–µ.tex) (./parts/–û–±–∑–æ—Ä –ª–∏—Ç–µ—Ä–∞—Ç—É—Ä—ã.tex
 (./parts/–û–±–∑–æ—Ä –ª–∏—Ç–µ—Ä–∞—Ç—É—Ä—ã/–ù–µ–π—Ä–æ–Ω–Ω—ã–µ —Å–µ—Ç–∏.tex
 [1] [2]
 <figures/SGD.jpg, id=28, 303.23077pt x 202.15384pt>
@@ -640,28 +645,22 @@ File: figures/OpenAI.jpg Graphic file (type jpg)
 <use figures/OpenAI.jpg>
 Package pdftex.def Info: figures/OpenAI.jpg  used on input line 57.
 (pdftex.def)             Requested size: 398.6314pt x 203.22469pt.
- [5 <./figures/PublicationsAI.png>]
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<figures/WattD.png, id=48, 1165.35374pt x 626.34pt>
+ [5 <./figures/PublicationsAI.png>] [6 <./figures/PerfomanceGPUCPU.png> <./figu
+res/ParametersANN.png>]
+<figures/WattD.png, id=54, 1165.35374pt x 626.34pt>
 File: figures/WattD.png Graphic file (type png)
 <use figures/WattD.png>
 Package pdftex.def Info: figures/WattD.png  used on input line 67.
 (pdftex.def)             Requested size: 398.6314pt x 214.25255pt.
 )
 (./parts/–û–±–∑–æ—Ä –ª–∏—Ç–µ—Ä–∞—Ç—É—Ä—ã/–û–ø—Ç–∏—á–µ—Å–∫–∏–µ –≤—ã—á–∏—Å–ª–∏—Ç–
-µ–ª–∏.tex [6 <./figures/PerfomanceGPUCPU.png>] [7 <./figures/ParametersANN.png>
- <./figures/OpenAI.jpg>] [8 <./figures/WattD.png>]
-<figures/VLC.png, id=67, 853.1875pt x 315.1775pt>
+µ–ª–∏.tex [7 <./figures/OpenAI.jpg>] [8 <./figures/WattD.png>]
+<figures/VLC.png, id=69, 853.1875pt x 315.1775pt>
 File: figures/VLC.png Graphic file (type png)
 <use figures/VLC.png>
 Package pdftex.def Info: figures/VLC.png  used on input line 13.
 (pdftex.def)             Requested size: 318.90633pt x 117.81134pt.
-<figures/JTC.png, id=68, 839.38594pt x 806.26219pt>
+<figures/JTC.png, id=70, 839.38594pt x 806.26219pt>
 File: figures/JTC.png Graphic file (type png)
 <use figures/JTC.png>
 Package pdftex.def Info: figures/JTC.png  used on input line 18.
@@ -712,17 +711,17 @@ LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <0.5> not available
 (Font)              size <5> substituted on input line 62.
 
 [10 <./figures/JTC.png>]
-<figures/JPEG2000.png, id=83, 969.6225pt x 525.46312pt>
+<figures/JPEG2000.png, id=84, 969.6225pt x 525.46312pt>
 File: figures/JPEG2000.png Graphic file (type png)
 <use figures/JPEG2000.png>
 Package pdftex.def Info: figures/JPEG2000.png  used on input line 98.
 (pdftex.def)             Requested size: 318.90633pt x 172.82607pt.
-<figures/VLCERMS.png, id=84, 621.07031pt x 568.37344pt>
+<figures/VLCERMS.png, id=85, 621.07031pt x 568.37344pt>
 File: figures/VLCERMS.png Graphic file (type png)
 <use figures/VLCERMS.png>
 Package pdftex.def Info: figures/VLCERMS.png  used on input line 105.
 (pdftex.def)             Requested size: 159.45012pt x 145.91765pt.
-<figures/VLCSNR.png, id=85, 605.26125pt x 595.47469pt>
+<figures/VLCSNR.png, id=86, 605.26125pt x 595.47469pt>
 File: figures/VLCSNR.png Graphic file (type png)
 <use figures/VLCSNR.png>
 Package pdftex.def Info: figures/VLCSNR.png  used on input line 110.
@@ -731,22 +730,18 @@ Package pdftex.def Info: figures/VLCSNR.png  used on input line 110.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[11] [12 <./figures/JPEG2000.png> <./figures/VLCERMS.png> <./figures/VLCSNR.png
->]
-<figures/JPEG.png, id=96, 1675.00781pt x 326.72063pt>
+[11 <./figures/JPEG2000.png>]
+<figures/JPEG.png, id=91, 1675.00781pt x 326.72063pt>
 File: figures/JPEG.png Graphic file (type png)
 <use figures/JPEG.png>
 Package pdftex.def Info: figures/JPEG.png  used on input line 120.
 (pdftex.def)             Requested size: 318.90633pt x 62.2022pt.
-<figures/JPEGres.png, id=97, 1086.30844pt x 815.29594pt>
+<figures/JPEGres.png, id=92, 1086.30844pt x 815.29594pt>
 File: figures/JPEGres.png Graphic file (type png)
 <use figures/JPEGres.png>
 Package pdftex.def Info: figures/JPEGres.png  used on input line 125.
 (pdftex.def)             Requested size: 279.04076pt x 209.42166pt.
-<figures/JPEGres2.png, id=98, 627.84563pt x 882.29625pt>
+<figures/JPEGres2.png, id=93, 627.84563pt x 882.29625pt>
 File: figures/JPEGres2.png Graphic file (type png)
 <use figures/JPEGres2.png>
 Package pdftex.def Info: figures/JPEGres2.png  used on input line 130.
@@ -755,10 +750,12 @@ Package pdftex.def Info: figures/JPEGres2.png  used on input line 130.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[13
 
- <./figures/JPEG.png> <./figures/JPEGres.png>]
-<figures/RandomProjRes.png, id=104, 1212.78094pt x 813.0375pt>
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[12 <./figures/VLCERMS.png> <./figures/VLCSNR.png> <./figures/JPEG.png>]
+[13 <./figures/JPEGres.png>]
+<figures/RandomProjRes.png, id=105, 1212.78094pt x 813.0375pt>
 File: figures/RandomProjRes.png Graphic file (type png)
 <use figures/RandomProjRes.png>
 Package pdftex.def Info: figures/RandomProjRes.png  used on input line 139.
@@ -768,12 +765,12 @@ Package pdftex.def Info: figures/RandomProjRes.png  used on input line 139.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [14 <./figures/JPEGres2.png>] [15 <./figures/RandomProjRes.png>]
-<figures/ClassicD2NN.png, id=113, 1486.80469pt x 645.91313pt>
+<figures/ClassicD2NN.png, id=114, 1486.80469pt x 645.91313pt>
 File: figures/ClassicD2NN.png Graphic file (type png)
 <use figures/ClassicD2NN.png>
 Package pdftex.def Info: figures/ClassicD2NN.png  used on input line 159.
 (pdftex.def)             Requested size: 318.90633pt x 138.54337pt.
-<figures/FD2NN.png, id=114, 831.85782pt x 620.3175pt>
+<figures/FD2NN.png, id=115, 831.85782pt x 620.3175pt>
 File: figures/FD2NN.png Graphic file (type png)
 <use figures/FD2NN.png>
 Package pdftex.def Info: figures/FD2NN.png  used on input line 168.
@@ -795,7 +792,124 @@ Overfull \hbox (17.32684pt too wide) in paragraph at lines 29--31
 n/12 )$
  []
 
-[21] [22])) (./parts/–ó–∞–∫–ª—é—á–µ–Ω–∏–µ.tex) (./LateX.bbl [23]
+[21]
+Package epstopdf Info: Source file: <figures/IncoherentRAD.eps>
+(epstopdf)                    date: 2024-05-11 04:14:14
+(epstopdf)                    size: 796208 bytes
+(epstopdf)             Output file: <figures/IncoherentRAD-eps-converted-to.pdf
+>
+(epstopdf)                    date: 2024-05-11 04:14:43
+(epstopdf)                    size: 147637 bytes
+(epstopdf)             Command: <repstopdf --outfile=figures/IncoherentRAD-eps-
+converted-to.pdf figures/IncoherentRAD.eps>
+(epstopdf)             \includegraphics on input line 57.
+Package epstopdf Info: Output file is already uptodate.
+<figures/IncoherentRAD-eps-converted-to.pdf, id=137, 483.8075pt x 635.37375pt>
+File: figures/IncoherentRAD-eps-converted-to.pdf Graphic file (type pdf)
+<use figures/IncoherentRAD-eps-converted-to.pdf>
+Package pdftex.def Info: figures/IncoherentRAD-eps-converted-to.pdf  used on in
+put line 57.
+(pdftex.def)             Requested size: 398.6314pt x 523.54024pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[22] [23 <./figures/IncoherentRAD-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <figures/PropagationSlit.eps>
+(epstopdf)                    date: 2024-05-11 05:40:49
+(epstopdf)                    size: 1588102 bytes
+(epstopdf)             Output file: <figures/PropagationSlit-eps-converted-to.p
+df>
+(epstopdf)                    date: 2024-05-11 07:41:46
+(epstopdf)                    size: 93292 bytes
+(epstopdf)             Command: <repstopdf --outfile=figures/PropagationSlit-ep
+s-converted-to.pdf figures/PropagationSlit.eps>
+(epstopdf)             \includegraphics on input line 80.
+Package epstopdf Info: Output file is already uptodate.
+<figures/PropagationSlit-eps-converted-to.pdf, id=222, 483.8075pt x 504.88625pt
+>
+File: figures/PropagationSlit-eps-converted-to.pdf Graphic file (type pdf)
+<use figures/PropagationSlit-eps-converted-to.pdf>
+Package pdftex.def Info: figures/PropagationSlit-eps-converted-to.pdf  used on 
+input line 80.
+(pdftex.def)             Requested size: 398.6314pt x 416.02011pt.
+ [24
+
+] [25 <./figures/PropagationSlit-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <figures/YungExperiment.eps>
+(epstopdf)                    date: 2024-05-11 07:42:43
+(epstopdf)                    size: 883307 bytes
+(epstopdf)             Output file: <figures/YungExperiment-eps-converted-to.pd
+f>
+(epstopdf)                    date: 2024-05-11 07:43:13
+(epstopdf)                    size: 78546 bytes
+(epstopdf)             Command: <repstopdf --outfile=figures/YungExperiment-eps
+-converted-to.pdf figures/YungExperiment.eps>
+(epstopdf)             \includegraphics on input line 94.
+Package epstopdf Info: Output file is already uptodate.
+<figures/YungExperiment-eps-converted-to.pdf, id=295, 414.54875pt x 659.46375pt
+>
+File: figures/YungExperiment-eps-converted-to.pdf Graphic file (type pdf)
+<use figures/YungExperiment-eps-converted-to.pdf>
+Package pdftex.def Info: figures/YungExperiment-eps-converted-to.pdf  used on i
+nput line 94.
+(pdftex.def)             Requested size: 378.6986pt x 602.44746pt.
+
+
+LaTeX Warning: Float too large for page by 37.51846pt on input line 97.
+
+Package epstopdf Info: Source file: <figures/Lenses.eps>
+(epstopdf)                    date: 2024-05-11 09:13:55
+(epstopdf)                    size: 2177382 bytes
+(epstopdf)             Output file: <figures/Lenses-eps-converted-to.pdf>
+(epstopdf)                    date: 2024-05-11 09:14:45
+(epstopdf)                    size: 229833 bytes
+(epstopdf)             Command: <repstopdf --outfile=figures/Lenses-eps-convert
+ed-to.pdf figures/Lenses.eps>
+(epstopdf)             \includegraphics on input line 100.
+Package epstopdf Info: Output file is already uptodate.
+<figures/Lenses-eps-converted-to.pdf, id=296, 473.77pt x 659.46375pt>
+File: figures/Lenses-eps-converted-to.pdf Graphic file (type pdf)
+<use figures/Lenses-eps-converted-to.pdf>
+Package pdftex.def Info: figures/Lenses-eps-converted-to.pdf  used on input lin
+e 100.
+(pdftex.def)             Requested size: 378.6986pt x 527.14908pt.
+Package epstopdf Info: Source file: <figures/LensImage.eps>
+(epstopdf)                    date: 2024-05-11 09:13:07
+(epstopdf)                    size: 1090463 bytes
+(epstopdf)             Output file: <figures/LensImage-eps-converted-to.pdf>
+(epstopdf)                    date: 2024-05-11 09:14:43
+(epstopdf)                    size: 173546 bytes
+(epstopdf)             Command: <repstopdf --outfile=figures/LensImage-eps-conv
+erted-to.pdf figures/LensImage.eps>
+(epstopdf)             \includegraphics on input line 105.
+Package epstopdf Info: Output file is already uptodate.
+<figures/LensImage-eps-converted-to.pdf, id=297, 339.2675pt x 352.31625pt>
+File: figures/LensImage-eps-converted-to.pdf Graphic file (type pdf)
+<use figures/LensImage-eps-converted-to.pdf>
+Package pdftex.def Info: figures/LensImage-eps-converted-to.pdf  used on input 
+line 105.
+(pdftex.def)             Requested size: 279.04076pt x 289.78284pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[26])
+(./parts/–û—Ä–∏–≥–∏–Ω–∞–ª—å–Ω–∞—è —á–∞—Å—Ç—å/–ì–∏–±—Ä–∏–¥–Ω—ã–π –æ–ø—Ç–æ—ç–ª–µ–
+∫—Ç—Ä–æ–Ω–Ω—ã–π –∫–ª–∞—Å—Å–∏—Ñ–∏–∫–∞—Ç–æ—Ä –∏–∑–æ–±—Ä–∞–∂–µ–Ω–∏–π.tex [27]
+[28 <./figures/YungExperiment-eps-converted-to.pdf>] [29 <./figures/Lenses-eps-
+converted-to.pdf>] [30 <./figures/LensImage-eps-converted-to.pdf>]
+
+LaTeX Warning: Reference `ris:OEScheme' on page 31 undefined on input line 2.
+
+)) (./parts/–ó–∞–∫–ª—é—á–µ–Ω–∏–µ.tex) (./LateX.bbl [31
+
+]
 Underfull \hbox (badness 3713) in paragraph at lines 4--8
 \T2A/cmr/m/n/12 ‡Á-‚Ë-ÚËË ËÒ-ÍÛÒ-ÒÚ‚ÂÌ-ÌÓ-„Ó ËÌ-ÚÂÎ-ÎÂÍ-Ú‡ ‚ –ÓÒ-ÒËÈ-ÒÍÓÈ ‘Â-‰
 Â-‡-ˆËË"
@@ -834,7 +948,7 @@ Underfull \hbox (badness 5374) in paragraph at lines 68--75
 \T2A/cmr/m/n/12 overview on history, evolution, and upcoming challenges in ai
  []
 
-[24] [25]) [26] (./LateX.aux)
+[32] [33]) [34] (./LateX.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-04-11>
@@ -845,17 +959,20 @@ LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 4.5pt have occurred.
 
 
+LaTeX Warning: There were undefined references.
+
+
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 8124 strings out of 474049
- 133275 string characters out of 5746278
+ 8187 strings out of 474049
+ 136229 string characters out of 5746278
  1942754 words of memory out of 5000000
- 30392 multiletter control sequences out of 15000+600000
- 584497 words of font info for 94 fonts, out of 8000000 for 9000
+ 30449 multiletter control sequences out of 15000+600000
+ 588173 words of font info for 102 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 77i,12n,82p,2714b,422s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 77i,12n,82p,2714b,454s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/Tex
 Live/2024/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><c:/TexLive/
 2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/TexLive/2024/texm
@@ -863,30 +980,32 @@ f-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/TexLive/2024/texmf-dist/fo
 nts/type1/public/amsfonts/cm/cmmi5.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmmi6.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmmi8.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mr12.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c
-:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/TexLive/2
-024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/TexLive/2024/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/TexLive/2024/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmsy5.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmsy6.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmsy8.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx060
-0.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb><c:/
-TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><c:/TexLive/20
-24/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><c:/TexLive/2024/texmf-d
-ist/fonts/type1/public/cm-super/sfbx1728.pfb><c:/TexLive/2024/texmf-dist/fonts/
-type1/public/cm-super/sfcc1440.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/publ
-ic/cm-super/sfrm0600.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-supe
-r/sfrm0800.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200
-.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb><c:/T
-exLive/2024/texmf-dist/fonts/type1/public/cm-super/sfsl1200.pfb><c:/TexLive/202
-4/texmf-dist/fonts/type1/public/cm-super/sfti0800.pfb><c:/TexLive/2024/texmf-di
-st/fonts/type1/public/cm-super/sfti1095.pfb><c:/TexLive/2024/texmf-dist/fonts/t
-ype1/public/cm-super/sfti1200.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/publi
-c/cm-super/sfxc2074.pfb>
-Output written on LateX.pdf (27 pages, 7744603 bytes).
+mr10.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><
+c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/TexLive/
+2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/TexLive/2024/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/TexLive/2024/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmsy10.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmsy5.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmsy6.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy
+8.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx0600.pfb><c:/
+TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb><c:/TexLive/20
+24/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><c:/TexLive/2024/texmf-d
+ist/fonts/type1/public/cm-super/sfbx1440.pfb><c:/TexLive/2024/texmf-dist/fonts/
+type1/public/cm-super/sfbx1728.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/publ
+ic/cm-super/sfcc1440.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-supe
+r/sfrm0600.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0800
+.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb><c:/T
+exLive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1440.pfb><c:/TexLive/202
+4/texmf-dist/fonts/type1/public/cm-super/sfsl1200.pfb><c:/TexLive/2024/texmf-di
+st/fonts/type1/public/cm-super/sfti0700.pfb><c:/TexLive/2024/texmf-dist/fonts/t
+ype1/public/cm-super/sfti1000.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/publi
+c/cm-super/sfti1095.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super
+/sfti1200.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-super/sfxc2074.
+pfb>
+Output written on LateX.pdf (35 pages, 8500250 bytes).
 PDF statistics:
- 277 PDF objects out of 1000 (max. 8388607)
- 153 compressed objects within 2 object streams
+ 670 PDF objects out of 1000 (max. 8388607)
+ 216 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
- 91 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 116 words of extra memory for PDF output out of 10000 (max. 10000000)
 
