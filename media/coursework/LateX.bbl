@@ -53,16 +53,16 @@ Liane Bernstein, Alexander Sludds, Ryan Hamerly, Vivienne Sze, Joel Emer, Dirk
   reports\hspace{0.2em}--\hspace{0.2em} 2021.\hspace{0.2em}--\hspace{0.2em}
   Vol.\hspace{0.2em}11, \No1.--\hspace{0.5em}p.\hspace{0.2em}3144.
 
+\bibitem{openai_website}
+OpenAI
+\newblock Ai and compute
+\newblock \url{https://openai.com/index/ai-and-compute/} 2024.
+
 \bibitem{powell2008quantum}
 James~R Powell,  The quantum limit to moore's law
   \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Proceedings of the
   IEEE\hspace{0.2em}--\hspace{0.2em} 2008.\hspace{0.2em}--\hspace{0.2em}
   Vol.\hspace{0.2em}96, \No8.--\hspace{0.5em}p.\hspace{0.2em}1247--1248.
-
-\bibitem{danowitz2014exploring}
-Andrew Danowitz
-\newblock {\em Exploring abstract interfaces in system-on-chip integration}
-\newblock PhD thesis Stanford University 2014.
 
 \bibitem{khan2021advancements}
 Fatima~Hameed Khan, Muhammad~Adeel Pasha, Shahid Masud,  Advancements in
@@ -73,12 +73,23 @@ Fatima~Hameed Khan, Muhammad~Adeel Pasha, Shahid Masud,  Advancements in
   2021.\hspace{0.2em}--\hspace{0.2em} Vol.\hspace{0.2em}12,
   \No6.--\hspace{0.5em}p.\hspace{0.2em}665.
 
+\bibitem{danowitz2014exploring}
+Andrew Danowitz
+\newblock {\em Exploring abstract interfaces in system-on-chip integration}
+\newblock PhD thesis Stanford University 2014.
+
 \bibitem{indiveri2015memory}
 Giacomo Indiveri, Shih-Chii Liu,  Memory and information processing in
   neuromorphic systems \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em}
   Proceedings of the IEEE\hspace{0.2em}--\hspace{0.2em}
   2015.\hspace{0.2em}--\hspace{0.2em} Vol.\hspace{0.2em}103,
   \No8.--\hspace{0.5em}p.\hspace{0.2em}1379--1397.
+
+\bibitem{mahapatra1999processor}
+Nihar~R Mahapatra, Balakrishna~V Venkatrao,  The processor-memory bottleneck:
+  problems and solutions. \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em}
+  Xrds\hspace{0.2em}--\hspace{0.2em} 1999.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}5, \No3es.--\hspace{0.5em}p.\hspace{0.2em}2--es.
 
 \bibitem{solli2015analog}
 Daniel~R Solli, Bahram Jalali,  Analog optical computing

@@ -1,24 +1,27 @@
 \babel@toc {russian}{}\relax 
-\contentsline {section}{\numberline {1}Введение}{1}{}%
-\contentsline {section}{\numberline {2}Обзор литературы}{2}{}%
-\contentsline {subsection}{\numberline {2.1}Нейронные сети}{2}{}%
-\contentsline {paragraph}{Идея нейронной сети}{2}{}%
-\contentsline {paragraph}{Современные тенденции в области нейронных сетей}{5}{}%
-\contentsline {subsection}{\numberline {2.2}Оптические вычислители}{8}{}%
-\contentsline {paragraph}{Оптические корреляторы}{9}{}%
-\contentsline {paragraph}{Оптическое сжатие информации}{10}{}%
-\contentsline {paragraph}{Дифракционные нейронные сети}{15}{}%
-\contentsline {subsection}{\numberline {2.3}Некогерентное излучение}{17}{}%
-\contentsline {paragraph}{Временная когерентность}{17}{}%
-\contentsline {paragraph}{Пространственная когерентность}{18}{}%
-\contentsline {section}{\numberline {3}Оригинальная часть}{19}{}%
-\contentsline {subsection}{\numberline {3.1}Теоретическое введение и методы}{19}{}%
-\contentsline {paragraph}{Линейная некогерентная система}{19}{}%
-\contentsline {paragraph}{Генерация реализаций некогерентного поля}{21}{}%
-\contentsline {paragraph}{Прохождение света через маску}{24}{}%
-\contentsline {paragraph}{Расчёт когерентного распространения}{24}{}%
-\contentsline {paragraph}{Линейная модель и некогерентный свет}{26}{}%
-\contentsline {subsection}{\numberline {3.2}Гибридный оптоэлектронный классификатор изображений}{31}{}%
-\contentsline {section}{\numberline {4}Заключение}{31}{}%
-\par \vspace {1pc}\hbox to \textwidth {\noindent \bf {\large Список литературы} \hfill \hspace {1em}32}
+\contentsline {section}{Введение}{2}{Doc-Start}%
+\contentsline {section}{\numberline {1}Обзор литературы}{3}{section.0.1}%
+\contentsline {subsection}{\numberline {1.1}Нейронные сети}{3}{subsection.0.1.1}%
+\contentsline {paragraph}{Математика нейронных сетей}{3}{section*.1}%
+\contentsline {paragraph}{Несоответствие вычислительных ресурсов}{6}{table.caption.4}%
+\contentsline {subsection}{\numberline {1.2}Оптические вычислители}{10}{subsection.0.1.2}%
+\contentsline {paragraph}{Оптические корреляторы}{10}{section*.10}%
+\contentsline {paragraph}{Оптическое сжатие изображений}{12}{equation.0.1.8}%
+\contentsline {paragraph}{Дифракционные нейронные сети}{16}{figure.caption.18}%
+\contentsline {subsection}{\numberline {1.3}Некогерентное излучение}{19}{subsection.0.1.3}%
+\contentsline {paragraph}{Временная когерентность}{19}{section*.21}%
+\contentsline {paragraph}{Пространственная когерентность}{19}{equation.0.1.12}%
+\contentsline {section}{\numberline {2}Оригинальная часть}{22}{section.0.2}%
+\contentsline {subsection}{\numberline {2.1}Постановка задачи}{22}{subsection.0.2.1}%
+\contentsline {subsection}{\numberline {2.2}Теоретическое введение и методы}{22}{subsection.0.2.2}%
+\contentsline {paragraph}{Линейная некогерентная система}{22}{section*.22}%
+\contentsline {paragraph}{Генерация реализаций некогерентного поля}{24}{equation.0.2.23}%
+\contentsline {paragraph}{Прохождение света через маску}{27}{figure.caption.23}%
+\contentsline {paragraph}{Расчёт когерентного распространения}{27}{figure.caption.23}%
+\contentsline {paragraph}{Линейная модель и некогерентный свет}{29}{figure.caption.24}%
+\contentsline {subsection}{\numberline {2.3}Гибридный оптоэлектронный классификатор изображений}{34}{subsection.0.2.3}%
+\contentsline {paragraph}{Параметры модели}{34}{figure.caption.28}%
+\contentsline {paragraph}{Подготовка данных}{35}{section*.29}%
+\contentsline {section}{Заключение}{36}{figure.caption.30}%
+\contentsline {section}{Список литературы}{37}{figure.caption.30}%
 \contentsfinish 

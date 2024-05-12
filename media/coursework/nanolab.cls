@@ -11,7 +11,7 @@
 \RequirePackage[utf8]{inputenc}%for WiN
 \RequirePackage[T2A]{fontenc}
 \RequirePackage[english,russian]{babel}
-%\RequirePackage[colorlinks=true, bookmarks=true, pagebackref=true, unicode=true]{hyperref}
+\RequirePackage[colorlinks=false, bookmarks=true, pagebackref=false, unicode=true, hidelinks=true]{hyperref}
 \RequirePackage{amssymb}
 \RequirePackage{amsmath}
 \RequirePackage{titlesec}
@@ -109,6 +109,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \renewcommand \thechapter {\@Roman\c@chapter}%% Нумерация глав римскими цифрами
 \newcommand{\nonumchapter}{\@nonumchap}
+\newcommand{\nonumsection}[1]{
+  \section*{#1}
+  \addcontentsline{toc}{section}{#1}
+  \markright{#1}
+}
 \renewcommand{\appendix}{\@tataappendix}
 \def\@nonumchap#1{\setcounter{section}{0}%
                         \newpage%
@@ -158,7 +163,7 @@
 %%%% Оформление списка литературы
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \renewenvironment{thebibliography}[1]
-     {\nonumchapter{\tatabibname}%
+     {\nonumsection{\tatabibname}%
       \@mkboth{\tatabibname}{\tatabibname}%
       \list{\@biblabel{\@arabic\c@enumiv}}%
            {\settowidth\labelwidth{\@biblabel{#1}}%
@@ -176,7 +181,6 @@
      {\def\@noitemerr
        {\@latex@warning{Empty `thebibliography' environment}}%
       \endlist}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Делаем сквозную нумерацию картинок, таблиц и уравнений
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
