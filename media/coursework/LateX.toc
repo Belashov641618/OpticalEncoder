@@ -19,9 +19,11 @@
 \contentsline {paragraph}{Прохождение света через маску}{27}{figure.caption.23}%
 \contentsline {paragraph}{Расчёт когерентного распространения}{27}{figure.caption.23}%
 \contentsline {paragraph}{Линейная модель и некогерентный свет}{29}{figure.caption.24}%
-\contentsline {subsection}{\numberline {2.3}Гибридный оптоэлектронный классификатор изображений}{34}{subsection.0.2.3}%
+\contentsline {subsection}{\numberline {2.3}Оптоэлектронный классификатор изображений}{34}{subsection.0.2.3}%
 \contentsline {paragraph}{Параметры модели}{34}{figure.caption.28}%
 \contentsline {paragraph}{Подготовка данных}{35}{section*.29}%
-\contentsline {section}{Заключение}{36}{figure.caption.30}%
-\contentsline {section}{Список литературы}{37}{figure.caption.30}%
+\contentsline {paragraph}{Обучение модели}{35}{figure.caption.30}%
+\contentsline {subsection}{\numberline {2.4}Результаты}{36}{subsection.0.2.4}%
+\contentsline {section}{Заключение}{37}{subsection.0.2.4}%
+\contentsline {section}{Список литературы}{38}{subsection.0.2.4}%
 \contentsfinish 

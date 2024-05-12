@@ -19,45 +19,45 @@ Warning--empty journal in Ahmanov
 while executing---line 1007 of file nanolab.bst
 `address' is a missing field, not a string, for entry MMF
 while executing---line 1007 of file nanolab.bst
-You've used 32 entries,
+You've used 33 entries,
             1802 wiz_defined-function locations,
-            659 strings with 9475 characters,
-and the built_in function-call counts, 9672 in all, are:
-= -- 820
-> -- 391
-< -- 2
-+ -- 135
-- -- 103
-* -- 1052
-:= -- 1421
-add.period$ -- 33
-call.type$ -- 32
-change.case$ -- 29
+            664 strings with 9676 characters,
+and the built_in function-call counts, 10055 in all, are:
+= -- 855
+> -- 406
+< -- 3
++ -- 140
+- -- 107
+* -- 1075
+:= -- 1470
+add.period$ -- 34
+call.type$ -- 33
+change.case$ -- 30
 chr.to.int$ -- 0
-cite$ -- 34
-duplicate$ -- 226
-empty$ -- 971
-format.name$ -- 103
-if$ -- 2058
+cite$ -- 35
+duplicate$ -- 247
+empty$ -- 1009
+format.name$ -- 107
+if$ -- 2152
 int.to.chr$ -- 0
-int.to.str$ -- 32
-missing$ -- 31
-newline$ -- 108
-num.names$ -- 31
-pop$ -- 31
+int.to.str$ -- 33
+missing$ -- 32
+newline$ -- 113
+num.names$ -- 32
+pop$ -- 37
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 99
+skip$ -- 115
 stack$ -- 0
-substring$ -- 1516
-swap$ -- 12
-text.length$ -- 2
+substring$ -- 1548
+swap$ -- 23
+text.length$ -- 3
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 2
-while$ -- 68
-width$ -- 34
-write$ -- 295
+while$ -- 72
+width$ -- 35
+write$ -- 306
 (There were 7 error messages)

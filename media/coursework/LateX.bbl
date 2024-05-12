@@ -117,6 +117,12 @@ A~Vander Lugt,  Signal detection by complex spatial filtering
   1964.\hspace{0.2em}--\hspace{0.2em} Vol.\hspace{0.2em}10,
   \No2.--\hspace{0.5em}p.\hspace{0.2em}139--145.
 
+\bibitem{weaver1966technique}
+CS~Weaver, Joseph~W Goodman,  A technique for optically convolving two
+  functions \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Applied
+  optics\hspace{0.2em}--\hspace{0.2em} 1966.\hspace{0.2em}--\hspace{0.2em}
+  Vol.\hspace{0.2em}5, \No7.--\hspace{0.5em}p.\hspace{0.2em}1248--1249.
+
 \bibitem{goncharov2019features}
 DS~Goncharov, E~Yu Zlokazov, EK~Petrova, NM~Ponomarev, RS~Starikov,  Features
   of the implementation of holographic invariant correlation filters based on a
@@ -125,12 +131,6 @@ DS~Goncharov, E~Yu Zlokazov, EK~Petrova, NM~Ponomarev, RS~Starikov,  Features
   Physics Institute\hspace{0.2em}--\hspace{0.2em}
   2019.\hspace{0.2em}--\hspace{0.2em} Vol.\hspace{0.2em}46,
   p.\hspace{0.2em}126--129.
-
-\bibitem{weaver1966technique}
-CS~Weaver, Joseph~W Goodman,  A technique for optically convolving two
-  functions \hspace{-0.3em}$/\hspace{-0.2em}/$\hspace{-0.2em} Applied
-  optics\hspace{0.2em}--\hspace{0.2em} 1966.\hspace{0.2em}--\hspace{0.2em}
-  Vol.\hspace{0.2em}5, \No7.--\hspace{0.5em}p.\hspace{0.2em}1248--1249.
 
 \bibitem{alfalou2009optical}
 Ayman Alfalou, C~Brosseau,  Optical image compression and encryption methods
@@ -216,5 +216,11 @@ Tao Yan, Jiamin Wu, Tiankuang Zhou, Hao Xie, Feng Xu, Jingtao Fan, Lu~Fang,
   по математической физике}.\hspace{0.2em}
   --\hspace{0.2em}
 \newblock Изд-во Моск. ун-та,  2004.
+
+\bibitem{he2016deep}
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun
+\newblock Deep residual learning for image recognition
+\newblock In:  {\em Proceedings of the IEEE conference on computer vision and
+  pattern recognition} pages 770--778 2016.
 
 \end{thebibliography}

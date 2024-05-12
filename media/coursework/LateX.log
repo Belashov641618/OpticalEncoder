@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  12 MAY 2024 21:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.4)  13 MAY 2024 00:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -801,7 +801,7 @@ Package hyperref Warning: The anchor of a bookmark and its parent's must not
 (hyperref)                be the same. Added a new anchor on input line 4.
 
 [3]
-<figures/SGD.jpg, id=169, 303.23077pt x 202.15384pt>
+<figures/SGD.jpg, id=179, 303.23077pt x 202.15384pt>
 File: figures/SGD.jpg Graphic file (type jpg)
 <use figures/SGD.jpg>
 Package pdftex.def Info: figures/SGD.jpg  used on input line 21.
@@ -810,7 +810,7 @@ Package pdftex.def Info: figures/SGD.jpg  used on input line 21.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/NNArchitectures.png, id=175, 3888.5275pt x 1656.1875pt>
+<figures/NNArchitectures.png, id=185, 3888.5275pt x 1656.1875pt>
 File: figures/NNArchitectures.png Graphic file (type png)
 <use figures/NNArchitectures.png>
 Package pdftex.def Info: figures/NNArchitectures.png  used on input line 28.
@@ -820,22 +820,22 @@ Package pdftex.def Info: figures/NNArchitectures.png  used on input line 28.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [5 <./figures/SGD.jpg> <./figures/NNArchitectures.png>]
-<figures/PublicationsAI.png, id=195, 1469.49pt x 664.73344pt>
+<figures/PublicationsAI.png, id=204, 1469.49pt x 664.73344pt>
 File: figures/PublicationsAI.png Graphic file (type png)
 <use figures/PublicationsAI.png>
 Package pdftex.def Info: figures/PublicationsAI.png  used on input line 39.
 (pdftex.def)             Requested size: 398.6314pt x 180.3223pt.
-<figures/PerfomanceGPUCPU.png, id=203, 1668.9853pt x 712.91344pt>
+<figures/PerfomanceGPUCPU.png, id=212, 1668.9853pt x 712.91344pt>
 File: figures/PerfomanceGPUCPU.png Graphic file (type png)
 <use figures/PerfomanceGPUCPU.png>
 Package pdftex.def Info: figures/PerfomanceGPUCPU.png  used on input line 45.
 (pdftex.def)             Requested size: 398.6314pt x 170.27597pt.
-<figures/ParametersANN.png, id=206, 853.1875pt x 454.69875pt>
+<figures/ParametersANN.png, id=215, 853.1875pt x 454.69875pt>
 File: figures/ParametersANN.png Graphic file (type png)
 <use figures/ParametersANN.png>
 Package pdftex.def Info: figures/ParametersANN.png  used on input line 50.
 (pdftex.def)             Requested size: 398.6314pt x 212.45264pt.
-<figures/OpenAI.jpg, id=211, 1736.4875pt x 885.3075pt>
+<figures/OpenAI.jpg, id=220, 1736.4875pt x 885.3075pt>
 File: figures/OpenAI.jpg Graphic file (type jpg)
 <use figures/OpenAI.jpg>
 Package pdftex.def Info: figures/OpenAI.jpg  used on input line 56.
@@ -849,7 +849,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [7 <./figures/PublicationsAI.png> <./figures/PerfomanceGPUCPU.png>]
-<figures/WattD.png, id=238, 1165.35374pt x 626.34pt>
+<figures/WattD.png, id=247, 1165.35374pt x 626.34pt>
 File: figures/WattD.png Graphic file (type png)
 <use figures/WattD.png>
 Package pdftex.def Info: figures/WattD.png  used on input line 65.
@@ -866,12 +866,12 @@ Package hyperref Warning: Difference (2) between bookmark levels is greater
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
 (hyperref)                be the same. Added a new anchor on input line 10.
 
-<figures/VLC.png, id=273, 853.1875pt x 315.1775pt>
+<figures/VLC.png, id=282, 853.1875pt x 315.1775pt>
 File: figures/VLC.png Graphic file (type png)
 <use figures/VLC.png>
 Package pdftex.def Info: figures/VLC.png  used on input line 13.
 (pdftex.def)             Requested size: 318.90633pt x 117.81134pt.
-<figures/JTC.png, id=276, 839.38594pt x 806.26219pt>
+<figures/JTC.png, id=285, 839.38594pt x 806.26219pt>
 File: figures/JTC.png Graphic file (type png)
 <use figures/JTC.png>
 Package pdftex.def Info: figures/JTC.png  used on input line 18.
@@ -883,17 +883,17 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [10] [11 <./figures/VLC.png>] [12 <./figures/JTC.png>]
-<figures/JPEG2000.png, id=326, 969.6225pt x 525.46312pt>
+<figures/JPEG2000.png, id=335, 969.6225pt x 525.46312pt>
 File: figures/JPEG2000.png Graphic file (type png)
 <use figures/JPEG2000.png>
 Package pdftex.def Info: figures/JPEG2000.png  used on input line 102.
 (pdftex.def)             Requested size: 318.90633pt x 172.82607pt.
-<figures/VLCERMS.png, id=329, 621.07031pt x 568.37344pt>
+<figures/VLCERMS.png, id=338, 621.07031pt x 568.37344pt>
 File: figures/VLCERMS.png Graphic file (type png)
 <use figures/VLCERMS.png>
 Package pdftex.def Info: figures/VLCERMS.png  used on input line 109.
 (pdftex.def)             Requested size: 159.45012pt x 145.91765pt.
-<figures/VLCSNR.png, id=330, 605.26125pt x 595.47469pt>
+<figures/VLCSNR.png, id=339, 605.26125pt x 595.47469pt>
 File: figures/VLCSNR.png Graphic file (type png)
 <use figures/VLCSNR.png>
 Package pdftex.def Info: figures/VLCSNR.png  used on input line 114.
@@ -903,17 +903,17 @@ Package pdftex.def Info: figures/VLCSNR.png  used on input line 114.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [13 <./figures/JPEG2000.png>]
-<figures/JPEG.png, id=348, 1675.00781pt x 326.72063pt>
+<figures/JPEG.png, id=358, 1675.00781pt x 326.72063pt>
 File: figures/JPEG.png Graphic file (type png)
 <use figures/JPEG.png>
 Package pdftex.def Info: figures/JPEG.png  used on input line 124.
 (pdftex.def)             Requested size: 318.90633pt x 62.2022pt.
-<figures/JPEGres.png, id=351, 1086.30844pt x 815.29594pt>
+<figures/JPEGres.png, id=361, 1086.30844pt x 815.29594pt>
 File: figures/JPEGres.png Graphic file (type png)
 <use figures/JPEGres.png>
 Package pdftex.def Info: figures/JPEGres.png  used on input line 129.
 (pdftex.def)             Requested size: 279.04076pt x 209.42166pt.
-<figures/JPEGres2.png, id=354, 627.84563pt x 882.29625pt>
+<figures/JPEGres2.png, id=364, 627.84563pt x 882.29625pt>
 File: figures/JPEGres2.png Graphic file (type png)
 <use figures/JPEGres2.png>
 Package pdftex.def Info: figures/JPEGres2.png  used on input line 134.
@@ -927,7 +927,7 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 [14 <./figures/VLCERMS.png> <./figures/VLCSNR.png> <./figures/JPEG.png>]
 [15 <./figures/JPEGres.png> <./figures/JPEGres2.png>]
-<figures/RandomProjRes.png, id=381, 1212.78094pt x 813.0375pt>
+<figures/RandomProjRes.png, id=390, 1212.78094pt x 813.0375pt>
 File: figures/RandomProjRes.png Graphic file (type png)
 <use figures/RandomProjRes.png>
 Package pdftex.def Info: figures/RandomProjRes.png  used on input line 143.
@@ -935,7 +935,7 @@ Package pdftex.def Info: figures/RandomProjRes.png  used on input line 143.
  [16
 
  <./figures/RandomProjRes.png>]
-<figures/ClassicD2NN.png, id=395, 1486.80469pt x 645.91313pt>
+<figures/ClassicD2NN.png, id=404, 1486.80469pt x 645.91313pt>
 File: figures/ClassicD2NN.png Graphic file (type png)
 <use figures/ClassicD2NN.png>
 Package pdftex.def Info: figures/ClassicD2NN.png  used on input line 164.
@@ -945,7 +945,7 @@ Package pdftex.def Info: figures/ClassicD2NN.png  used on input line 164.
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [17]
-<figures/FD2NN.png, id=409, 831.85782pt x 620.3175pt>
+<figures/FD2NN.png, id=418, 831.85782pt x 620.3175pt>
 File: figures/FD2NN.png Graphic file (type png)
 <use figures/FD2NN.png>
 Package pdftex.def Info: figures/FD2NN.png  used on input line 173.
@@ -999,7 +999,7 @@ Package epstopdf Info: Source file: <figures/IncoherentRAD.eps>
 converted-to.pdf figures/IncoherentRAD.eps>
 (epstopdf)             \includegraphics on input line 58.
 Package epstopdf Info: Output file is already uptodate.
-<figures/IncoherentRAD-eps-converted-to.pdf, id=477, 483.8075pt x 635.37375pt>
+<figures/IncoherentRAD-eps-converted-to.pdf, id=487, 483.8075pt x 635.37375pt>
 File: figures/IncoherentRAD-eps-converted-to.pdf Graphic file (type pdf)
 <use figures/IncoherentRAD-eps-converted-to.pdf>
 Package pdftex.def Info: figures/IncoherentRAD-eps-converted-to.pdf  used on in
@@ -1021,7 +1021,7 @@ df>
 s-converted-to.pdf figures/PropagationSlit.eps>
 (epstopdf)             \includegraphics on input line 81.
 Package epstopdf Info: Output file is already uptodate.
-<figures/PropagationSlit-eps-converted-to.pdf, id=575, 483.8075pt x 504.88625pt
+<figures/PropagationSlit-eps-converted-to.pdf, id=584, 483.8075pt x 504.88625pt
 >
 File: figures/PropagationSlit-eps-converted-to.pdf Graphic file (type pdf)
 <use figures/PropagationSlit-eps-converted-to.pdf>
@@ -1042,7 +1042,7 @@ f>
 -converted-to.pdf figures/YungExperiment.eps>
 (epstopdf)             \includegraphics on input line 97.
 Package epstopdf Info: Output file is already uptodate.
-<figures/YungExperiment-eps-converted-to.pdf, id=654, 414.54875pt x 659.46375pt
+<figures/YungExperiment-eps-converted-to.pdf, id=663, 414.54875pt x 659.46375pt
 >
 File: figures/YungExperiment-eps-converted-to.pdf Graphic file (type pdf)
 <use figures/YungExperiment-eps-converted-to.pdf>
@@ -1063,7 +1063,7 @@ Package epstopdf Info: Source file: <figures/Lenses.eps>
 ed-to.pdf figures/Lenses.eps>
 (epstopdf)             \includegraphics on input line 103.
 Package epstopdf Info: Output file is already uptodate.
-<figures/Lenses-eps-converted-to.pdf, id=657, 473.77pt x 659.46375pt>
+<figures/Lenses-eps-converted-to.pdf, id=666, 473.77pt x 659.46375pt>
 File: figures/Lenses-eps-converted-to.pdf Graphic file (type pdf)
 <use figures/Lenses-eps-converted-to.pdf>
 Package pdftex.def Info: figures/Lenses-eps-converted-to.pdf  used on input lin
@@ -1079,7 +1079,7 @@ Package epstopdf Info: Source file: <figures/LensImage.eps>
 erted-to.pdf figures/LensImage.eps>
 (epstopdf)             \includegraphics on input line 108.
 Package epstopdf Info: Output file is already uptodate.
-<figures/LensImage-eps-converted-to.pdf, id=658, 339.2675pt x 352.31625pt>
+<figures/LensImage-eps-converted-to.pdf, id=667, 339.2675pt x 352.31625pt>
 File: figures/LensImage-eps-converted-to.pdf Graphic file (type pdf)
 <use figures/LensImage-eps-converted-to.pdf>
 Package pdftex.def Info: figures/LensImage-eps-converted-to.pdf  used on input 
@@ -1103,7 +1103,7 @@ converted-to.pdf>] [33 <./figures/LensImage-eps-converted-to.pdf>]
 
 pdfTeX warning: pdflatex.exe (file ./figures/NetworkScheme.pdf): PDF inclusion:
  found PDF version <1.7>, but at most version <1.5> allowed
-<figures/NetworkScheme.pdf, id=897, 442.4831pt x 250.83711pt>
+<figures/NetworkScheme.pdf, id=906, 442.4831pt x 250.83711pt>
 File: figures/NetworkScheme.pdf Graphic file (type pdf)
 <use figures/NetworkScheme.pdf>
 Package pdftex.def Info: figures/NetworkScheme.pdf  used on input line 4.
@@ -1119,13 +1119,14 @@ Package hyperref Warning: Difference (2) between bookmark levels is greater
 Package hyperref Warning: The anchor of a bookmark and its parent's must not
 (hyperref)                be the same. Added a new anchor on input line 13.
 
-<figures/CIFAR10.png, id=943, 2106.36937pt x 812.28468pt>
+<figures/CIFAR10.png, id=954, 2106.36937pt x 812.28468pt>
 File: figures/CIFAR10.png Graphic file (type png)
 <use figures/CIFAR10.png>
 Package pdftex.def Info: figures/CIFAR10.png  used on input line 16.
 (pdftex.def)             Requested size: 398.6314pt x 153.71597pt.
-)) (./parts/Р—Р°РєР»СЋС‡РµРЅРёРµ.tex [35 <./figures/CIFAR10.png>]) (./LateX.bbl
-[36]
+) (./parts/РћСЂРёРіРёРЅР°Р»СЊРЅР°СЏ С‡Р°СЃС‚СЊ/Р РµР·СѓР»СЊС‚Р°С‚С‹.tex))
+(./parts/Р—Р°РєР»СЋС‡РµРЅРёРµ.tex [35 <./figures/CIFAR10.png>] [36])
+(./LateX.bbl [37]
 Underfull \hbox (badness 3713) in paragraph at lines 4--8
 \T2A/cmr/m/n/12 раз-ви-тии ис-кус-ствен-но-го ин-тел-лек-та в Рос-сий-ской Фе-д
 е-ра-ции"
@@ -1168,25 +1169,25 @@ Underfull \hbox (badness 5374) in paragraph at lines 68--75
 \T2A/cmr/m/n/12 overview on history, evolution, and upcoming challenges in ai
  []
 
-[37]
+[38]
 Underfull \hbox (badness 1371) in paragraph at lines 77--80
 []\T2A/cmr/m/n/12 Andrew Danowitz  \T2A/cmr/m/it/12 Exploring abstract interfac
 es in system-on-^^?chip
  []
 
-[38] [39]) [40] (./LateX.aux)
+[39] [40]) [41] (./LateX.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-04-11>
  ***********
 Package rerunfilecheck Info: File `LateX.out' has not changed.
-(rerunfilecheck)             Checksum: 46A84BD98002F94F4082F749C85AB00B;6524.
+(rerunfilecheck)             Checksum: 16ABB3CAE150E0B03988FD06522B97A3;6773.
  ) 
 Here is how much of TeX's memory you used:
- 15771 strings out of 474049
- 252704 string characters out of 5746278
+ 15784 strings out of 474049
+ 253298 string characters out of 5746278
  1943754 words of memory out of 5000000
- 37784 multiletter control sequences out of 15000+600000
+ 37791 multiletter control sequences out of 15000+600000
  583987 words of font info for 87 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  95i,12n,96p,2781b,590s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1217,10 +1218,10 @@ f-dist/fonts/type1/public/cm-super/sfti1200.pfb><c:/TexLive/2024/texmf-dist/fon
 ts/type1/public/cm-super/sftt1200.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/p
 ublic/cm-super/sfxc1440.pfb><c:/TexLive/2024/texmf-dist/fonts/type1/public/cm-s
 uper/sfxc2074.pfb>
-Output written on LateX.pdf (41 pages, 9157381 bytes).
+Output written on LateX.pdf (42 pages, 9160085 bytes).
 PDF statistics:
- 1133 PDF objects out of 1200 (max. 8388607)
- 631 compressed objects within 7 object streams
- 142 named destinations out of 1000 (max. 500000)
- 326 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1150 PDF objects out of 1200 (max. 8388607)
+ 647 compressed objects within 7 object streams
+ 145 named destinations out of 1000 (max. 500000)
+ 342 words of extra memory for PDF output out of 10000 (max. 10000000)
 
