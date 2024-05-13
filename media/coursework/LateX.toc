@@ -24,6 +24,5 @@
 \contentsline {paragraph}{Подготовка данных}{34}{section*.29}%
 \contentsline {paragraph}{Обучение модели}{34}{figure.caption.30}%
 \contentsline {subsection}{\numberline {2.4}Результаты}{35}{subsection.0.2.4}%
-\contentsline {section}{Заключение}{42}{figure.caption.36}%
-\contentsline {section}{Список литературы}{43}{figure.caption.36}%
+\contentsline {section}{Список литературы}{42}{figure.caption.36}%
 \contentsfinish 
