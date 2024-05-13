@@ -1,6 +1,6 @@
 \subsection{Оптоэлектронный классификатор изображений}
 Идея создания гибридной оптоэлектронной сети для классификации основано на концепции, описанной в параграфе, посвящённом сжатия информации, в секции \ref{sec:OpticalCalcs}. Принципиальная схема представлена на рисунке \ref{ris:OEScheme}.
-\begin{figure}[h]
+\begin{figure}[htbp]
 	\centering{\includegraphics[width=1.0\linewidth]{figures/NetworkScheme.pdf}}
 	\caption{Схема оптоэлектронной нейронной сети. $L$ - расстояние между слоями.}
 	\label{ris:OEScheme}
@@ -12,7 +12,7 @@
 
 \paragraph{Подготовка данных}
 В качестве набора размеченных изображений для классификации был выбран CIFAR10. Этот набор состоит из $10$-ти классов, по $6000$ изображений размером $32 \times 32$ пикселя в каждом классе. Примеры изображений представлены на рисунке \ref{ris:CIFAR10}.
-\begin{figure}[h]
+\begin{figure}[htbp]
 	\centering{\includegraphics[width=1.0\linewidth]{figures/CIFAR10.png}}
 	\caption{Примеры изображений набора CIFAR10.}
 	\label{ris:CIFAR10}
