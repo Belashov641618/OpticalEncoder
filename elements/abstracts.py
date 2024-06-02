@@ -247,6 +247,7 @@ class AbstractModulator(AbstractElement):
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)
+        field = fix_shape(field)
         field = torch.nn.functional.pad(field, self._paddings_difference)
         field = field * self._multiplier()
         field = interpolate(field, (self.pixels.output.x, self.pixels.output.y), mode=self.interpolation.mode)
@@ -287,6 +288,7 @@ class AbstractMask(AbstractInhomogeneity):
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)
+        field = fix_shape(field)
         field = torch.nn.functional.pad(field, self._paddings_difference)
         field = field * self._mask_buffer
         field = interpolate(field, (self.pixels.output.x, self.pixels.output.y), mode=self.interpolation.mode)

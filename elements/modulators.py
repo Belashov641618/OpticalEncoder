@@ -47,6 +47,8 @@ class Lens(AbstractMask):
 
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, space_reflection:FloatS, space_absorption:FloatS, focus:FloatS, logger:Logger=None):
         super().__init__(pixels, length, wavelength, reflection, absorption, space_reflection, space_absorption, logger=logger, finalize=False)
+        field = fix_shape(field)
+        
         self.focus = SpaceParam[float](self._change_focus, group=self.wavelength.group)
         self.focus.set(focus)
         self.accuracy.connect(self.focus.tensor)
@@ -121,5 +123,6 @@ class Mask(AbstractElement):
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)
-
+        field = fix_shape(field)
+        
         return field * self._mask_buffer

@@ -50,7 +50,8 @@ class ConvolutionalPropagation(AbstractPropagator):
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(field,*args, **kwargs)
-
+        field = fix_shape(field)
+        
         field = torch.nn.functional.pad(field, self._paddings)
 
         field = torch.nn.functional.conv2d(field, self._propagation_buffer.expand(field.shape[1], 1, *self._propagation_buffer.shape[1:]), groups=field.shape[1], padding=self._convolution_paddings)
@@ -128,7 +129,10 @@ class FurrierPropagation(AbstractPropagator):
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(field,*args, **kwargs)
-
+        field = fix_shape(field)
+        print(f"FurrierPropagation: {field.shape}")
+        print(f"FurrierPropagation._propagation_buffer: {self._propagation_buffer.shape}")
+        
         field = torch.nn.functional.pad(field, self._paddings)
         field = torch.fft.fft2(field)
         field = field * self._propagation_buffer
