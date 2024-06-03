@@ -153,6 +153,7 @@ class AbstractPropagator(AbstractOptical):
     def propagation_buffer(self):
         return self._propagation_buffer
     def _register_propagation_buffer(self, buffer:torch.Tensor):
+        print("AbstractPropagator buffer registering")
         if buffer.device != self.device:
             buffer = buffer.to(self.device)
         if buffer.dtype not in (self.accuracy.tensor_float, self.accuracy.tensor_complex):
@@ -210,6 +211,10 @@ class AbstractInhomogeneity(AbstractOptical):
         super().forward(*args, **kwargs)
 
 class AbstractModulator(AbstractElement):
+    def to(self, *args, **kwargs):
+        print(f"AbstractModulator.to triggered with: {args}, {kwargs}")
+        return super().to(*args, **kwargs)
+    
     mask_pixels:XYParams[int]
     _mask_parameters:torch.nn.Parameter
     def _register_mask_parameters(self, parameters:torch.Tensor):
