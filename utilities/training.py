@@ -10,7 +10,8 @@ from utilities import *
 def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimizer, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor]):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     if hasattr(model, 'device'): device = model.device
-
+    else: device = next(iter(model.parameters())).device
+    
     model.train()
     history = numpy.zeros((len(dataset.train)))
 
@@ -47,7 +48,8 @@ def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimize
 def confusion(model:torch.nn.Module, dataset:Dataset, classes:int=10):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     if hasattr(model, 'device'): device = model.device
-
+    else: device = next(iter(model.parameters())).device
+    
     model.eval()
     matrix = numpy.zeros((classes, classes))
     with torch.no_grad():

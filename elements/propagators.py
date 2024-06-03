@@ -129,7 +129,6 @@ class FurrierPropagation(AbstractPropagator):
         self.delayed.launch()
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
-        print(f"FurrierPropagation delayed: {self.delayed._delayed_functions}")
         super().forward(field, *args, **kwargs)
         field = fix_complex(field)
         

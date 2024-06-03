@@ -17,11 +17,11 @@ class CompositeModel(torch.nn.Sequential):
     _modulators:tuple[AbstractModulator, ...]
     _wrappers:tuple[AbstractEncoderDecoder, ...]
     def _init_groups(self):
-        self._elements = ()
-        self._optical = ()
-        self._propagators = ()
-        self._modulators = ()
-        self._wrappers = ()
+        self._elements = []
+        self._optical = []
+        self._propagators = []
+        self._modulators = []
+        self._wrappers = []
         groups_map = [
             (self._elements, AbstractElement),
             (self._optical, AbstractOptical),
@@ -29,12 +29,15 @@ class CompositeModel(torch.nn.Sequential):
             (self._modulators, AbstractModulator),
             (self._wrappers, AbstractEncoderDecoder),
         ]
-        for group, type in groups_map:
-            group = ()
-        for element in self._modules:
-            for group, type in groups_map:
-                if isinstance(element, type):
-                    group += (element,)
+        for name, module in self.named_modules():
+            for group, type_ in groups_map:
+                if isinstance(module, type_):
+                    group.append(module)
+        self._elements = tuple(self._elements)
+        self._optical = tuple(self._optical)
+        self._propagators = tuple(self._propagators)
+        self._modulators = tuple(self._modulators)
+        self._wrappers = tuple(self._wrappers)
     @property
     def count(self):
         return len(self._elements)
