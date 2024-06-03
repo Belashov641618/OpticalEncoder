@@ -1,3 +1,4 @@
+from __future__ import annotations
 import torch
 from typing import Callable, Any, Optional
 from utilities import *
@@ -337,19 +338,30 @@ class AbstractDetectors(AbstractSpectral):
     def forward(self, *args, **kwargs):
         super().forward(*args, **kwargs)
 
-# Остальное
-class AbstractWrapper(torch.nn.Module):
+# Обёртки
+class AbstractEncoderDecoder(torch.nn.Module):
     delayed:DelayedFunctions
-    _forward:Optional[Callable[[torch.Tensor, Any, ...], torch.Tensor]]
-    def __init__(self, forward:Callable[[torch.Tensor, Any, ...], torch.Tensor]=None):
+    _parent:AbstractWrapper
+    def __init__(self, parent:AbstractWrapper):
         super().__init__()
         self.delayed = DelayedFunctions()
-        self._forward = forward
-    def attach_forward(self, forward:Callable[[torch.Tensor, Any, ...], torch.Tensor]):
-        self._forward = forward
+        self._parent = parent
     def forward(self, field:torch.Tensor, *args, **kwargs):
         raise NotImplementedError
+    
 
+class AbstractWrapper(torch.nn.Module):
+    encoder:AbstractEncoderDecoder
+    decoder:AbstractEncoderDecoder
+
+    def __init__(self, init:bool=True):
+        super().__init__()
+        if init:
+            self.encoder = AbstractEncoderDecoder(self)
+            self.decoder = AbstractEncoderDecoder(self)
+        
+    def pair(self):
+        return self.encoder, self.decoder
 
 
 

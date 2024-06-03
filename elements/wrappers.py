@@ -1,15 +1,19 @@
+from __future__ import annotations
 import numpy
 import torch
 
-from typing import Union, Iterable
+from typing import Union, Iterable, Optional
 from matplotlib.patches import Circle
 
-from elements.abstracts import AbstractWrapper
+from elements.abstracts import AbstractWrapper, AbstractEncoderDecoder
 from utilities.noise import gaussian, GaussianNormalizer
 from utilities import *
 from parameters import FigureWidthHeight, FontLibrary
 
 class CudaMemoryChunker(AbstractWrapper):
+    """
+    НЕ ИСПОЛЬЗУЙ ЭТОТ КЛАСС, ОН БОЛЬШЕ НЕ РАБОТАЕТ
+    """
     _chunks:int
     _sub_chunks:int
     def __init__(self, chunks:int=1, sub_chunks:int=1):
@@ -42,7 +46,32 @@ class CudaMemoryChunker(AbstractWrapper):
                 raise error
         return self.forward(field, *args, **kwargs)
 
+class IncoherentEncoder(AbstractEncoderDecoder):
+    def __init__(self, parent:Incoherent):
+        super().__init__(parent)
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        self._parent.delayed.launch()
+        field = fix_complex(field)
 
+        self._parent.channels = field.size(1)
+        Nxy = (field.size(2), field.size(3))
+        field = field.reshape(-1, self._parent.channels, 1, *Nxy)
+
+        field = field * torch.exp(2j * torch.pi * self._parent.sample())
+        field = field.reshape(-1, self._parent.channels * self.samples, *Nxy)
+
+        return field
+class IncoherentDecoder(AbstractEncoderDecoder):
+    def __init__(self, parent:Incoherent):
+        super().__init__(parent)
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        self._parent.delayed.launch()
+        field = fix_complex(field)
+
+        Nxy = (field.size(2), field.size(3))
+        field = field.reshape(-1, self._parent.channels, self.samples, *Nxy)
+        field = torch.mean(field.abs() ** 2, dim=2) * torch.exp(1j * torch.angle(field[:, :, 0, :, :]))
+        return field
 class Incoherent(AbstractWrapper):
     _generator:GaussianNormalizer
     def _reset_generator(self):
@@ -71,7 +100,6 @@ class Incoherent(AbstractWrapper):
     @property
     def samples(self):
         return self._samples.value
-
     pixels:XYParams[int]
     length:XYParams[float]
 
@@ -79,35 +107,20 @@ class Incoherent(AbstractWrapper):
         self.delayed.launch()
         return self._generator.sample()
 
+    _channels:Optional[int]
+
     def __init__(self, spatial_coherence:float, time_coherence:float, time:float, samples:int, pixels:IntXY, length:FloatXY):
-        super().__init__()
+        super().__init__(init=False)
         self._spatial_coherence = Param[float](self._delayed_generator_reset).set(spatial_coherence)
         self._time_coherence = Param[float](self._delayed_generator_reset).set(time_coherence)
         self._time = Param[float](self._delayed_generator_reset).set(time)
         self._samples = Param[int](self._delayed_generator_reset).set(samples)
-
         self.pixels = XYParams[int](change=self._delayed_generator_reset).set(pixels)
         self.length = XYParams[float](change=self._delayed_generator_reset).set(length)
+        self._channels = None
 
-    def forward(self, field:torch.Tensor, *args, **kwargs):
-        self.delayed.launch()
-        field = fix_complex(field)
-        
-        channels = field.size(1)
-        Nxy = (field.size(2), field.size(3))
-        field = field.reshape(-1, channels, 1, *Nxy)
-        # [batch][channel][new dim][Nx][Ny]
-        field = field * torch.exp(2j*torch.pi*self._generator.sample())
-        field = field.reshape(-1, channels*self.samples, *Nxy)
-
-        field = self._forward(field, *args, **kwargs)
-
-        field = field.reshape(-1, channels, self.samples, *Nxy)
-        field = torch.mean(field.abs()**2, dim=2)*torch.exp(1j*torch.angle(field[:,:,0,:,:]))
-
-        return field
-
-
+        self.encoder = IncoherentEncoder(self)
+        self.decoder = IncoherentDecoder(self)
 
     def show(self):
         with torch.no_grad():

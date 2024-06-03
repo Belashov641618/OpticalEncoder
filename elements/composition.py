@@ -5,25 +5,29 @@ from typing import Literal, Union
 from tqdm import tqdm
 from math import sqrt
 
-from elements.abstracts import AbstractElement, AbstractOptical, AbstractPropagator, AbstractWrapper, AbstractDetectors, AbstractModulator
+from elements.abstracts import AbstractElement, AbstractOptical, AbstractPropagator, AbstractWrapper, AbstractEncoderDecoder, AbstractDetectors, AbstractModulator
 from utilities import *
 from parameters import FigureWidthHeight, FontLibrary
+
 
 class CompositeModel(torch.nn.Sequential):
     _elements:tuple[AbstractElement, ...]
     _optical:tuple[AbstractOptical, ...]
     _propagators:tuple[AbstractPropagator, ...]
     _modulators:tuple[AbstractModulator, ...]
+    _wrappers:tuple[AbstractEncoderDecoder, ...]
     def _init_groups(self):
         self._elements = ()
         self._optical = ()
         self._propagators = ()
         self._modulators = ()
+        self._wrappers = ()
         groups_map = [
             (self._elements, AbstractElement),
             (self._optical, AbstractOptical),
             (self._propagators, AbstractPropagator),
             (self._modulators, AbstractModulator),
+            (self._wrappers, AbstractEncoderDecoder),
         ]
         for group, type in groups_map:
             group = ()
@@ -37,26 +41,11 @@ class CompositeModel(torch.nn.Sequential):
     def element(self, position:int):
         return self._elements[position % self.count]
 
-    # Дополнительные обёртки
-    _wrappers: list[AbstractWrapper]
-    def _init_wrappers(self):
-        self._wrappers = []
-    def wrap(self, wrapper: AbstractWrapper):
-        wrapper = wrapper.to(self.device)
-        if not self._wrappers:
-            wrapper.attach_forward(self._forward)
-            self._wrappers = [wrapper]
-        else:
-            wrapper.attach_forward(self._wrappers[-1].forward)
-            self._wrappers.append(wrapper)
-        self.add_module(f'Wrapper{len(self._wrappers) - 1}', wrapper)
-
     def __init__(self, *elements:AbstractElement):
         super().__init__(*elements)
         self._init_groups()
-        self._init_wrappers()
 
-    def _forward(self, field:torch.Tensor, *args, distance:float=None, elements:int=None, **kwargs):
+    def forward(self, field:torch.Tensor, *args, distance:float=None, elements:int=None, **kwargs):
         for i, element in enumerate(self._elements):
             if distance is not None and isinstance(element, AbstractPropagator):
                 distance -= element.distance
@@ -70,12 +59,6 @@ class CompositeModel(torch.nn.Sequential):
             if elements is not None and i == elements:
                 return field
         return field
-
-    def forward(self, field:torch.Tensor, *args, distance:float=None, elements:int=None, **kwargs):
-        if self._wrappers:
-            return self._wrappers[-1].forward(field, *args, distance=distance, elements=elements, **kwargs)
-        else:
-            return self._forward(field, *args, distance=distance, elements=elements, **kwargs)
 
     # Дополнительные методы
     @property
@@ -127,7 +110,6 @@ class CompositeModel(torch.nn.Sequential):
         for i in tqdm(range(self.count), total=self.count):
             result[i+1] = interpolate(self.forward(field, elements=i), (pixels_x, pixels_y), interpolation).squeeze().cpu()
         return result
-
 
 
 _OpticalModels = Union[CompositeModel]
