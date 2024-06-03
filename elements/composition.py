@@ -15,6 +15,10 @@ class CompositeModel(torch.nn.Sequential):
     _propagators:tuple[AbstractPropagator, ...]
     _modulators:tuple[AbstractModulator, ...]
     def _init_groups(self):
+        self._elements = ()
+        self._optical = ()
+        self._propagators = ()
+        self._modulators = ()
         groups_map = [
             (self._elements, AbstractElement),
             (self._optical, AbstractOptical),

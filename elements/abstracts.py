@@ -153,7 +153,6 @@ class AbstractPropagator(AbstractOptical):
     def propagation_buffer(self):
         return self._propagation_buffer
     def _register_propagation_buffer(self, buffer:torch.Tensor):
-        print("AbstractPropagator buffer registering")
         if buffer.device != self.device:
             buffer = buffer.to(self.device)
         if buffer.dtype not in (self.accuracy.tensor_float, self.accuracy.tensor_complex):
