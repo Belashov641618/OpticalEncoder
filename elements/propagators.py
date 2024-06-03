@@ -131,8 +131,6 @@ class FurrierPropagation(AbstractPropagator):
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(field,*args, **kwargs)
         field = fix_complex(field)
-        print(f"FurrierPropagation: {field.shape}")
-        print(f"FurrierPropagation._propagation_buffer: {self._propagation_buffer.shape}")
         
         field = torch.nn.functional.pad(field, self._paddings)
         field = torch.fft.fft2(field)

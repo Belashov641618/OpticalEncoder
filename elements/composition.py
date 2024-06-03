@@ -5,34 +5,39 @@ from typing import Literal, Union
 from tqdm import tqdm
 from math import sqrt
 
-from elements.abstracts import AbstractElement, AbstractOptical, AbstractPropagator, AbstractWrapper, AbstractDetectors
+from elements.abstracts import AbstractElement, AbstractOptical, AbstractPropagator, AbstractWrapper, AbstractDetectors, AbstractModulator
 from utilities import *
 from parameters import FigureWidthHeight, FontLibrary
 
-class CompositeModel(torch.nn.Module):
-    # Группы модулей
-    _elements:tuple[AbstractElement,...]
-    def _init_elements(self, *elements:AbstractElement):
-        self._elements = elements
-        for i, element in enumerate(self._elements):
-            self.add_module(f'Element{i}', element)
+class CompositeModel(torch.nn.Sequential):
+    _elements:tuple[AbstractElement, ...]
+    _optical:tuple[AbstractOptical, ...]
+    _propagators:tuple[AbstractPropagator, ...]
+    _modulators:tuple[AbstractModulator, ...]
+    def _init_groups(self):
+        groups_map = [
+            (self._elements, AbstractElement),
+            (self._optical, AbstractOptical),
+            (self._propagators, AbstractPropagator),
+            (self._modulators, AbstractModulator),
+        ]
+        for group, type in groups_map:
+            group = ()
+        for element in self._modules:
+            for group, type in groups_map:
+                if isinstance(element, type):
+                    group += (element,)
     @property
     def count(self):
         return len(self._elements)
-    def element(self, position:int) -> AbstractElement:
+    def element(self, position:int):
         return self._elements[position % self.count]
 
-    _optical:tuple[AbstractOptical,...]
-    def _init_optical(self):
-        self._optical = tuple([element for element in self._elements if isinstance(element, AbstractOptical)])
-
-    _propagators:tuple[AbstractPropagator,...]
-    def _init_propagators(self):
-        self._propagators = tuple([element for element in self._optical if isinstance(element, AbstractPropagator)])
-
     # Дополнительные обёртки
-    _wrappers:list[AbstractWrapper]
-    def wrap(self, wrapper:AbstractWrapper):
+    _wrappers: list[AbstractWrapper]
+    def _init_wrappers(self):
+        self._wrappers = []
+    def wrap(self, wrapper: AbstractWrapper):
         wrapper = wrapper.to(self.device)
         if not self._wrappers:
             wrapper.attach_forward(self._forward)
@@ -40,15 +45,12 @@ class CompositeModel(torch.nn.Module):
         else:
             wrapper.attach_forward(self._wrappers[-1].forward)
             self._wrappers.append(wrapper)
-        self.add_module(f'Wrapper{len(self._wrappers)-1}', wrapper)
+        self.add_module(f'Wrapper{len(self._wrappers) - 1}', wrapper)
 
-    # Основные методы
     def __init__(self, *elements:AbstractElement):
-        super().__init__()
-        self._wrappers = []
-        self._init_elements(*elements)
-        self._init_optical()
-        self._init_propagators()
+        super().__init__(*elements)
+        self._init_groups()
+        self._init_wrappers()
 
     def _forward(self, field:torch.Tensor, *args, distance:float=None, elements:int=None, **kwargs):
         for i, element in enumerate(self._elements):
@@ -121,6 +123,8 @@ class CompositeModel(torch.nn.Module):
         for i in tqdm(range(self.count), total=self.count):
             result[i+1] = interpolate(self.forward(field, elements=i), (pixels_x, pixels_y), interpolation).squeeze().cpu()
         return result
+
+
 
 _OpticalModels = Union[CompositeModel]
 class HybridModel(torch.nn.Module):
