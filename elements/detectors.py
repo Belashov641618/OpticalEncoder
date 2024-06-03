@@ -81,7 +81,7 @@ class ClassificationDetectors(AbstractDetectors):
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)
-        field = fix_shape(field)
+        field = fix_complex(field)
         
         field = torch.nn.functional.pad(torch.abs(field), self._paddings_difference)
         field = field.reshape(field.shape[0], 1, *field.shape[1:]) * (self._wavelength_buffer.reshape(1, -1, 1, 1) * self._detectors_buffer.reshape(self._detectors_buffer.shape[0], 1, *self._detectors_buffer.shape[1:]))
@@ -194,7 +194,7 @@ class MatrixDetectors(AbstractDetectors):
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)
-        field = fix_shape(field)
+        field = fix_complex(field)
         
         field = torch.nn.functional.pad(torch.abs(field), self._paddings_difference)
 

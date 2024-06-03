@@ -18,7 +18,7 @@ class CudaMemoryChunker(AbstractWrapper):
         self._sub_chunks:int = sub_chunks
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
-        field = fix_shape(field)
+        field = fix_complex(field)
         try:
             results = []
             for part_ in torch.chunk(field, self._chunks, dim=0):
@@ -91,7 +91,7 @@ class Incoherent(AbstractWrapper):
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         self.delayed.launch()
-        field = fix_shape(field)
+        field = fix_complex(field)
         
         channels = field.size(1)
         Nxy = (field.size(2), field.size(3))

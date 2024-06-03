@@ -50,11 +50,12 @@ class ConvolutionalPropagation(AbstractPropagator):
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(field,*args, **kwargs)
-        field = fix_shape(field)
+        field = fix_complex(field)
         
         field = torch.nn.functional.pad(field, self._paddings)
+        propagation_buffer = fix_complex(self._propagation_buffer)
 
-        field = torch.nn.functional.conv2d(field, self._propagation_buffer.expand(field.shape[1], 1, *self._propagation_buffer.shape[1:]), groups=field.shape[1], padding=self._convolution_paddings)
+        field = torch.nn.functional.conv2d(field, propagation_buffer.expand(field.shape[1], 1, *propagation_buffer.shape[1:]), groups=field.shape[1], padding=self._convolution_paddings)
 
         field = torch.nn.functional.pad(field, self._unpaddings)
         field = interpolate(field, (self.pixels.output.x, self.pixels.output.y), mode=self.interpolation.mode)
@@ -129,13 +130,13 @@ class FurrierPropagation(AbstractPropagator):
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(field,*args, **kwargs)
-        field = fix_shape(field)
+        field = fix_complex(field)
         print(f"FurrierPropagation: {field.shape}")
         print(f"FurrierPropagation._propagation_buffer: {self._propagation_buffer.shape}")
         
         field = torch.nn.functional.pad(field, self._paddings)
         field = torch.fft.fft2(field)
-        field = field * self._propagation_buffer
+        field = field * fix_complex(self._propagation_buffer)
         field = torch.fft.ifft2(field)
         field = torch.nn.functional.pad(field, self._unpaddings)
         field = interpolate(field, (self.pixels.output.x, self.pixels.output.y), mode=self.interpolation.mode)

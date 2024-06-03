@@ -114,7 +114,7 @@ def trays_rays(image:torch.Tensor):
 
     return mask
 
-def fix_shape(tensor:torch.Tensor):
+def fix_complex(tensor:torch.Tensor):
     if len(tensor.shape) == 5 and tensor.shape[4] == 2:
         tensor = tensor.movedim(4,0)
         tensor = tensor[0] + 1j*tensor[1]
