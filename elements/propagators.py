@@ -122,6 +122,7 @@ class FurrierPropagation(AbstractPropagator):
 
     def __init__(self, pixels:IntIO, length:FloatIO, wavelength:FloatS, reflection:FloatS, absorption:FloatS, distance:float, border_ratio:float=0.5, logger:Logger=None):
         super().__init__(pixels, length, wavelength, reflection, absorption, distance, logger=logger)
+        print("FurrierPropagation Initialization")
         self.border_ratio = border_ratio
         self._pad_pixels = XYParams[int]()
         self._pad_pixels.set(0)
@@ -129,7 +130,8 @@ class FurrierPropagation(AbstractPropagator):
         self.delayed.launch()
 
     def forward(self, field:torch.Tensor, *args, **kwargs):
-        super().forward(field,*args, **kwargs)
+        print(f"FurrierPropagation delayed: {self.delayed._delayed_functions}")
+        super().forward(field, *args, **kwargs)
         field = fix_complex(field)
         
         field = torch.nn.functional.pad(field, self._paddings)
