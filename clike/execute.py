@@ -1,6 +1,8 @@
 import os
 import sys
 import tempfile
+import time
+
 import torch
 import torch.optim as optim
 from enum import Enum
@@ -48,13 +50,23 @@ def _confusion(*args):
 def _execute(*args):
     pass
 
-if __name__ == '__main__':
+def main():
     print(sys.argv)
     aim = int(sys.argv[1])
     print(f"Aim is: {aim}")
     with open(os.path.dirname(os.path.abspath(__file__)) + "/cash/arguments.pkl", 'rb') as file:
         arguments = load(file)
-    if aim == aims.train:           _train(*arguments)
-    elif aims == aims.confusion:    _confusion(*arguments)
-    elif aims == aims.execute:      _execute(*arguments)
-    else:                           raise AttributeError('Выбран не верный тип операции')
+    if aim == aims.train:
+        _train(*arguments)
+    elif aim == aims.confusion:
+        _confusion(*arguments)
+    elif aim == aims.execute:
+        _execute(*arguments)
+    elif aim == -1:
+        for i in range(7):
+            print(i)
+            time.sleep(2)
+    else:
+        raise AttributeError('Выбран не верный тип операции')
+if __name__ == '__main__':
+    main()
