@@ -7,8 +7,7 @@ from time import time
 
 from utilities import *
 
-def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimizer, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor]):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimizer, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], echo:bool=True):
     if hasattr(model, 'device'): device = model.device
     else: device = next(iter(model.parameters())).device
     
@@ -20,7 +19,7 @@ def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimize
     running_loss_proportion = 0.2
     regression = 0
 
-    iterator = tqdm(dataset.train)
+    iterator = tqdm(dataset.train, disable=not echo)
     for i, (images, labels) in enumerate(iterator):
         labels = labels.to(device)
         images = images.to(device)
@@ -46,7 +45,6 @@ def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimize
     return history
 
 def confusion(model:torch.nn.Module, dataset:Dataset, classes:int=10):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     if hasattr(model, 'device'): device = model.device
     else: device = next(iter(model.parameters())).device
     

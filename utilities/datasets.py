@@ -23,8 +23,7 @@ class Dataset:
                     transforms.ToTensor(),
                     transforms.ConvertImageDtype(self._dtype)
                 ])
-            self._train = DataLoader(datasets.MNIST(root=DataSetsPath, train=True, transform=transformation, download=True), batch_size=self._batch, shuffle=True)
-            self._test  = DataLoader(datasets.MNIST(root=DataSetsPath, train=False, transform=transformation, download=True), batch_size=self._batch, shuffle=True)
+            dataset = datasets.MNIST(root=DataSetsPath, train=True, transform=transformation, download=True)
         elif self._dataset == 'Flowers':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
@@ -32,8 +31,7 @@ class Dataset:
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])
-            self._train = DataLoader(datasets.Flowers102(root=DataSetsPath, split='train', transform=transformation, download=True), batch_size=self._batch, shuffle=True)
-            self._test  = DataLoader(datasets.Flowers102(root=DataSetsPath, split='test',  transform=transformation, download=True), batch_size=self._batch, shuffle=True)
+            dataset = datasets.Flowers102(root=DataSetsPath, split='train', transform=transformation, download=True)
         elif self._dataset == 'STL10':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
@@ -41,8 +39,7 @@ class Dataset:
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])
-            self._train = DataLoader(datasets.STL10(root=DataSetsPath, split='train', transform=transformation, download=True), batch_size=self._batch, shuffle=True)
-            self._test  = DataLoader(datasets.STL10(root=DataSetsPath, split='test',  transform=transformation, download=True), batch_size=self._batch, shuffle=True)
+            dataset = datasets.STL10(root=DataSetsPath, split='train', transform=transformation, download=True)
         elif self._dataset == 'CIFAR10':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
@@ -50,9 +47,11 @@ class Dataset:
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])
-            self._train = DataLoader(datasets.CIFAR10(root=DataSetsPath, train=True,   transform=transformation, download=True), batch_size=self._batch, shuffle=True)
-            self._test  = DataLoader(datasets.CIFAR10(root=DataSetsPath, train=False,  transform=transformation, download=True), batch_size=self._batch, shuffle=True)
+            dataset = datasets.CIFAR10(root=DataSetsPath, train=True,   transform=transformation, download=True)
         else: raise ValueError(f'Dataset is {self._dataset}')
+        sampler = self._sampler_type(dataset)
+        self._train = DataLoader(dataset, batch_size=self._batch, sampler=sampler)
+        self._test = DataLoader(dataset, batch_size=self._batch, sampler=sampler)
     @property
     def train(self):
         self._delayed.launch()
@@ -124,7 +123,27 @@ class Dataset:
             self._delayed.add(self._reload)
             self._dtype = type
 
-    def __init__(self, dataset:LiteralDataSet=None, batch:int=None, width:int=None, height:int=None, dtype:torch.dtype=torch.float32):
+    _sampler_type : type(torch.utils.data.Sampler)
+    @property
+    def sampler(self):
+        class SamplerSelector:
+            _self:Dataset
+            def __init__(self, _self:Dataset):
+                self._self = _self
+            def get(self):
+                return self._self._sampler_type
+            def set(self, type:type(torch.utils.data.Sampler)):
+                if not hasattr(self._self, '_sampler_type') or self._self._sampler_type != type:
+                    self._self._delayed.add(self._self._reload)
+                self._self._sampler_type = type
+
+            def default(self):
+                self.set(torch.utils.data.RandomSampler)
+            def parallel(self):
+                self.set(torch.utils.data.distributed.DistributedSampler)
+        return SamplerSelector(self)
+
+    def __init__(self, dataset:LiteralDataSet=None, batch:int=None, width:int=None, height:int=None, dtype:torch.dtype=torch.float32, sampler:type(torch.utils.data.Sampler)=torch.utils.data.RandomSampler):
         self._delayed = DelayedFunctions()
 
         if dataset is not None: self.dataset.set(dataset)
@@ -132,6 +151,7 @@ class Dataset:
         if width  is not None: self.width  = width
         if height is not None: self.height = height
         if dtype  is not None: self.dtype  = dtype
+        if sampler is not None: self.sampler.set(sampler)
 
 
     @staticmethod
