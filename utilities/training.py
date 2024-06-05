@@ -10,7 +10,7 @@ from utilities import *
 def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimizer, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], echo:bool=True):
     if hasattr(model, 'device'): device = model.device
     else: device = next(iter(model.parameters())).device
-    
+
     model.train()
     history = numpy.zeros((len(dataset.train)))
 
@@ -21,8 +21,8 @@ def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimize
 
     iterator = tqdm(dataset.train, disable=not echo)
     for i, (images, labels) in enumerate(iterator):
-        labels = labels.to(device)
-        images = images.to(device)
+        labels = labels.to(device, non_blocking=True)
+        images = images.to(device, non_blocking=True)
         results = model.forward(images)
 
         optimizer.zero_grad()

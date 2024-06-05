@@ -5,7 +5,6 @@ import time
 import numpy
 import torch
 import torch.distributed
-import torch.optim as optim
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import IterableDataset, DataLoader
 from pickle import load, dump
@@ -38,24 +37,34 @@ class _aims:
 aims = _aims()
 
 
-
 def _train_flow(rank:int, world_size:int, model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], optimizer_args, optimizer_kwargs):
     print(f"Training thread#{rank} PID is: {os.getpid()}")
     setup(rank, world_size)
     model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(rank))
-    dataset.sampler.parallel()
+    dataset.sampler.parallel(rank, world_size)
     optimizer = optimizer(model.parameters(), *optimizer_args, **optimizer_kwargs)
-    loss_array = train(model, dataset, optimizer, loss_function, echo=(rank == 0))
 
-    loss_arrays_list = [None for _ in range(world_size)]
-    torch.distributed.gather_object(loss_array, loss_arrays_list, dst=0)
+    log_timings()
+    loss_array = train(model, dataset, optimizer, loss_function, echo=(rank == 0))
+    log_timings(f"Thread#{rank} complete training in")
+
+    log_timings()
+    # loss_arrays_list = ([None for _ in range(world_size)] if rank == 0 else None)
+    # torch.distributed.gather_object(loss_array, loss_arrays_list, dst=0)
+    loss_array_tensor = torch.tensor(loss_array, dtype=torch.float32, device=rank)
+    gathered_loss_tensors = [torch.zeros_like(loss_array_tensor) for _ in range(world_size)]
+    torch.distributed.all_gather(gathered_loss_tensors, loss_array_tensor)
+    log_timings(f"Thread#{rank} complete gathering in")
 
     torch.distributed.barrier()
     if rank == 0:
-        loss_array_reduced = sum(loss_arrays_list) / world_size
+        log_timings()
+        gathered_loss_tensors = [tensor.cpu().numpy() for tensor in gathered_loss_tensors]
+        loss_array_reduced = sum(gathered_loss_tensors) / world_size
         with open(_directory + "/cash/results.pkl", 'wb') as file:
             model = model.module.cpu()
             dump((model, loss_array_reduced), file)
+        log_timings(f"Thread#{rank} complete dumping in")
     cleanup()
 def _train(model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], *optimizer_args, **optimizer_kwargs):
     world_size = torch.cuda.device_count()
@@ -66,11 +75,11 @@ def _confusion_flow(rank:int, world_size:int, model:torch.nn.Module, dataset:Dat
     print(f"Confusion thread#{rank} PID is: {os.getpid()}")
     setup(rank, world_size)
     model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(rank))
-    dataset.sampler.parallel()
+    dataset.sampler.parallel(rank, world_size)
 
     confusion_matrix = confusion(model, dataset, classes, echo=(rank == 0))
 
-    confusion_matrices_list = [None for _ in range(world_size)]
+    confusion_matrices_list = ([None for _ in range(world_size)] if rank == 0 else None)
     torch.distributed.gather_object(confusion_matrix, confusion_matrices_list, dst=0)
 
     torch.distributed.barrier()
@@ -109,7 +118,7 @@ def _execute_flow(rank:int, world_size:int, model:torch.nn.Module, dataset:DataL
             result = extract(result)
             results.append((idx, result))
 
-    results_list:list = [None for _ in range(world_size)]
+    results_list:list = ([None for _ in range(world_size)] if rank == 0 else None)
     torch.distributed.gather_object(results, results_list, dst=0)
 
     torch.distributed.barrier()
@@ -123,7 +132,7 @@ def _execute_flow(rank:int, world_size:int, model:torch.nn.Module, dataset:DataL
     cleanup()
 def _execute(model:torch.nn.Module, data:Union[Dataset, Iterable[torch.Tensor]], extract:Union[Callable[[torch.Tensor],Any],Callable[[torch.Tensor,torch.Tensor],Any]]):
     if isinstance(data, Dataset):
-        data.sampler.parallel()
+        data.sampler.parallel(0, 8)
         dataloader = data.test
         _type = True
     else:
@@ -146,7 +155,7 @@ def main():
     with open(_directory + "/cash/arguments.pkl", 'rb') as file:
         arguments = load(file)
     if aim == aims.train:
-        _train(*arguments)
+        _train(*(arguments[:-2]), *(arguments[-2]), **(arguments[-1]))
     elif aim == aims.confusion:
         _confusion(*arguments)
     elif aim == aims.execute:

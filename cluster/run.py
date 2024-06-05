@@ -15,9 +15,9 @@ def run(aim:int, *args):
     with open(_directory + "/cash/arguments.pkl", 'wb') as file:
         dump(args, file)
     if IPython.get_ipython():
-        IPython.get_ipython().system(f'python3 "{os.path.dirname(os.path.abspath(__file__))}"/functions.py "{aim}"')
+        IPython.get_ipython().system(f'python3 "{_directory}"/functions.py "{aim}"')
     else:
-        subprocess.run(["python3", f"{os.path.dirname(os.path.abspath(__file__))}/functions.py", str(aim)])
+        subprocess.run(["python3", f"{_directory}/functions.py", str(aim)])
     with open(_directory + "/cash/results.pkl", 'rb') as file:
         results = load(file)
     return results

@@ -49,9 +49,9 @@ class Dataset:
             ])
             dataset = datasets.CIFAR10(root=DataSetsPath, train=True,   transform=transformation, download=True)
         else: raise ValueError(f'Dataset is {self._dataset}')
-        sampler = self._sampler_type(dataset)
-        self._train = DataLoader(dataset, batch_size=self._batch, sampler=sampler)
-        self._test = DataLoader(dataset, batch_size=self._batch, sampler=sampler)
+        sampler = self._sampler_type(dataset, **self._sampler_kwargs)
+        self._train = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=16)
+        self._test = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=16)
     @property
     def train(self):
         self._delayed.launch()
@@ -124,6 +124,7 @@ class Dataset:
             self._dtype = type
 
     _sampler_type : type(torch.utils.data.Sampler)
+    _sampler_kwargs : dict
     @property
     def sampler(self):
         class SamplerSelector:
@@ -132,15 +133,16 @@ class Dataset:
                 self._self = _self
             def get(self):
                 return self._self._sampler_type
-            def set(self, type:type(torch.utils.data.Sampler)):
-                if not hasattr(self._self, '_sampler_type') or self._self._sampler_type != type:
+            def set(self, type:type(torch.utils.data.Sampler), **kwargs):
+                if not hasattr(self._self, '_sampler_type') or self._self._sampler_type != type or self._self._sampler_kwargs != kwargs:
                     self._self._delayed.add(self._self._reload)
                 self._self._sampler_type = type
+                self._self._sampler_kwargs = kwargs
 
             def default(self):
                 self.set(torch.utils.data.RandomSampler)
-            def parallel(self):
-                self.set(torch.utils.data.distributed.DistributedSampler)
+            def parallel(self, rank:int, world_size:int):
+                self.set(torch.utils.data.distributed.DistributedSampler, rank=rank, num_replicas=world_size)
         return SamplerSelector(self)
 
     def __init__(self, dataset:LiteralDataSet=None, batch:int=None, width:int=None, height:int=None, dtype:torch.dtype=torch.float32, sampler:type(torch.utils.data.Sampler)=torch.utils.data.RandomSampler):
