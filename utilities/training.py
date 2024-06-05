@@ -44,14 +44,14 @@ def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimize
     model.eval()
     return history
 
-def confusion(model:torch.nn.Module, dataset:Dataset, classes:int=10):
+def confusion(model:torch.nn.Module, dataset:Dataset, classes:int=10, echo:bool=True):
     if hasattr(model, 'device'): device = model.device
     else: device = next(iter(model.parameters())).device
     
     model.eval()
     matrix = numpy.zeros((classes, classes))
     with torch.no_grad():
-        iterator = tqdm(dataset.test)
+        iterator = tqdm(dataset.test, disable=not echo)
         for images, labels in iterator:
             images = images.to(device)
             labels = labels.to(device)
