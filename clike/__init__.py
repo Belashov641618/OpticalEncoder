@@ -1,2 +1,2 @@
-from .execute import aims
+from .functions import aims
 from .run import run

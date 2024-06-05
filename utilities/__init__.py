@@ -9,4 +9,5 @@ from .loggers import Logger, DynamicApproximation
 from .methods import closest_integer, upper_integer, interpolate, shifted_log10, trays_rays, dimension_normalization, fix_complex
 from .format import EngineeringFormater, engineering, scientific
 from . import filters
+from . import training
 from belashovplot import TiledPlot
