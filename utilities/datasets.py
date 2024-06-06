@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import torch
+import sys
+import os
 
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from typing import Literal, Union
+from tqdm import tqdm
 
 from utilities import *
 from parameters import DataSetsPath
@@ -16,6 +19,8 @@ class Dataset:
     _train : DataLoader
     _test  : DataLoader
     def _reload(self):
+        original_stdout = sys.stdout
+        sys.stdout = open(os.devnull, 'w')
         if self._dataset == 'MNIST':
             transformation = transforms.Compose([
                     transforms.Grayscale(),
@@ -48,7 +53,13 @@ class Dataset:
                 transforms.ConvertImageDtype(self._dtype)
             ])
             dataset = datasets.CIFAR10(root=DataSetsPath, train=True,   transform=transformation, download=True)
-        else: raise ValueError(f'Dataset is {self._dataset}')
+        else:
+            sys.stdout.close()
+            sys.stdout = original_stdout
+            raise ValueError(f'Dataset is {self._dataset}')
+        sys.stdout.close()
+        sys.stdout = original_stdout
+
         sampler = self._sampler_type(dataset, **self._sampler_kwargs)
         self._train = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=16)
         self._test = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=16)

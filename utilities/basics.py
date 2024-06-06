@@ -4,6 +4,7 @@ import copy
 
 import torch
 from typing import List, Callable, Tuple, Any, Generic, TypeVar, Optional, Union, Literal
+
 class DelayedFunctions:
     _delayed_functions : List[Tuple[Callable, float, Any, Any]]
     def add(self, function:Callable, priority:float=0., *args, **kwargs):

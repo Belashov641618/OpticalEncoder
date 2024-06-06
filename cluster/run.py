@@ -27,12 +27,13 @@ def train(model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.
     device = (model.device if hasattr(model, 'device') else next(iter(model.parameters())).device if model.parameters() else torch.device('cpu'))
     model_.to(device)
     model = model_
-    return loss_history
+    return loss_history, model
 def confusion(model:torch.nn.Module, dataset:Dataset, classes:int=10):
     confusion_matrix = run(aims.confusion, model, dataset, classes)
     return confusion_matrix
-
 def execute(model:torch.nn.Module, data:Union[Dataset, Iterable[torch.Tensor]], extract:Union[Callable[[torch.Tensor],Any],Callable[[torch.Tensor,torch.Tensor],Any]]):
     results = run(aims.execute, model, data, extract)
     return results
-
+def epochs(amount:int, classes:int, model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], *optimizer_args, **optimizer_kwargs):
+    models_history, loss_histories, confusion_matrices_history = run(aims.epochs, amount, classes, model, dataset, loss_function, optimizer, optimizer_args, optimizer_kwargs)
+    return models_history, loss_histories, confusion_matrices_history
