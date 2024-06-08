@@ -164,6 +164,7 @@ class Normalizer(Generator):
     def numel(self):
         return self._generator.numel()
 
+
 class GaussianNormalizer(Normalizer):
     def _function(self, x:torch.Tensor):
         return 0.5*(torch.erf((x-self._params[1])/(self._params[0]*1.41421356)) + self._params[3])*self._params[2]

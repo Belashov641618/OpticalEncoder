@@ -16,20 +16,20 @@ class CompositeModel(torch.nn.Sequential):
     _propagators:tuple[AbstractPropagator, ...]
     _modulators:tuple[AbstractModulator, ...]
     _wrappers:tuple[AbstractEncoderDecoder, ...]
-    def _init_groups(self):
+    def _init_groups(self, *modules:torch.nn.Module):
         self._elements = []
         self._optical = []
         self._propagators = []
         self._modulators = []
         self._wrappers = []
         groups_map = [
-            (self._elements, AbstractElement),
+            (self._elements, torch.nn.Module),
             (self._optical, AbstractOptical),
             (self._propagators, AbstractPropagator),
             (self._modulators, AbstractModulator),
             (self._wrappers, AbstractEncoderDecoder),
         ]
-        for name, module in self.named_modules():
+        for module in modules:
             for group, type_ in groups_map:
                 if isinstance(module, type_):
                     group.append(module)
@@ -46,13 +46,13 @@ class CompositeModel(torch.nn.Sequential):
 
     def __init__(self, *elements:AbstractElement):
         super().__init__(*elements)
-        self._init_groups()
+        self._init_groups(*elements)
 
     def forward(self, field:torch.Tensor, *args, distance:float=None, elements:int=None, **kwargs):
         for i, element in enumerate(self._elements):
             if distance is not None and isinstance(element, AbstractPropagator):
                 distance -= element.distance
-                if distance is not None and distance < 0:
+                if distance < 0:
                     element_distance = element.distance
                     element.distance = element_distance + distance
                     field = element.forward(field)

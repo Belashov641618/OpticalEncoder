@@ -6,11 +6,21 @@ import os
 
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
-from typing import Literal, Union
+from typing import Literal, Union, Optional
 from tqdm import tqdm
 
 from utilities import *
 from parameters import DataSetsPath
+
+class LoadSelector:
+    _dataset : Dataset
+    def __init__(self, dataset:Dataset):
+        self._dataset = dataset
+    def train(self):
+        _ = next(iter(self._dataset.train))
+    def test(self):
+        _ = next(iter(self._dataset.test))
+
 
 LiteralDataSet = Literal['MNIST', 'Flowers', 'STL10', 'CIFAR10']
 class Dataset:
@@ -19,12 +29,13 @@ class Dataset:
     _train : DataLoader
     _test  : DataLoader
     def _reload(self):
+        if any(attr is None for attr in (self._dataset, self._batch)): raise AttributeError
         original_stdout = sys.stdout
         sys.stdout = open(os.devnull, 'w')
         if self._dataset == 'MNIST':
             transformation = transforms.Compose([
                     transforms.Grayscale(),
-                    transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True),
+                    *(transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True) if self._width is not None and self._height is not None else []),
                     transforms.ToTensor(),
                     transforms.ConvertImageDtype(self._dtype)
                 ])
@@ -32,7 +43,7 @@ class Dataset:
         elif self._dataset == 'Flowers':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
-                transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True),
+                *(transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True) if self._width is not None and self._height is not None else []),
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])
@@ -40,7 +51,7 @@ class Dataset:
         elif self._dataset == 'STL10':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
-                transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True),
+                *(transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True) if self._width is not None and self._height is not None else []),
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])
@@ -48,7 +59,7 @@ class Dataset:
         elif self._dataset == 'CIFAR10':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
-                transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True),
+                *(transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True) if self._width is not None and self._height is not None else []),
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])
@@ -61,8 +72,8 @@ class Dataset:
         sys.stdout = original_stdout
 
         sampler = self._sampler_type(dataset, **self._sampler_kwargs)
-        self._train = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=16)
-        self._test = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=16)
+        self._train = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
+        self._test = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
     @property
     def train(self):
         self._delayed.launch()
@@ -73,7 +84,7 @@ class Dataset:
         return self._test
 
     # Properties
-    _dataset : LiteralDataSet
+    _dataset : Optional[LiteralDataSet]
     @property
     def dataset(self):
         class DatasetSelector:
@@ -94,7 +105,7 @@ class Dataset:
             def flowers(self):  self.set('Flowers')
         return DatasetSelector(self)
 
-    _batch : int
+    _batch : Optional[int]
     @property
     def batch(self):
         return self._batch
@@ -104,7 +115,7 @@ class Dataset:
             self._delayed.add(self._reload)
             self._batch = size
 
-    _width : int
+    _width : Optional[int]
     @property
     def width(self):
         return self._width
@@ -114,7 +125,7 @@ class Dataset:
             self._delayed.add(self._reload)
             self._width = pixels
 
-    _height : int
+    _height : Optional[int]
     @property
     def height(self):
         return self._height
@@ -124,7 +135,7 @@ class Dataset:
             self._delayed.add(self._reload)
             self._height = pixels
 
-    _dtype : torch.dtype
+    _dtype : Optional[torch.dtype]
     @property
     def dtype(self):
         return self._dtype
@@ -134,8 +145,8 @@ class Dataset:
             self._delayed.add(self._reload)
             self._dtype = type
 
-    _sampler_type : type(torch.utils.data.Sampler)
-    _sampler_kwargs : dict
+    _sampler_type : Optional[type(torch.utils.data.Sampler)]
+    _sampler_kwargs : Optional[dict]
     @property
     def sampler(self):
         class SamplerSelector:
@@ -156,16 +167,43 @@ class Dataset:
                 self.set(torch.utils.data.distributed.DistributedSampler, rank=rank, num_replicas=world_size)
         return SamplerSelector(self)
 
-    def __init__(self, dataset:LiteralDataSet=None, batch:int=None, width:int=None, height:int=None, dtype:torch.dtype=torch.float32, sampler:type(torch.utils.data.Sampler)=torch.utils.data.RandomSampler):
+    _threads : Optional[int]
+    @property
+    def threads(self):
+        return self._threads
+    @threads.setter
+    def threads(self, num_workers:int):
+        if not hasattr(self, '_threads') or num_workers != self._threads:
+            self._delayed.add(self._reload)
+            self._threads = num_workers
+
+    _preload : Optional[int]
+    @property
+    def preload(self):
+        return self._preload
+    @preload.setter
+    def preload(self, amount:int):
+        if not hasattr(self, '_preload') or amount != self._preload:
+            self._delayed.add(self._reload)
+            self._preload = amount
+
+    def __init__(self, dataset:LiteralDataSet=None, batch:int=None, width:int=None, height:int=None, dtype:torch.dtype=torch.float32, sampler:type(torch.utils.data.Sampler)=torch.utils.data.RandomSampler, threads:int=os.cpu_count(), preload:int=2):
         self._delayed = DelayedFunctions()
 
-        if dataset is not None: self.dataset.set(dataset)
-        if batch  is not None: self.batch  = batch
-        if width  is not None: self.width  = width
-        if height is not None: self.height = height
-        if dtype  is not None: self.dtype  = dtype
-        if sampler is not None: self.sampler.set(sampler)
+        if dataset is None: self._dataset = None
+        else: self.dataset.set(dataset)
 
+        self.batch  = batch
+        self.width  = width
+        self.height = height
+        self.dtype  = dtype
+        self.sampler.set(sampler)
+        self.threads = threads
+        self.preload = preload
+
+    @property
+    def load(self):
+        return LoadSelector(self)
 
     @staticmethod
     def single(dataset:LiteralDataSet, width:int, height:int, dtype:torch.dtype=torch.float32):

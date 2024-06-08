@@ -344,18 +344,16 @@ class AbstractEncoderDecoder(torch.nn.Module):
     def __init__(self, parent:AbstractWrapper):
         super().__init__()
         self._parent = parent
-        self._modules.pop('_parent')
     def forward(self, field:torch.Tensor, *args, **kwargs):
         raise NotImplementedError
     
 
-class AbstractWrapper(torch.nn.Module):
+class AbstractWrapper:
     encoder:AbstractEncoderDecoder
     decoder:AbstractEncoderDecoder
 
     delayed:DelayedFunctions
     def __init__(self, init:bool=True):
-        super().__init__()
         self.delayed = DelayedFunctions()
         if init:
             self.encoder = AbstractEncoderDecoder(self)

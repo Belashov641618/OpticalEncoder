@@ -47,8 +47,11 @@ class CudaMemoryChunker(AbstractWrapper):
         return self.forward(field, *args, **kwargs)
 
 class IncoherentEncoder(AbstractEncoderDecoder):
+    _generator:GaussianNormalizer
+    _parent:Incoherent
     def __init__(self, parent:Incoherent):
         super().__init__(parent)
+        self._generator = getattr(self._parent, "_generator")
     def forward(self, field:torch.Tensor, *args, **kwargs):
         self._parent.delayed.launch()
         field = fix_complex(field)
@@ -57,11 +60,12 @@ class IncoherentEncoder(AbstractEncoderDecoder):
         Nxy = (field.size(2), field.size(3))
         field = field.reshape(-1, self._parent.channels, 1, *Nxy)
 
-        field = field * torch.exp(2j * torch.pi * self._parent.sample())
-        field = field.reshape(-1, self._parent.channels * self.samples, *Nxy)
+        field = field * torch.exp(2j * torch.pi * self._generator.sample())
+        field = field.reshape(-1, self._parent.channels * self._parent.samples, *Nxy)
 
         return field
 class IncoherentDecoder(AbstractEncoderDecoder):
+    _parent: Incoherent
     def __init__(self, parent:Incoherent):
         super().__init__(parent)
     def forward(self, field:torch.Tensor, *args, **kwargs):
@@ -69,7 +73,7 @@ class IncoherentDecoder(AbstractEncoderDecoder):
         field = fix_complex(field)
 
         Nxy = (field.size(2), field.size(3))
-        field = field.reshape(-1, self._parent.channels, self.samples, *Nxy)
+        field = field.reshape(-1, self._parent.channels, self._parent.samples, *Nxy)
         field = torch.mean(field.abs() ** 2, dim=2) * torch.exp(1j * torch.angle(field[:, :, 0, :, :]))
         return field
 class Incoherent(AbstractWrapper):
@@ -107,7 +111,7 @@ class Incoherent(AbstractWrapper):
         self.delayed.launch()
         return self._generator.sample()
 
-    _channels:Optional[int]
+    channels:Optional[int]
 
     def __init__(self, spatial_coherence:float, time_coherence:float, time:float, samples:int, pixels:IntXY, length:FloatXY):
         super().__init__(init=False)
@@ -118,6 +122,12 @@ class Incoherent(AbstractWrapper):
         self.pixels = XYParams[int](change=self._delayed_generator_reset).set(pixels)
         self.length = XYParams[float](change=self._delayed_generator_reset).set(length)
         self._channels = None
+
+        self._generator = GaussianNormalizer(gaussian(
+            (self.time_coherence, self.spatial_coherence, self.spatial_coherence),
+            (self.samples, self.pixels.x, self.pixels.y),
+            ((0, self.time), (0, self.length.x), (0, self.length.y)),
+            generator=True), 100)
 
         self.encoder = IncoherentEncoder(self)
         self.decoder = IncoherentDecoder(self)

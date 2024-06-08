@@ -1,12 +1,12 @@
 import os
 import sys
-import tempfile
 import time
 import numpy
 import torch
 import torch.distributed
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data import IterableDataset, DataLoader
+from torch.profiler import profile, record_function, ProfilerActivity
 from torchsummary import summary
 from pickle import load, dump, dumps, loads
 from copy import deepcopy
@@ -167,46 +167,34 @@ def _epochs_flow(rank:int, world_size:int, epochs:int, classes:int, model:torch.
     dataset.sampler.parallel(rank, world_size)
     optimizer = optimizer(model.parameters(), *optimizer_args, **optimizer_kwargs)
 
-    chronograph = Chronograph()
-    train_cid = chronograph.add_process('Training')
-    confusion_cid = chronograph.add_process('Confusion')
-    gather_cid = chronograph.add_process('Gathering')
-    dump_cid = chronograph.add_process('Dumping')
-
     loss_histories = []
     models_history = []
     confusion_matrices_history = []
 
-    chronograph.start(confusion_cid)
+    # with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA], record_shapes=True, profile_memory=True, with_stack=True, with_flops=True, with_modules=True, on_trace_ready=torch.profiler.tensorboard_trace_handler(f"./log{rank}"),) as prof:
     confusion_matrix = confusion(model, dataset, classes, echo=(rank == 0))
     confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=rank)
     gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(world_size)]
     torch.distributed.all_gather(gathered_confusion_matrices, confusion_matrices_tensor)
-    chronograph.end(confusion_cid)
 
     torch.distributed.barrier()
     if rank == 0:
         gathered_confusion_matrices = [tensor.cpu().numpy() for tensor in gathered_confusion_matrices]
         confusion_matrix_reduced = sum(gathered_confusion_matrices) / world_size
         confusion_matrices_history.append(confusion_matrix_reduced)
-        print(f"Accuracy in the beggining is {100 * numpy.sum(numpy.diagonal(confusion_matrix_reduced, 0)) / numpy.sum(confusion_matrix_reduced)}")
+        print(f"Accuracy in the beginning is {100 * numpy.sum(numpy.diagonal(confusion_matrix_reduced, 0)) / numpy.sum(confusion_matrix_reduced)}")
 
     for i in range(epochs):
-        chronograph.start(train_cid)
-        loss_array = train(model, dataset, optimizer, loss_function, echo=(rank == 0), chronograph=chronograph)
+        loss_array = train(model, dataset, optimizer, loss_function, echo=(rank == 0))
         loss_array_tensor = torch.tensor(loss_array, dtype=torch.float32, device=rank)
         gathered_loss_tensors = [torch.zeros_like(loss_array_tensor) for _ in range(world_size)]
         torch.distributed.all_gather(gathered_loss_tensors, loss_array_tensor)
-        chronograph.end(train_cid)
 
-        chronograph.start(confusion_cid)
         confusion_matrix = confusion(model, dataset, classes, echo=(rank == 0))
         confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=rank)
         gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(world_size)]
         torch.distributed.all_gather(gathered_confusion_matrices, confusion_matrices_tensor)
-        chronograph.end(confusion_cid)
 
-        chronograph.start(gather_cid)
         torch.distributed.barrier()
         if rank == 0:
             gathered_loss_tensors = [tensor.cpu().numpy() for tensor in gathered_loss_tensors]
@@ -215,32 +203,22 @@ def _epochs_flow(rank:int, world_size:int, epochs:int, classes:int, model:torch.
             confusion_matrix_reduced = sum(gathered_confusion_matrices) / world_size
             loss_histories.append(loss_array_reduced)
             confusion_matrices_history.append(confusion_matrix_reduced)
-            models_history.append(deepcopy(model).cpu())
+            model_copy = deepcopy(model.module)
+            model_copy = model_copy.cpu()
+            models_history.append(model_copy)
             print(f"Accuracy after epoch {i+1} is {100*numpy.sum(numpy.diagonal(confusion_matrix_reduced, 0))/numpy.sum(confusion_matrix_reduced)}")
-        chronograph.end(gather_cid)
 
+            with open(_directory + "/cash/checkpoints.pkl", 'wb') as file:
+                dump((models_history, loss_histories, confusion_matrices_history), file)
+    # print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=-1), end=f"\nProcess rank: {rank}\n\n")
     torch.distributed.barrier()
     if rank == 0:
-        chronograph.start(dump_cid)
         with open(_directory + "/cash/results.pkl", 'wb') as file:
             dump((models_history, loss_histories, confusion_matrices_history), file)
-        chronograph.end(dump_cid)
-
-    statistic = chronograph.statistic()
-    serialized_statistic = dumps(statistic)
-    gathered_statistic = [None for _ in range(world_size)]
-    torch.distributed.all_gather_object(gathered_statistic, serialized_statistic)
-
-    if rank == 0:
-        statistics_list = [loads(statistic) for statistic in gathered_statistic if statistic is bytes]
-        combined_statistics = sum(statistics_list)
-        if hasattr(combined_statistics, 'print'):
-            combined_statistics.print()
-        else:
-            print(combined_statistics)
 
     cleanup()
 def _epochs(epochs:int, classes:int, model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], *optimizer_args, **optimizer_kwargs):
+    print(f"Training main thread PID is: {os.getpid()}")
     world_size = torch.cuda.device_count()
     torch.multiprocessing.spawn(_epochs_flow, args=(world_size, epochs, classes, model, dataset, loss_function, optimizer, optimizer_args, optimizer_kwargs), nprocs=world_size, join=True)
 
