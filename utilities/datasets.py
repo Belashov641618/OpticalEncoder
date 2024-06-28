@@ -35,7 +35,7 @@ class Dataset:
         if self._dataset == 'MNIST':
             transformation = transforms.Compose([
                     transforms.Grayscale(),
-                    *(transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True) if self._width is not None and self._height is not None else []),
+                    *([transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True)] if self._width is not None and self._height is not None else []),
                     transforms.ToTensor(),
                     transforms.ConvertImageDtype(self._dtype)
                 ])
@@ -43,7 +43,7 @@ class Dataset:
         elif self._dataset == 'Flowers':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
-                *(transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True) if self._width is not None and self._height is not None else []),
+                *([transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True)] if self._width is not None and self._height is not None else []),
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])
@@ -51,7 +51,7 @@ class Dataset:
         elif self._dataset == 'STL10':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
-                *(transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True) if self._width is not None and self._height is not None else []),
+                *([transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True)] if self._width is not None and self._height is not None else []),
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])
@@ -59,7 +59,7 @@ class Dataset:
         elif self._dataset == 'CIFAR10':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
-                *(transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True) if self._width is not None and self._height is not None else []),
+                *([transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True)] if self._width is not None and self._height is not None else []),
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])

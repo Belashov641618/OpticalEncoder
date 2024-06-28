@@ -49,7 +49,10 @@ class CompositeModel(torch.nn.Sequential):
         self._init_groups(*elements)
 
     def forward(self, field:torch.Tensor, *args, distance:float=None, elements:int=None, **kwargs):
+        wrapper_index = 0
         for i, element in enumerate(self._elements):
+            if element is self._wrappers:
+                wrapper_index += 1
             if distance is not None and isinstance(element, AbstractPropagator):
                 distance -= element.distance
                 if distance < 0:
@@ -57,6 +60,8 @@ class CompositeModel(torch.nn.Sequential):
                     element.distance = element_distance + distance
                     field = element.forward(field)
                     element.distance = element_distance
+                    for wrapper in self._wrappers[wrapper_index+1:]:
+                        field = wrapper.forward(field)
                     return field
             field = element.forward(field)
             if elements is not None and i == elements:
