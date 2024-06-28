@@ -6,7 +6,7 @@ import os
 
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
-from typing import Literal, Union, Optional
+from typing import Literal, Union, Optional, Iterable
 from tqdm import tqdm
 
 from utilities import *
@@ -20,6 +20,32 @@ class LoadSelector:
         _ = next(iter(self._dataset.train))
     def test(self):
         _ = next(iter(self._dataset.test))
+
+class ReferenceSelector:
+    _dataset:Dataset
+    def __init__(self, dataset:Dataset):
+        self._dataset = dataset
+    def set(self, state:int):
+        if self._dataset._reference_type != state:
+            self._dataset._reference_type = state
+            self._dataset._delayed.add(self._dataset._reload)
+    def default(self):
+        self.set(0)
+    def same(self):
+        self.set(1)
+
+
+class SameReferenceIterator(DataLoader):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __iter__(self):
+        self.iterator = super().__iter__()
+        return self
+
+    def __next__(self):
+        image, label = next(self.iterator)
+        return image, image.clone()
 
 
 LiteralDataSet = Literal['MNIST', 'Flowers', 'STL10', 'CIFAR10']
@@ -72,8 +98,9 @@ class Dataset:
         sys.stdout = original_stdout
 
         sampler = self._sampler_type(dataset, **self._sampler_kwargs)
-        self._train = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
-        self._test = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
+        DataLoaderClasses = [DataLoader, SameReferenceIterator]
+        self._train = DataLoaderClasses[self._reference_type](dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
+        self._test = DataLoaderClasses[self._reference_type](dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
     @property
     def train(self):
         self._delayed.launch()
@@ -104,6 +131,11 @@ class Dataset:
             def mnist(self):    self.set('MNIST')
             def flowers(self):  self.set('Flowers')
         return DatasetSelector(self)
+
+    _reference_type:int
+    @property
+    def reference(self):
+        return ReferenceSelector(self)
 
     _batch : Optional[int]
     @property
@@ -189,6 +221,8 @@ class Dataset:
 
     def __init__(self, dataset:LiteralDataSet=None, batch:int=None, width:int=None, height:int=None, dtype:torch.dtype=torch.float32, sampler:type(torch.utils.data.Sampler)=torch.utils.data.RandomSampler, threads:int=os.cpu_count(), preload:int=2):
         self._delayed = DelayedFunctions()
+
+        self._reference_type = 0
 
         if dataset is None: self._dataset = None
         else: self.dataset.set(dataset)

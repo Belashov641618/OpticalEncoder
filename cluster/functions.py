@@ -44,83 +44,81 @@ class _aims:
 aims = _aims()
 
 
-def _train_flow(rank:int, world_size:int, model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], optimizer_args, optimizer_kwargs):
+def _train_flow(rank:int, gpus:tuple[int,...], model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], optimizer_args, optimizer_kwargs):
     print(f"Training thread#{rank} PID is: {os.getpid()}")
-    setup(rank, world_size)
-    model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(rank))
-    dataset.sampler.parallel(rank, world_size)
+    setup(rank, len(gpus))
+    model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(gpus[rank]))
+    dataset.sampler.parallel(rank, len(gpus))
     optimizer = optimizer(model.parameters(), *optimizer_args, **optimizer_kwargs)
 
     loss_array = train(model, dataset, optimizer, loss_function, echo=(rank == 0))
 
-    loss_array_tensor = torch.tensor(loss_array, dtype=torch.float32, device=rank)
-    gathered_loss_tensors = [torch.zeros_like(loss_array_tensor) for _ in range(world_size)]
+    loss_array_tensor = torch.tensor(loss_array, dtype=torch.float32, device=gpus[rank])
+    gathered_loss_tensors = [torch.zeros_like(loss_array_tensor) for _ in range(len(gpus))]
     torch.distributed.all_gather(gathered_loss_tensors, loss_array_tensor)
 
     torch.distributed.barrier()
     if rank == 0:
         gathered_loss_tensors = [tensor.cpu().numpy() for tensor in gathered_loss_tensors]
-        loss_array_reduced = sum(gathered_loss_tensors) / world_size
+        loss_array_reduced = sum(gathered_loss_tensors) / len(gpus)
         with open(_directory + "/cash/results.pkl", 'wb') as file:
             model = model.module.cpu()
             dump((model, loss_array_reduced), file)
     cleanup()
-def _train(model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], *optimizer_args, **optimizer_kwargs):
-    world_size = torch.cuda.device_count()
-    torch.multiprocessing.spawn(_train_flow, args=(world_size, model, dataset, loss_function, optimizer, optimizer_args, optimizer_kwargs), nprocs=world_size, join=True)
+def _train(gpus:tuple[int,...], model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], *optimizer_args, **optimizer_kwargs):
+    torch.multiprocessing.spawn(_train_flow, args=(gpus, model, dataset, loss_function, optimizer, optimizer_args, optimizer_kwargs), nprocs=len(gpus), join=True)
 
 
-def _confusion_flow(rank:int, world_size:int, model:torch.nn.Module, dataset:Dataset, classes:int):
+def _confusion_flow(rank:int, gpus:tuple[int,...], model:torch.nn.Module, dataset:Dataset, classes:int):
     print(f"Confusion thread#{rank} PID is: {os.getpid()}")
-    setup(rank, world_size)
-    model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(rank))
-    dataset.sampler.parallel(rank, world_size)
+    setup(rank, len(gpus))
+    model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(gpus[rank]))
+    dataset.sampler.parallel(rank, len(gpus))
 
     confusion_matrix = confusion(model, dataset, classes, echo=(rank == 0))
 
-    confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=rank)
-    gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(world_size)]
+    confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=gpus[rank])
+    gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(len(gpus))]
     torch.distributed.all_gather(gathered_confusion_matrices, confusion_matrices_tensor)
 
     torch.distributed.barrier()
     if rank == 0:
         gathered_confusion_matrices = [tensor.cpu().numpy() for tensor in gathered_confusion_matrices]
-        confusion_matrix_reduced = sum(gathered_confusion_matrices) / world_size
+        confusion_matrix_reduced = sum(gathered_confusion_matrices) / len(gpus)
         with open(_directory + "/cash/results.pkl", 'wb') as file:
             dump(confusion_matrix_reduced, file)
     cleanup()
-def _confusion(model:torch.nn.Module, dataset:Dataset, classes:int):
-    world_size = torch.cuda.device_count()
-    torch.multiprocessing.spawn(_confusion_flow, args=(world_size, model, dataset, classes), nprocs=world_size, join=True)
+def _confusion(gpus:tuple[int,...], model:torch.nn.Module, dataset:Dataset, classes:int):
+    torch.multiprocessing.spawn(_confusion_flow, args=(gpus, model, dataset, classes), nprocs=len(gpus), join=True)
 
 
-def _execute_flow(rank:int, world_size:int, model:torch.nn.Module, dataset:DataLoader, extract:Union[Callable[[torch.Tensor],Any],Callable[[torch.Tensor,torch.Tensor],Any]], _type:bool):
+def _execute_flow(rank:int, gpus:tuple[int,...], model:torch.nn.Module, dataset:DataLoader, extract:Union[Callable[[torch.Tensor],Any],Callable[[torch.Tensor,torch.Tensor],Any]], _type:bool):
     print(f"Confusion thread#{rank} PID is: {os.getpid()}")
-    setup(rank, world_size)
-    model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(rank))
+    setup(rank, len(gpus))
+    model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(gpus[rank]))
 
     results = []
-    idx_offset = rank * len(dataset) // world_size
+    idx_offset = rank * len(dataset) // len(gpus)
     iterator = tqdm(dataset, disable=rank != 0)
     if _type:
         for idx, (data, correct) in enumerate(iterator, start=idx_offset):
             data:torch.Tensor
-            data = data.to(rank)
-            correct = correct.to(rank)
+            data = data.to(gpus[rank])
+            correct = correct.to(gpus[rank])
 
             result = model.forward(data)
             result = extract(result, correct)
             results.append((idx, result))
     else:
         for idx, data in enumerate(iterator, start=idx_offset):
-            data = data.to(rank)
+            data = data.to(gpus[rank])
 
             result = model.forward(data)
             result = extract(result)
             results.append((idx, result))
 
     #TODO Переделать, т.к. долго работает
-    results_list:list = ([None for _ in range(world_size)] if rank == 0 else None)
+    results_list:list = ([None for _ in range(len(gpus))] if rank == 0 else None)
     torch.distributed.gather_object(results, results_list, dst=0)
 
     torch.distributed.barrier()
@@ -132,7 +130,7 @@ def _execute_flow(rank:int, world_size:int, model:torch.nn.Module, dataset:DataL
         with open(_directory + "/cash/results.pkl", 'wb') as file:
             dump(results, file)
     cleanup()
-def _execute(model:torch.nn.Module, data:Union[Dataset, Iterable[torch.Tensor]], extract:Union[Callable[[torch.Tensor],Any],Callable[[torch.Tensor,torch.Tensor],Any]]):
+def _execute(gpus:tuple[int,...], model:torch.nn.Module, data:Union[Dataset, Iterable[torch.Tensor]], extract:Union[Callable[[torch.Tensor],Any],Callable[[torch.Tensor,torch.Tensor],Any]]):
     if isinstance(data, Dataset):
         data.sampler.parallel(0, 8)
         dataloader = data.test
@@ -148,11 +146,10 @@ def _execute(model:torch.nn.Module, data:Union[Dataset, Iterable[torch.Tensor]],
         dataset = TempDataset(data)
         dataloader = DataLoader(dataset, sampler=DistributedSampler(dataset))
         _type = False
-    world_size = torch.cuda.device_count()
-    torch.multiprocessing.spawn(_confusion_flow, args=(world_size, model, dataloader, extract, _type), nprocs=world_size, join=True)
+    torch.multiprocessing.spawn(_confusion_flow, args=(gpus, model, dataloader, extract, _type), nprocs=len(gpus), join=True)
 
 
-def _epochs_flow(rank:int, world_size:int, epochs:int, classes:int, model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], optimizer_args, optimizer_kwargs):
+def _epochs_flow(rank:int, gpus:tuple[int,...], epochs:int, classes:int, model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], optimizer_args, optimizer_kwargs):
     print(f"Training thread#{rank} PID is: {os.getpid()}")
     if rank == 0:
         if isinstance(model, HybridModel):
@@ -162,9 +159,9 @@ def _epochs_flow(rank:int, world_size:int, epochs:int, classes:int, model:torch.
             print(type(model._electronic_model).__name__)
         else:
             summary(model, (1, dataset.width, dataset.height), dataset.batch)
-    setup(rank, world_size)
-    model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(rank))
-    dataset.sampler.parallel(rank, world_size)
+    setup(rank, len(gpus))
+    model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(gpus[rank]))
+    dataset.sampler.parallel(rank, len(gpus))
     optimizer = optimizer(model.parameters(), *optimizer_args, **optimizer_kwargs)
 
     loss_histories = []
@@ -173,34 +170,34 @@ def _epochs_flow(rank:int, world_size:int, epochs:int, classes:int, model:torch.
 
     # with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA], record_shapes=True, profile_memory=True, with_stack=True, with_flops=True, with_modules=True, on_trace_ready=torch.profiler.tensorboard_trace_handler(f"./log{rank}"),) as prof:
     confusion_matrix = confusion(model, dataset, classes, echo=(rank == 0))
-    confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=rank)
-    gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(world_size)]
+    confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=gpus[rank])
+    gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(len(gpus))]
     torch.distributed.all_gather(gathered_confusion_matrices, confusion_matrices_tensor)
 
     torch.distributed.barrier()
     if rank == 0:
         gathered_confusion_matrices = [tensor.cpu().numpy() for tensor in gathered_confusion_matrices]
-        confusion_matrix_reduced = sum(gathered_confusion_matrices) / world_size
+        confusion_matrix_reduced = sum(gathered_confusion_matrices) / len(gpus)
         confusion_matrices_history.append(confusion_matrix_reduced)
         print(f"Accuracy in the beginning is {100 * numpy.sum(numpy.diagonal(confusion_matrix_reduced, 0)) / numpy.sum(confusion_matrix_reduced)}")
 
     for i in range(epochs):
         loss_array = train(model, dataset, optimizer, loss_function, echo=(rank == 0))
-        loss_array_tensor = torch.tensor(loss_array, dtype=torch.float32, device=rank)
-        gathered_loss_tensors = [torch.zeros_like(loss_array_tensor) for _ in range(world_size)]
+        loss_array_tensor = torch.tensor(loss_array, dtype=torch.float32, device=gpus[rank])
+        gathered_loss_tensors = [torch.zeros_like(loss_array_tensor) for _ in range(len(gpus))]
         torch.distributed.all_gather(gathered_loss_tensors, loss_array_tensor)
 
         confusion_matrix = confusion(model, dataset, classes, echo=(rank == 0))
-        confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=rank)
-        gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(world_size)]
+        confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=gpus[rank])
+        gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(len(gpus))]
         torch.distributed.all_gather(gathered_confusion_matrices, confusion_matrices_tensor)
 
         torch.distributed.barrier()
         if rank == 0:
             gathered_loss_tensors = [tensor.cpu().numpy() for tensor in gathered_loss_tensors]
-            loss_array_reduced = sum(gathered_loss_tensors) / world_size
+            loss_array_reduced = sum(gathered_loss_tensors) / len(gpus)
             gathered_confusion_matrices = [tensor.cpu().numpy() for tensor in gathered_confusion_matrices]
-            confusion_matrix_reduced = sum(gathered_confusion_matrices) / world_size
+            confusion_matrix_reduced = sum(gathered_confusion_matrices) / len(gpus)
             loss_histories.append(loss_array_reduced)
             confusion_matrices_history.append(confusion_matrix_reduced)
             model_copy = deepcopy(model.module)
@@ -217,23 +214,23 @@ def _epochs_flow(rank:int, world_size:int, epochs:int, classes:int, model:torch.
             dump((models_history, loss_histories, confusion_matrices_history), file)
 
     cleanup()
-def _epochs(epochs:int, classes:int, model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], *optimizer_args, **optimizer_kwargs):
+def _epochs(gpus:tuple[int,...], epochs:int, classes:int, model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], *optimizer_args, **optimizer_kwargs):
     print(f"Training main thread PID is: {os.getpid()}")
-    world_size = torch.cuda.device_count()
-    torch.multiprocessing.spawn(_epochs_flow, args=(world_size, epochs, classes, model, dataset, loss_function, optimizer, optimizer_args, optimizer_kwargs), nprocs=world_size, join=True)
+    torch.multiprocessing.spawn(_epochs_flow, args=(gpus, epochs, classes, model, dataset, loss_function, optimizer, optimizer_args, optimizer_kwargs), nprocs=len(gpus), join=True)
 
 def main():
     aim = int(sys.argv[1])
     with open(_directory + "/cash/arguments.pkl", 'rb') as file:
         arguments = load(file)
+        gpus, *arguments = arguments
     if aim == aims.epochs:
-        _epochs(*(arguments[:-2]), *(arguments[-2]), **(arguments[-1]))
+        _epochs(gpus, *(arguments[:-2]), *(arguments[-2]), **(arguments[-1]))
     elif aim == aims.train:
-        _train(*(arguments[:-2]), *(arguments[-2]), **(arguments[-1]))
+        _train(gpus, *(arguments[:-2]), *(arguments[-2]), **(arguments[-1]))
     elif aim == aims.confusion:
-        _confusion(*arguments)
+        _confusion(gpus, *arguments)
     elif aim == aims.execute:
-        _execute(*arguments)
+        _execute(gpus, *arguments)
     elif aim == -1:
         print("Test cluster run execution")
         for i in range(7):

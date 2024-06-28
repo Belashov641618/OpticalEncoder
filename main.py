@@ -7,7 +7,10 @@ import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     from utilities import *
-    dataset = Dataset('CIFAR10', 64, 512, 512, torch.complex6)
-    dataset.train
+    dataset = Dataset('MNIST', 10, 512, 512, torch.complex64)
+    dataset.reference.default()
+    image, image_ = next(iter(dataset.train))
+    print(image.shape, image_.shape)
+
 
 
