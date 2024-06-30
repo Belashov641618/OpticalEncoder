@@ -13,10 +13,9 @@ from copy import deepcopy
 from typing import Callable, Type, Union, Iterable, Any
 from tqdm import tqdm
 
-
 if __name__ == '__main__':
     # torch.backends.cudnn.enabled = False
-    sys.path.append('..')
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from utilities.training import train, confusion
 from utilities import *
 from elements.composition import HybridModel
@@ -157,8 +156,8 @@ def _epochs_flow(rank:int, gpus:tuple[int,...], epochs:int, classes:int, model:t
                 print(type(layer).__name__)
             print(type(model._detectors).__name__)
             print(type(model._electronic_model).__name__)
-        else:
-            summary(model, (1, dataset.width, dataset.height), dataset.batch)
+        # else:
+            # summary(model, (1, dataset.width, dataset.height), dataset.batch)
     setup(rank, len(gpus))
     model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(gpus[rank]))
     dataset.sampler.parallel(rank, len(gpus))
@@ -169,24 +168,7 @@ def _epochs_flow(rank:int, gpus:tuple[int,...], epochs:int, classes:int, model:t
     confusion_matrices_history = []
 
     # with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA], record_shapes=True, profile_memory=True, with_stack=True, with_flops=True, with_modules=True, on_trace_ready=torch.profiler.tensorboard_trace_handler(f"./log{rank}"),) as prof:
-    confusion_matrix = confusion(model, dataset, classes, echo=(rank == 0))
-    confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=gpus[rank])
-    gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(len(gpus))]
-    torch.distributed.all_gather(gathered_confusion_matrices, confusion_matrices_tensor)
-
-    torch.distributed.barrier()
-    if rank == 0:
-        gathered_confusion_matrices = [tensor.cpu().numpy() for tensor in gathered_confusion_matrices]
-        confusion_matrix_reduced = sum(gathered_confusion_matrices) / len(gpus)
-        confusion_matrices_history.append(confusion_matrix_reduced)
-        print(f"Accuracy in the beginning is {100 * numpy.sum(numpy.diagonal(confusion_matrix_reduced, 0)) / numpy.sum(confusion_matrix_reduced)}")
-
-    for i in range(epochs):
-        loss_array = train(model, dataset, optimizer, loss_function, echo=(rank == 0))
-        loss_array_tensor = torch.tensor(loss_array, dtype=torch.float32, device=gpus[rank])
-        gathered_loss_tensors = [torch.zeros_like(loss_array_tensor) for _ in range(len(gpus))]
-        torch.distributed.all_gather(gathered_loss_tensors, loss_array_tensor)
-
+    if dataset.confusion_allowed:
         confusion_matrix = confusion(model, dataset, classes, echo=(rank == 0))
         confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=gpus[rank])
         gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(len(gpus))]
@@ -194,17 +176,40 @@ def _epochs_flow(rank:int, gpus:tuple[int,...], epochs:int, classes:int, model:t
 
         torch.distributed.barrier()
         if rank == 0:
-            gathered_loss_tensors = [tensor.cpu().numpy() for tensor in gathered_loss_tensors]
-            loss_array_reduced = sum(gathered_loss_tensors) / len(gpus)
             gathered_confusion_matrices = [tensor.cpu().numpy() for tensor in gathered_confusion_matrices]
             confusion_matrix_reduced = sum(gathered_confusion_matrices) / len(gpus)
-            loss_histories.append(loss_array_reduced)
             confusion_matrices_history.append(confusion_matrix_reduced)
+            print(f"Accuracy in the beginning is {100 * numpy.sum(numpy.diagonal(confusion_matrix_reduced, 0)) / numpy.sum(confusion_matrix_reduced)}")
+
+    for i in range(epochs):
+        loss_array = train(model, dataset, optimizer, loss_function, echo=(rank == 0))
+        loss_array_tensor = torch.tensor(loss_array, dtype=torch.float32, device=gpus[rank])
+        gathered_loss_tensors = [torch.zeros_like(loss_array_tensor) for _ in range(len(gpus))]
+        torch.distributed.all_gather(gathered_loss_tensors, loss_array_tensor)
+
+        if dataset.confusion_allowed:
+            confusion_matrix = confusion(model, dataset, classes, echo=(rank == 0))
+            confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=gpus[rank])
+            gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(len(gpus))]
+            torch.distributed.all_gather(gathered_confusion_matrices, confusion_matrices_tensor)
+
+        torch.distributed.barrier()
+        if rank == 0:
+            gathered_loss_tensors = [tensor.cpu().numpy() for tensor in gathered_loss_tensors]
+            loss_array_reduced = sum(gathered_loss_tensors) / len(gpus)
+            loss_histories.append(loss_array_reduced)
+            if dataset.confusion_allowed:
+                gathered_confusion_matrices = [tensor.cpu().numpy() for tensor in gathered_confusion_matrices]
+                confusion_matrix_reduced = sum(gathered_confusion_matrices) / len(gpus)
+                confusion_matrices_history.append(confusion_matrix_reduced)
             model_copy = deepcopy(model.module)
             model_copy = model_copy.cpu()
             models_history.append(model_copy)
-            print(f"Accuracy after epoch {i+1} is {100*numpy.sum(numpy.diagonal(confusion_matrix_reduced, 0))/numpy.sum(confusion_matrix_reduced)}")
-
+            if dataset.confusion_allowed:
+                print(f"Accuracy after epoch {i+1} is {100*numpy.sum(numpy.diagonal(confusion_matrix_reduced, 0))/numpy.sum(confusion_matrix_reduced)}")
+            else:
+                print(f"Mean loss after epoch {i+1} is {sum(loss_array_reduced)/len(loss_array_reduced)}")
+            
             with open(_directory + "/cash/checkpoints.pkl", 'wb') as file:
                 dump((models_history, loss_histories, confusion_matrices_history), file)
     # print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=-1), end=f"\nProcess rank: {rank}\n\n")

@@ -35,6 +35,14 @@ def interpolate(field:torch.Tensor, size:Any, mode:IMType=InterpolateModes.neare
     else:
         return torch.nn.functional.interpolate(field, size, mode=mode, antialias=False, align_corners=align)
 
+def normilize(tensor:torch.Tensor, vmin:float=0, vmax:float=1.0):
+    min_vals, _ = torch.min(tensor.view(*tensor.shape[:2], -1), dim=-1, keepdim=True)
+    max_vals, _ = torch.max(tensor.view(*tensor.shape[:2], -1), dim=-1, keepdim=True)
+    min_vals, max_vals = min_vals.unsqueeze(-1), max_vals.unsqueeze(-1)
+    normilized = (tensor - min_vals) / (max_vals - min_vals)
+    normilized = normilized * (vmax - vmin) - vmin
+    return normilized
+
 def shifted_log10(*images:torch.Tensor, shift:float=None, average:float=0.5, reduce:Literal['mean','max','min']='mean', return_shift:bool=True):
     if len(images) > 0:
         if shift is None:

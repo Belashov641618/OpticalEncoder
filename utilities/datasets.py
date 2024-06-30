@@ -35,18 +35,17 @@ class ReferenceSelector:
         self.set(1)
 
 
-class SameReferenceIterator(DataLoader):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
+class SameReferenceIterator:
+    def __init__(self, loader:DataLoader):
+        self.loader = loader
     def __iter__(self):
-        self.iterator = super().__iter__()
+        self.iterator = iter(self.loader)
         return self
-
     def __next__(self):
         image, label = next(self.iterator)
         return image, image.clone()
-
+    def __len__(self):
+        return len(self.loader)
 
 LiteralDataSet = Literal['MNIST', 'Flowers', 'STL10', 'CIFAR10']
 class Dataset:
@@ -98,17 +97,23 @@ class Dataset:
         sys.stdout = original_stdout
 
         sampler = self._sampler_type(dataset, **self._sampler_kwargs)
-        DataLoaderClasses = [DataLoader, SameReferenceIterator]
-        self._train = DataLoaderClasses[self._reference_type](dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
-        self._test = DataLoaderClasses[self._reference_type](dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
+        self._train = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
+        self._test = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
     @property
     def train(self):
         self._delayed.launch()
-        return self._train
+        if self._reference_type == 1:
+            return SameReferenceIterator(self._train)
+        else:
+            return self._train
+        
     @property
     def test(self):
         self._delayed.launch()
-        return self._test
+        if self._reference_type == 1:
+            return SameReferenceIterator(self._test)
+        else:
+            return self._test
 
     # Properties
     _dataset : Optional[LiteralDataSet]
@@ -219,6 +224,12 @@ class Dataset:
             self._delayed.add(self._reload)
             self._preload = amount
 
+    @property
+    def confusion_allowed(self):
+        if self._reference_type == 1:
+            return False
+        return True
+    
     def __init__(self, dataset:LiteralDataSet=None, batch:int=None, width:int=None, height:int=None, dtype:torch.dtype=torch.float32, sampler:type(torch.utils.data.Sampler)=torch.utils.data.RandomSampler, threads:int=os.cpu_count(), preload:int=2):
         self._delayed = DelayedFunctions()
 
