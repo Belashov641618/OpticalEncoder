@@ -8,6 +8,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from typing import Literal, Union, Optional, Iterable
 from tqdm import tqdm
+from math import sqrt
 
 from utilities import *
 from parameters import DataSetsPath
@@ -47,7 +48,9 @@ class SameReferenceIterator:
     def __len__(self):
         return len(self.loader)
 
-LiteralDataSet = Literal['MNIST', 'Flowers', 'STL10', 'CIFAR10']
+LiteralDataSet  = Literal['MNIST', 'Flowers', 'STL10', 'CIFAR10']
+DataSetToWidth  = dict(MNIST=28, Flowers=100, STL10=96, CIFAR10=32)
+DataSetToHeight = dict(MNIST=28, Flowers=100, STL10=96, CIFAR10=32)
 class Dataset:
     _delayed : DelayedFunctions
 
@@ -59,16 +62,18 @@ class Dataset:
         sys.stdout = open(os.devnull, 'w')
         if self._dataset == 'MNIST':
             transformation = transforms.Compose([
-                    transforms.Grayscale(),
-                    *([transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True)] if self._width is not None and self._height is not None else []),
-                    transforms.ToTensor(),
-                    transforms.ConvertImageDtype(self._dtype)
-                ])
+                transforms.Grayscale(),
+                transforms.Resize((self._width-self._paddings[2]-self._paddings[3], self._height-self._paddings[0]-self._paddings[1]), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True),
+                *self._transformations,
+                transforms.ToTensor(),
+                transforms.ConvertImageDtype(self._dtype)
+            ])
             dataset = datasets.MNIST(root=DataSetsPath, train=True, transform=transformation, download=True)
         elif self._dataset == 'Flowers':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
-                *([transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True)] if self._width is not None and self._height is not None else []),
+                transforms.Resize((self._width-self._paddings[2]-self._paddings[3], self._height-self._paddings[0]-self._paddings[1]), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True),
+                *self._transformations,
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])
@@ -76,7 +81,8 @@ class Dataset:
         elif self._dataset == 'STL10':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
-                *([transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True)] if self._width is not None and self._height is not None else []),
+                transforms.Resize((self._width-self._paddings[2]-self._paddings[3], self._height-self._paddings[0]-self._paddings[1]), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True),
+                *self._transformations,
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])
@@ -84,7 +90,8 @@ class Dataset:
         elif self._dataset == 'CIFAR10':
             transformation = transforms.Compose([
                 transforms.Grayscale(),
-                *([transforms.Resize((self._width, self._height), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True)] if self._width is not None and self._height is not None else []),
+                transforms.Resize((self._width-self._paddings[2]-self._paddings[3], self._height-self._paddings[0]-self._paddings[1]), interpolation=transforms.InterpolationMode.BICUBIC, antialias=True),
+                *self._transformations,
                 transforms.ToTensor(),
                 transforms.ConvertImageDtype(self._dtype)
             ])
@@ -106,7 +113,6 @@ class Dataset:
             return SameReferenceIterator(self._train)
         else:
             return self._train
-        
     @property
     def test(self):
         self._delayed.launch()
@@ -114,6 +120,56 @@ class Dataset:
             return SameReferenceIterator(self._test)
         else:
             return self._test
+
+    # Transformations
+    _transformations:list[torch.nn.Module]
+    _padding_values:tuple[int,...]
+    def _set_padding_values(self, values:tuple[int,...]):
+        if values != self._padding_values:
+            self._padding_values = values
+            index = -1
+            for i, element in enumerate(self._transformations):
+                if isinstance(element, transforms.Pad):
+                    index = i
+                    break
+            if index >= 0:
+                self._transformations[index] = transforms.Pad(self._padding_values)
+            else:
+                self._transformations.append(transforms.Pad(self._padding_values))
+            self._delayed.add(self._reload)
+    @property
+    def _paddings(self):
+        if len(self._padding_values) == 1:
+            return self._padding_values[0], self._padding_values[0], self._padding_values[0], self._padding_values[0]
+        elif len(self._padding_values) == 2:
+            return self._padding_values[0], self._padding_values[0], self._padding_values[1], self._padding_values[1]
+        elif len(self._padding_values) == 4:
+            return self._padding_values
+        else:
+            raise AttributeError
+    def padding(self, pixels:Union[int,tuple[int,int],tuple[int,int,int,int]]=None, percent:Union[float,tuple[float,float],tuple[float,float,float,float]]=None, surface_ratio:float=None):
+        if pixels is not None:
+            if isinstance(pixels, int):
+                pixels = (pixels, pixels, pixels, pixels)
+            elif len(pixels) == 2:
+                pixels = (pixels[0], pixels[0], pixels[1], pixels[1])
+            elif len(pixels) != 4:
+                raise AttributeError
+            self._set_padding_values(pixels)
+        elif percent is not None:
+            if isinstance(percent, float):
+                percent = (percent, percent, percent, percent)
+            elif len(percent) == 2:
+                percent = (percent[0], percent[0], percent[1], percent[1])
+            elif len(percent) != 4:
+                raise AttributeError
+            self._set_padding_values((int(self._height*percent[0]), int(self._height*percent[1]), int(self.width*percent[2]), int(self._height*percent[3])))
+        elif surface_ratio is not None:
+            ratio = (1.0 - sqrt(surface_ratio))/2
+            self._set_padding_values((int(self._height*ratio), int(self._height*ratio), int(self._width*ratio), int(self._width*ratio)))
+    def _init_transformations(self):
+        self._transformations = []
+        self._padding_values = (0,0,0,0)
 
     # Properties
     _dataset : Optional[LiteralDataSet]
@@ -126,6 +182,10 @@ class Dataset:
 
             def set(self, dataset:LiteralDataSet):
                 if not hasattr(self._self, '_dataset') or self._self._dataset != dataset:
+                    if not hasattr(self._self, '_width') or self._self._width is None:
+                        self._self.width = DataSetToWidth[dataset]
+                    if not hasattr(self._self, '_height') or self._self._height is None:
+                        self._self.height = DataSetToHeight[dataset]
                     self._self._delayed.add(self._self._reload)
                 self._self._dataset = dataset
             def __eq__(self, dataset:Union[LiteralDataSet,DatasetSelector]):
@@ -135,6 +195,8 @@ class Dataset:
 
             def mnist(self):    self.set('MNIST')
             def flowers(self):  self.set('Flowers')
+            def stl10(self):    self.set('STL10')
+            def cifar10(self):  self.set('CIFAR10')
         return DatasetSelector(self)
 
     _reference_type:int
@@ -246,6 +308,7 @@ class Dataset:
         self.threads = threads
         self.preload = preload
 
+        self._init_transformations()
     @property
     def load(self):
         return LoadSelector(self)
