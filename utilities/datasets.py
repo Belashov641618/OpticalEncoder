@@ -220,6 +220,8 @@ class Dataset:
         return self._width
     @width.setter
     def width(self, pixels:int):
+        if pixels is None:
+            pixels = DataSetToWidth[self.dataset.get()]
         if not hasattr(self, '_width') or pixels != self._width:
             self._delayed.add(self._reload)
             self._width = pixels
@@ -230,6 +232,8 @@ class Dataset:
         return self._height
     @height.setter
     def height(self, pixels:int):
+        if pixels is None:
+            pixels = DataSetToHeight[self.dataset.get()]
         if not hasattr(self, '_height') or pixels != self._height:
             self._delayed.add(self._reload)
             self._height = pixels
