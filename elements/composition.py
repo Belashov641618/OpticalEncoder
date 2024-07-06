@@ -2,8 +2,8 @@ import numpy
 import torch
 
 from typing import Literal, Union
+
 from tqdm import tqdm
-from math import sqrt
 
 from elements.abstracts import AbstractElement, AbstractOptical, AbstractPropagator, AbstractWrapper, AbstractEncoderDecoder, AbstractDetectors, AbstractModulator
 from utilities import *
