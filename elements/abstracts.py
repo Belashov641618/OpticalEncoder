@@ -236,6 +236,9 @@ class AbstractModulator(AbstractElement):
         return torch.sigmoid(self._mask_parameters.unsqueeze(0).unsqueeze(0))
     def _multiplier(self) -> torch.Tensor:
         raise NotImplementedError
+    def multiplier(self) -> torch.Tensor:
+        return self._multiplier().clone().detach().cpu()
+    
     @property
     def properties(self):
         return self._mask_parameters.clone().detach().cpu()

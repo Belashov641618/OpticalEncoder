@@ -315,7 +315,7 @@ class SpaceParam(Generic[ParamType]):
             temp = torch.linspace(value0, value1, N, device=self._value.device, dtype=self._value.dtype)
         else:
             temp = torch.ones(N, device=self._value.device, dtype=self._value.dtype) * value0
-        if temp != self._value:
+        if torch.sum(torch.abs(temp - self._value)) != 0:
             self._value = temp
             self._launch()
     def set(self, data:Union[ParamType, tuple[ParamType,ParamType,int]]):

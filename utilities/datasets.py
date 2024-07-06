@@ -34,6 +34,8 @@ class ReferenceSelector:
         self.set(0)
     def same(self):
         self.set(1)
+    def mirrored(self):
+        self.set(2)
 
 
 class SameReferenceIterator:
@@ -45,6 +47,18 @@ class SameReferenceIterator:
     def __next__(self):
         image, label = next(self.iterator)
         return image, image.clone()
+    def __len__(self):
+        return len(self.loader)
+
+class MirrorReferenceIterator:
+    def __init__(self, loader:DataLoader):
+        self.loader = loader
+    def __iter__(self):
+        self.iterator = iter(self.loader)
+        return self
+    def __next__(self):
+        image, label = next(self.iterator)
+        return image, torch.flip(image.clone(), (2,3))
     def __len__(self):
         return len(self.loader)
 
@@ -111,6 +125,8 @@ class Dataset:
         self._delayed.launch()
         if self._reference_type == 1:
             return SameReferenceIterator(self._train)
+        elif self._reference_type == 2:
+            return MirrorReferenceIterator(self._train)
         else:
             return self._train
     @property
@@ -118,6 +134,8 @@ class Dataset:
         self._delayed.launch()
         if self._reference_type == 1:
             return SameReferenceIterator(self._test)
+        elif self._reference_type == 2:
+            return MirrorReferenceIterator(self._test)
         else:
             return self._test
 
@@ -292,7 +310,7 @@ class Dataset:
 
     @property
     def confusion_allowed(self):
-        if self._reference_type == 1:
+        if self._reference_type == 1 or self._reference_type == 2:
             return False
         return True
     

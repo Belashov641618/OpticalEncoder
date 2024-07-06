@@ -134,7 +134,19 @@ class FurrierPropagation(AbstractPropagator):
         
         field = torch.nn.functional.pad(field, self._paddings)
         field = torch.fft.fft2(field)
-        field = field * fix_complex(self._propagation_buffer)
+        # Bx10*2xNxN || 2xNxN
+        # Первые 10 для первой длинны волны
+        # Вторые 10 для второй длинны волны
+        # И тд
+        # Как это сделать правильно??
+
+        buffer = self._propagation_buffer
+        if field.shape[1] != buffer.shape[0]:
+            shape = buffer.shape
+            temp = field.shape[1] // self._propagation_buffer.shape[0]
+            buffer = buffer.unsqueeze(0).expand(temp, *shape).reshape(temp*shape[0], *shape[1:])
+        field = field * buffer
+        #field = field * fix_complex(self._propagation_buffer)
         field = torch.fft.ifft2(field)
         field = torch.nn.functional.pad(field, self._unpaddings)
         field = interpolate(field, (self.pixels.output.x, self.pixels.output.y), mode=self.interpolation.mode)
