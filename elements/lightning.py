@@ -4,10 +4,10 @@ import pytorch_lightning as lightning
 from typing import Callable, Union, Iterable, Optional, Any
 
 from utilities.methods import normilize
-
+from utilities.datasets import Dataset
 
 class Basic(lightning.LightningModule):
-    _model:torch.nn.Module
+    _model:Optional[torch.nn.Module]
     @property
     def model(self):
         return self._model
@@ -77,7 +77,7 @@ class Basic(lightning.LightningModule):
                  schedulers:Union[torch.optim.lr_scheduler.LRScheduler,Iterable[torch.optim.lr_scheduler.LRScheduler]]=None
                  ):
         super().__init__()
-        self.model = model
+        self._model = model
         self.loss_function = loss_function
         if optimizers is None: self._optimizers = None
         else: self.set_optimizers(optimizers)
@@ -94,8 +94,16 @@ class Basic(lightning.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        return self._optimizers, self._schedulers
+        if self._schedulers is not None:
+            return self._optimizers, self._schedulers
+        else:
+            return self._optimizers
 
+    dataset:Dataset
+    def train_dataloader(self):
+        return self.dataset.train
+    def val_dataloader(self):
+        return self.dataset.test
 
 class Classification(Basic):
     def __init__(self,
@@ -105,6 +113,7 @@ class Classification(Basic):
                  schedulers:Union[torch.optim.lr_scheduler.LRScheduler,Iterable[torch.optim.lr_scheduler.LRScheduler]]=None
                  ):
         super().__init__(model, loss_function, optimizers, schedulers)
+        self._validation_history = []
 
     def validation_step(self, batch:tuple[torch.Tensor,torch.Tensor], index:int):
         data, reference = batch
@@ -121,10 +130,13 @@ class Classification(Basic):
         self.log('test_loss', loss, prog_bar=True)
         self.log('test_accuracy', 100*torch.sum(torch.diagonal(confusion,0))/torch.sum(confusion), prog_bar=True)
 
+        self._validation_history.append({'test_loss':loss, 'confusion':confusion})
         return  {'test_loss':loss, 'confusion':confusion}
 
     # noinspection PyTypeChecker
-    def validation_epoch_end(self, outputs:list):
+    _validation_history:list[dict]
+    def on_validation_epoch_end(self):
+        outputs = self._validation_history
         mean_loss = torch.stack([output['test_loss'] for output in outputs]).mean()
         confusion = sum(output['confusion'] for output in outputs)
         accuracy = 100*torch.sum(torch.diagonal(confusion,0))/torch.sum(confusion)
@@ -141,6 +153,7 @@ class ImageToImage(Basic):
                  schedulers:Union[torch.optim.lr_scheduler.LRScheduler,Iterable[torch.optim.lr_scheduler.LRScheduler]]=None
                  ):
         super().__init__(model, loss_function, optimizers, schedulers)
+        self._validation_history = []
 
     def validation_step(self, batch:tuple[torch.Tensor,torch.Tensor], index:int):
         images, references = batch
@@ -163,10 +176,14 @@ class ImageToImage(Basic):
         self.log('test_mse',  mse,  prog_bar=True)
         self.log('test_psnr', psnr, prog_bar=True)
 
+        self._validation_history.append(dict(test_loss=loss, mae=mae, mse=mse, psnr=psnr))
         return dict(test_loss=loss, mae=mae, mse=mse, psnr=psnr)
 
     # noinspection PyTypeChecker
-    def validation_epoch_end(self, outputs:list):
+    _validation_history:list[dict]
+    def on_validation_epoch_end(self):
+        outputs = self._validation_history 
+        
         mean_loss = torch.stack([output['test_loss'] for output in outputs]).mean()
         mean_mae  = torch.stack([output['test_mae']  for output in outputs]).mean()
         mean_mse  = torch.stack([output['test_mse']  for output in outputs]).mean()

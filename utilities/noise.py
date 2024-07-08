@@ -86,7 +86,7 @@ def gaussian(areas:Union[Iterable[float],float], counts:Union[Iterable[int],int]
     sigmas_ = tuple(sigmas_temp)
     limits_ = tuple(limits_temp)
 
-    if device is None: device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if device is None: device = torch.device('cpu')
 
     coordinates:list[torch.Tensor] = [torch.linspace(limit0, limit1, count, device=device) for (limit0, limit1), count in zip(limits_, counts_)]
     mask = Gaussian(sigmas_)(*coordinates)
