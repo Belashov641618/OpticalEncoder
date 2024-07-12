@@ -20,7 +20,11 @@ class Generator(torch.nn.Module):
         raise NotImplementedError
     @property
     def device(self):
-        raise NotImplementedError
+        if not self.parameters():
+            return torch.device('cpu')
+        else:
+            parameter = next(iter(self.parameters()))
+            return parameter.device
     @property
     def dtype(self):
         raise NotImplementedError

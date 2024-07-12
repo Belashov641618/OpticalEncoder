@@ -83,7 +83,7 @@ class Incoherent(AbstractWrapper):
             (self.time_coherence, self.spatial_coherence, self.spatial_coherence),
             (self.samples, self.pixels.x, self.pixels.y),
             ((0, self.time),(0, self.length.x),(0,self.length.y)),
-            generator=True), 100)
+            device=self._generator.device, generator=True), 100)
         self._generator.optimize()
     def _delayed_generator_reset(self):
         self.delayed.add(self._reset_generator)
