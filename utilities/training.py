@@ -20,7 +20,7 @@ def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimize
     running_loss_proportion = 0.2
     regression = 0
 
-    iterator = tqdm(dataset.train, disable=not echo)
+    iterator = tqdm(dataset.train, disable=not echo, bar_format="{l_bar}{bar} | {n_fmt}/{total_fmt} | {elapsed}m - {remaining}m")
 
     for i, (images, labels) in enumerate(iterator):
         labels = labels.to(device, non_blocking=True)
@@ -42,8 +42,8 @@ def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimize
             history_slice = history[:i+1]
             iteration_slice = numpy.arange(0, i+1)
             k, b = numpy.polyfit(iteration_slice, history_slice, 1)
-            regression = k * 1000
-        iterator.set_description(f"RLoss: {running_loss}, RPI1000: {regression}")
+            regression = k.item() * 1000.0
+        iterator.set_description(f"RL:{scientific(float(running_loss),'',3,space='')}, RPI1K:{scientific(float(regression),'',2,space='')}")
     model.eval()
     return history
 
