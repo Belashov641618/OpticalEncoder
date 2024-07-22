@@ -46,6 +46,29 @@ class CudaMemoryChunker(AbstractWrapper):
                 raise error
         return self.forward(field, *args, **kwargs)
 
+
+class FullyIncoherentEncoder(AbstractEncoderDecoder):
+    def _init__(self, parent:FullyIncoherent):
+        super().__init__(parent)
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        self._parent.delayed.launch()
+        field = field * torch.exp(2j * torch.pi * torch.rand((1,field.shape[1]*self._parent.samples,*field.shape[2:]), device=field.device))
+        return field
+class FullyIncoherentDecoder(AbstractEncoderDecoder):
+    def __init__(self, parent:FullyIncoherent):
+        super().__init__(parent)
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        self._parent.delayed.launch()
+        field = torch.reshape(field, (field.shape[0], -1, self._parent.samples, *field.shape[2:]))
+        field = torch.mean(torch.abs(field)**2, dim=2) * torch.exp(1j * torch.angle(field[:, :, 0, :, :]))
+        return field
+class FullyIncoherent(AbstractWrapper):
+    def __init__(self, samples:int):
+        super().__init__(init=False)
+        self.samples = samples
+        self.encoder = FullyIncoherentEncoder(self)
+        self.decoder = FullyIncoherentDecoder(self)
+
 class IncoherentEncoder(AbstractEncoderDecoder):
     _generator:GaussianNormalizer
     _parent:Incoherent

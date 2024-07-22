@@ -7,9 +7,10 @@ def autocorrelation(tensor:torch.Tensor, dims:Union[int,tuple[int,...]], mean_di
 
     tensor = tensor.cpu()
 
+    L = 1.0E-18
     a = tensor - torch.mean(tensor, dim=mean_dim, keepdim=True)
-    a = a / torch.sqrt(torch.sum(a**2, dim=mean_dim, keepdim=True)/(a.size(mean_dim) - 1))
-
+    a = a / (torch.sqrt(torch.sum(a**2, dim=mean_dim, keepdim=True)/(a.size(mean_dim) - 1)) + L)
+    
     paddings  = [0 for i in range(2*len(a.size()))]
     paddings_ = [0 for i in range(2*len(a.size()))]
     multiplier = 1.0
