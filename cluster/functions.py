@@ -149,13 +149,13 @@ def _execute(gpus:tuple[int,...], model:torch.nn.Module, data:Union[Dataset, Ite
 
 
 def _epochs_flow(rank:int, gpus:tuple[int,...], epochs:int, classes:int, model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], optimizer_args, optimizer_kwargs):
-    print(f"Training thread#{rank} PID is: {os.getpid()}")
-    if rank == 0:
-        if isinstance(model, HybridModel):
-            for layer in model._optical_model:
-                print(type(layer).__name__)
-            print(type(model._detectors).__name__)
-            print(type(model._electronic_model).__name__)
+    # print(f"Training thread#{rank} PID is: {os.getpid()}")
+    # if rank == 0:
+        # if isinstance(model, HybridModel):
+            # for layer in model._optical_model:
+                # print(type(layer).__name__)
+            # print(type(model._detectors).__name__)
+            # print(type(model._electronic_model).__name__)
         # else:
             # summary(model, (1, dataset.width, dataset.height), dataset.batch)
     setup(rank, len(gpus))

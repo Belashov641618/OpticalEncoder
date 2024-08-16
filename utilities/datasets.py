@@ -118,7 +118,7 @@ class Dataset:
         sys.stdout = original_stdout
 
         sampler = self._sampler_type(dataset, **self._sampler_kwargs)
-        self._train = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
+        self._train = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload, drop_last=True)
         self._test = DataLoader(dataset, batch_size=self._batch, sampler=sampler, pin_memory=True, num_workers=self._threads, prefetch_factor=self._preload)
     @property
     def train(self):

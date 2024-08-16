@@ -67,3 +67,12 @@ class ImageComparisonMAE(MeanImageComparison):
         return torch.abs(image - reference)
     def __init__(self, *args, **kwargs):
         super().__init__(function=self._function_mae, *args, **kwargs)
+
+class MseCrossEntropyCombination:
+    def __init__(self, cross_entropy_to_mse_proportion:float=1.0):
+        self.proportion = cross_entropy_to_mse_proportion
+    def __call__(self, outputs:torch.Tensor, targets:torch.Tensor):
+        CELoss = torch.nn.functional.cross_entropy(outputs, targets)
+        MSELoss = torch.nn.functional.mse_loss(torch.nn.functional.softmax(outputs, dim=1), torch.nn.functional.one_hot(targets, num_classes=10).float())
+        loss = self.proportion*CELoss + (1.0-self.proportion)*MSELoss
+        return loss

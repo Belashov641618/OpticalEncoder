@@ -16,3 +16,20 @@ class AdjustSize(torch.nn.Module):
     def forward(self, field:torch.Tensor, *args, **kwargs):
         return interpolate(field, (self.width, self.height), self.mode)
 
+class IntensityToAmplituder(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        return torch.sqrt(torch.abs(field)).to(torch.complex64)
+
+class AmplitudeToIntensity(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        return torch.abs(field)**2
+
+class Empty(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+    def forward(self, field:torch.Tensor, *args, **kwargs):
+        return field
