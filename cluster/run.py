@@ -40,9 +40,11 @@ def run(aim:int, *args):
     with open(_directory + "/cash/arguments.pkl", 'wb') as file:
         dump(args, file)
     if IPython.get_ipython():
-        IPython.get_ipython().system(f'python3 "{_directory}"/functions.py "{aim}"')
+        result = IPython.get_ipython().system(f'python3 "{_directory}"/functions.py "{aim}"')
     else:
-        subprocess.run(["python3", f"{_directory}/functions.py", str(aim)])
+        result = subprocess.run(["python3", f"{_directory}/functions.py", str(aim)]).returncode
+    if result is not None and result != 0:
+        raise Exception(f"Return code of subprocess is not zero: {result}")
     with open(_directory + "/cash/results.pkl", 'rb') as file:
         results = load(file)
     return results

@@ -3,7 +3,7 @@ from .basics import Param, XYParams, IOParams, IntXY, FloatXY, IntIO, FloatIO
 from .basics import SpaceParam, FloatS, SpaceParamGroup
 from .basics import InterpolateMode, InterpolateModes, IMType
 from .basics import function_combiner
-from .losses import ImageComparisonMSE, ImageComparisonMAE, MeanImageComparison 
+from .losses import ImageComparisonMSE, ImageComparisonMAE, MeanImageComparison, MseCrossEntropyCombination
 from .statistics import distribution, autocorrelation, correlation_circle
 from .datasets import Dataset, LiteralDataSet
 from .loggers import Logger, DynamicApproximation

@@ -26,7 +26,7 @@ def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimize
         labels = labels.to(device, non_blocking=True)
         images = images.to(device, non_blocking=True)
 
-        results = model.forward(images)
+        results = model(images)
 
         optimizer.zero_grad()
         loss = loss_function(results, labels)
@@ -58,7 +58,7 @@ def confusion(model:torch.nn.Module, dataset:Dataset, classes:int=10, echo:bool=
         for images, labels in iterator:
             images = images.to(device)
             labels = labels.to(device)
-            values, indexes = torch.max(model.forward(images), dim=1)
+            values, indexes = torch.max(model(images), dim=1)
             for label, index in zip(labels, indexes):
                 matrix[label.item(), index.item()] += 1
     return matrix
