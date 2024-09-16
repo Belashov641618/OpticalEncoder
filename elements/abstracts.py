@@ -1,6 +1,6 @@
 from __future__ import annotations
 import torch
-from typing import Callable, Any, Optional
+from typing import Callable, Any, Optional, Literal
 from utilities import *
 
 # Элементы
@@ -322,6 +322,28 @@ class AbstractDetectors(AbstractSpectral):
     @spectral.setter
     def spectral(self, filter:filters.Filter):
         self._spectral_filter.value = filter
+
+    _normalization_type:Literal['none', 'integral', 'softmax', 'minmax']
+    @property
+    def normalization(self):
+        class NormalizationSelector:
+            def __init__(self, _self:AbstractDetectors):
+                self._self = _self
+            def get(self):
+                return self._self._normalization_type
+            def set(self, ntype:Literal['none', 'integral', 'softmax', 'minmax']):
+                self._self._normalization_type = ntype
+            def none(self):
+                self.set('none')
+            def integral(self):
+                self.set('integral')
+            def softmax(self):
+                self.set('softmax')
+            def minmax(self):
+                self.set('minmax')
+        return NormalizationSelector(self)
+
+
     @property
     def device(self):
         if hasattr(self, '_spectral_buffer'):
@@ -337,7 +359,21 @@ class AbstractDetectors(AbstractSpectral):
         super().__init__(pixels, length, wavelength, logger=logger)
         self._spectral_filter = Param[filters.Filter](self._attach_recalc_spectral_buffer)
         self._spectral_filter.set(spectral_filter)
+        self.normalization.none()
 
+    def _normalize(self, signals:torch.Tensor, field:torch.Tensor):
+        if   self._normalization_type == 'none':
+            return signals
+        elif self._normalization_type == 'integral':
+            integrals = torch.sum(field*self._spectral_buffer.reshape(1,-1,1,1), dim=(1,2,3), keepdim=True)
+            return signals / integrals
+        elif self._normalization_type == 'softmax':
+            return torch.softmax(signals, dim=1)
+        elif self._normalization_type == 'minmax':
+            minimums, _ = torch.min(signals, dim=1, keepdim=True)
+            maximums, _ = torch.max(signals, dim=1, keepdim=True)
+            return (signals - minimums) / (maximums - minimums)
+        else: TypeError(f"Unknown normalization type: {self._normalization_type}")
     def forward(self, *args, **kwargs):
         super().forward(*args, **kwargs)
 

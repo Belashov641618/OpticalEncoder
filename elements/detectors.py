@@ -82,12 +82,12 @@ class ClassificationDetectors(AbstractDetectors):
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)
         field = fix_complex(field)
-        
-        field = torch.nn.functional.pad(torch.abs(field), self._paddings_difference)
-        field = field.reshape(field.shape[0], 1, *field.shape[1:]) * (self._wavelength_buffer.reshape(1, -1, 1, 1) * self._detectors_buffer.reshape(self._detectors_buffer.shape[0], 1, *self._detectors_buffer.shape[1:]))
-        field = torch.sum(field, dim=(2,3,4))
-
-        return field
+        padded_filed = torch.nn.functional.pad(torch.abs(field), self._paddings_difference)
+        spectrally_normed_field = padded_filed * self._spectral_buffer.view(1, -1, 1, 1)
+        expanded_to_detectors_field = spectrally_normed_field.unsqueeze(1) * self._detectors_buffer.view(1, self._detectors_buffer.shape[0], 1, self._detectors_buffer.shape[1:])
+        signals = torch.sum(expanded_to_detectors_field, dim=(2,3,4))
+        normed_signals = self._normalize(signals, field)
+        return normed_signals
 
 class MatrixDetectors(AbstractDetectors):
     detectors:XYParams[int]
@@ -195,17 +195,15 @@ class MatrixDetectors(AbstractDetectors):
     def forward(self, field:torch.Tensor, *args, **kwargs):
         super().forward(*args, **kwargs)
         field = fix_complex(field)
-        
         field = torch.nn.functional.pad(torch.abs(field), self._paddings_difference)
-
         paddings, dx, dy = self._convolution_params
-        field = torch.nn.functional.pad(field, paddings)
-
-        kernel = self._detectors_buffer.repeat(1, self.wavelength.size, 1, 1) * self._spectral_buffer.reshape(1, -1, 1, 1)
-        signals = torch.nn.functional.conv2d(field, kernel, stride=(dx, dy), groups=self.wavelength.size)
+        padded_field = torch.nn.functional.pad(field, paddings)
+        kernel = self._detectors_buffer.repeat(1, self.wavelength.size, 1, 1) * self._spectral_buffer.view(1, -1, 1, 1)
+        signals = torch.nn.functional.conv2d(padded_field, kernel, stride=(dx, dy), groups=self.wavelength.size)
         signals = signals[:,:,0:self._detectors.x,0:self._detectors.y]*self._step_x*self._step_y
         signals = torch.mean(signals, dim=1).unsqueeze(1)
-        return signals
+        normed_signals = self._normalize(signals, field)
+        return normed_signals
 
 
 
