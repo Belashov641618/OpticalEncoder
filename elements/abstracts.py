@@ -365,8 +365,8 @@ class AbstractDetectors(AbstractSpectral):
         if   self._normalization_type == 'none':
             return signals
         elif self._normalization_type == 'integral':
-            integrals = torch.sum(field*self._spectral_buffer.reshape(1,-1,1,1), dim=(1,2,3), keepdim=True)
-            return signals / integrals
+            integrals = torch.sum(field*self._spectral_buffer.reshape(1,-1,1,1), dim=(1,2,3))
+            return signals / integrals.view(-1,1)
         elif self._normalization_type == 'softmax':
             return torch.softmax(signals, dim=1)
         elif self._normalization_type == 'minmax':

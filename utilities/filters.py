@@ -1,7 +1,7 @@
 import torch
 import math
 
-from typing import Iterable, Tuple, Optional, Union
+from typing import Iterable, Tuple, Optional, Union, Literal
 
 _sqrt2pi = math.sqrt(2*math.pi)
 
@@ -30,15 +30,21 @@ class Filter:
         raise NotImplementedError
 
 class Gaussian(Filter):
+    _normalization_type:Literal['area','maximum']
     _sigmas:Tuple[float, ...]
     _means: Tuple[float, ...]
     _limits:Optional[Tuple[Tuple[float, float], ...]]
+    _deltas:Tuple[float,...]
 
     _normalization:float
     def _set_normalization(self):
-        self._normalization = 1.0
-        for sigma in self._sigmas:
-            self._normalization *= 1.0 / (sigma * _sqrt2pi)
+        if self._normalization_type == 'area':
+            self._normalization = 1.0
+            for sigma in self._sigmas:
+                self._normalization *= 1.0 / (sigma * _sqrt2pi)
+        elif self._normalization_type == 'maximum':
+            self._normalization = 1.0
+        else: raise ValueError(f"Unknown gaussian normalization type: {self._normalization_type}")
 
     _multipliers:Tuple[float, ...]
     def _set_multipliers(self):
@@ -48,7 +54,8 @@ class Gaussian(Filter):
     def dims(self):
         return len(self._sigmas)
 
-    def __init__(self, sigmas:Union[Iterable[float],float], means:Optional[Union[Iterable[float],float]]=None, limits:Optional[Union[Iterable[Tuple[float, float]], Tuple[float, float]]]=None):
+    def __init__(self, sigmas:Union[Iterable[float],float], means:Optional[Union[Iterable[float],float]]=None, limits:Optional[Union[Iterable[Tuple[float, float]], Tuple[float, float]]]=None, deltas:Union[Iterable[float],float]=None, normalization:Literal['area','maximum']='area'):
+        self._normalization_type = normalization
         if isinstance(sigmas, float):   self._sigmas = (sigmas, )
         else:                           self._sigmas = tuple(sigmas)
 
@@ -62,9 +69,13 @@ class Gaussian(Filter):
             self._limits = (limits, )
         else:                           self._limits = tuple(limits)
 
-        if len(self._sigmas) != self.dims or len(self._means) != self.dims or (self._limits is not None and len(self._limits) != self.dims):
-            raise ValueError('sigmas, means and limits must have the same length')
-
+        if deltas is None:              self._deltas = tuple([1.0]*len(self._sigmas))
+        elif isinstance(deltas, float): self._deltas = (deltas,)
+        else:                           self._deltas = tuple(deltas)
+        
+        if len(self._sigmas) != self.dims or len(self._means) != self.dims or (self._limits is not None and len(self._limits) != self.dims) or len(self._deltas) != self.dims:
+            raise ValueError('sigmas, means, deltas and limits must have the same length')            
+        
         self._set_normalization()
         self._set_multipliers()
 

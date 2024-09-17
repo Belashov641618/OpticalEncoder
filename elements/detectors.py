@@ -84,7 +84,7 @@ class ClassificationDetectors(AbstractDetectors):
         field = fix_complex(field)
         padded_filed = torch.nn.functional.pad(torch.abs(field), self._paddings_difference)
         spectrally_normed_field = padded_filed * self._spectral_buffer.view(1, -1, 1, 1)
-        expanded_to_detectors_field = spectrally_normed_field.unsqueeze(1) * self._detectors_buffer.view(1, self._detectors_buffer.shape[0], 1, self._detectors_buffer.shape[1:])
+        expanded_to_detectors_field = spectrally_normed_field.unsqueeze(1) * self._detectors_buffer.view(1, self._detectors_buffer.shape[0], 1, *self._detectors_buffer.shape[1:])
         signals = torch.sum(expanded_to_detectors_field, dim=(2,3,4))
         normed_signals = self._normalize(signals, field)
         return normed_signals

@@ -209,29 +209,23 @@ def _epochs_flow(rank:int, gpus:tuple[int,...], epochs:int, classes:int, model:t
             loss_array_reduced = sum(gathered_loss_tensors) / len(gpus)
             loss_histories.append(loss_array_reduced)
             if dataset.confusion_allowed:
-                # print(f"| {time.time()} : {rank} : Meaning cofusion matrixes")
                 gathered_confusion_matrices = [tensor.cpu().numpy() for tensor in gathered_confusion_matrices]
                 confusion_matrix_reduced = sum(gathered_confusion_matrices) / len(gpus)
                 confusion_matrices_history.append(confusion_matrix_reduced)
-            # print(f"| {time.time()} : {rank} : Appending models history")
             model_copy = deepcopy(model.module)
             model_copy = model_copy.cpu()
             models_history.append(model_copy)
-            # print(f"| {time.time()} : {rank} : Printing results")
             if dataset.confusion_allowed:
                 print(f"Accuracy after epoch {i+1} is {100*numpy.sum(numpy.diagonal(confusion_matrix_reduced, 0))/numpy.sum(confusion_matrix_reduced)}")
             else:
                 print(f"Mean loss after epoch {i+1} is {sum(loss_array_reduced)/len(loss_array_reduced)}")
             if i != epochs-1:
-                # print(f"| {time.time()} : {rank} : Writing file")
                 with open(_directory + "/cash/checkpoints.pkl", 'wb') as file:
                     dump((models_history, loss_histories, confusion_matrices_history), file)
         torch.distributed.barrier()
     torch.distributed.barrier()
     
-    # print(f"| {time.time()} : {rank} : Calculations finished")
     if rank == 0:
-        # print(f"| {time.time()} : {rank} : Writing file")
         with open(_directory + "/cash/results.pkl", 'wb') as file:
             dump((models_history, loss_histories, confusion_matrices_history), file)
             
@@ -249,6 +243,7 @@ def _epochs(gpus:tuple[int,...], epochs:int, classes:int, model:torch.nn.Module,
             if os.path.exists(_directory + "/cash/checkpoints.pkl"):
                 os.remove(_directory + "/cash/checkpoints.pkl")
             torch.multiprocessing.spawn(_epochs_flow, args=(gpus, epochs, classes, model, dataset, loss_function, optimizer, optimizer_args, optimizer_kwargs), nprocs=len(gpus), join=True)
+            break
         except Exception as error:
             torch.cuda.empty_cache()
             print(error)
@@ -263,7 +258,6 @@ def _epochs(gpus:tuple[int,...], epochs:int, classes:int, model:torch.nn.Module,
             confusion_matrices_history += cmh
             model = models_history[-1]
             epochs -= len(loss_histories)
-        break
     if merge_histories:
         with open(_directory + "/cash/results.pkl", 'rb') as file:
             mh, lh, cmh = load(file)
