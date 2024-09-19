@@ -1,16 +1,17 @@
-from tests.FurrierPropagation import rectangle_diffraction
-from tests.Logger import dynamic_approximation, cycles
-from tests.Modulators import lens_focus
 import torch
-import matplotlib.pyplot as plt
-from belashovplot import TiledPlot
 
 if __name__ == '__main__':
-    from utilities import *
-    from utilities.datasets import LiteralDataSet
-    dataset = Dataset('MNIST', 10, 512, 512, torch.complex64)
-    image, image_ = next(iter(dataset.train))
-    print(image.shape, image_.shape)
+    from utilities.losses import Normalizable, Normalization, LossLinearCombination
+    mse = Normalizable.MeanSquareError(Normalization.Minmax())
+    ce = Normalizable.CrossEntropy(Normalization.Softmax())
+    loss = LossLinearCombination(mse, ce)
+    loss.proportions(0.8, None)
+    value = loss(torch.tensor([[0., 1., 0., 0.]]), torch.tensor([[0., 1., 0., 0.]]))
+    print(mse(torch.tensor([[0., 1., 0., 0.]]), torch.tensor([[0., 1., 0., 0.]])))
+    print(ce(torch.tensor([[0., 1., 0., 0.]]), torch.tensor([[0., 1., 0., 0.]])))
+    print(loss.coefficients, value)
+
+
 
 
 
