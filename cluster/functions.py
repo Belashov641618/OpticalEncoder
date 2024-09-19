@@ -164,6 +164,8 @@ def _epochs_flow(rank:int, gpus:tuple[int,...], epochs:int, classes:int, model:t
     model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(gpus[rank]))
     dataset.sampler.parallel(rank, len(gpus))
     optimizer = optimizer(model.parameters(), *optimizer_args, **optimizer_kwargs)
+    if hasattr(loss_function, 'to'):
+        loss_function = loss_function.to(gpus[rank])
 
     loss_histories = []
     models_history = []

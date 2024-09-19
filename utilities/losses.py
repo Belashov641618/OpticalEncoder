@@ -36,9 +36,10 @@ class LossLinearCombination(torch.nn.Module):
             if value is None:   none_indexes.append(i)
             else:               not_none_indexes.append(i)
         integral = sum(values[i] for i in not_none_indexes)
+        if not none_indexes and abs(integral - 1.0) > 1.0E-8: raise ValueError(f"If all values defined, integral have to equal 1.0, but it`s equal {integral}")
         if integral > 1.0: raise ValueError(f"Sum of all not none proportion values must be lower or equal 1.0, but it`s equal {integral}")
         rest = 1.0 - integral
-        none_multiplier = rest/len(none_indexes)
+        none_multiplier = rest/len(none_indexes) if none_indexes else rest
         for i in none_indexes:
             values[i] = none_multiplier
         self._multipliers = values
@@ -50,7 +51,7 @@ class LossLinearCombination(torch.nn.Module):
         self.proportions(*values)
 
     def __call__(self, result:torch.Tensor, target:torch.Tensor) -> torch.Tensor:
-        loss = torch.tensor(0.)
+        loss = torch.tensor(0., device=result.device)
         for i in range(self.count):
             loss += self._multipliers[i] * self._loss_functions[i](result, target)
         return loss
@@ -117,7 +118,7 @@ class Normalizable:
             super().__init__(norm)
             self._mse = torch.nn.MSELoss(reduction=reduction)
         def _loss(self, signals:torch.Tensor, target:torch.Tensor) -> torch.Tensor:
-            return self._mse(signals, target)
+            return self._mse(signals, torch.nn.functional.one_hot(target, num_classes=signals.shape[1]).float())
         def __call__(self, signals:torch.Tensor, target:torch.Tensor) -> torch.Tensor:
             return super().__call__(signals, target)
     class CrossEntropy(Abstract):
