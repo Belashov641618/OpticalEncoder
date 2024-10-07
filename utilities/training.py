@@ -8,11 +8,13 @@ from time import time
 from utilities import *
 
 def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimizer, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], echo:bool=True):
-
     if hasattr(model, 'device'): device = model.device
     else: device = next(iter(model.parameters())).device
 
+    if torch.distributed.is_initialized() and torch.distributed.get_backend() == 'nccl':
+        torch.distributed.barrier()
     model.train()
+
     history = numpy.zeros((len(dataset.train)))
 
     time_start = time()
@@ -44,14 +46,21 @@ def train(model:torch.nn.Module, dataset:Dataset, optimizer:torch.optim.Optimize
             k, b = numpy.polyfit(iteration_slice, history_slice, 1)
             regression = k.item() * 1000.0
         iterator.set_description(f"RL:{scientific(float(running_loss),'',3,space='')}, RPI1K:{scientific(float(regression),'',2,space='')}")
+
+    if torch.distributed.is_initialized() and torch.distributed.get_backend() == 'nccl':
+        torch.distributed.barrier()
     model.eval()
+
     return history
 
 def confusion(model:torch.nn.Module, dataset:Dataset, classes:int=10, echo:bool=True):
     if hasattr(model, 'device'): device = model.device
     else: device = next(iter(model.parameters())).device
-    
+
+    if torch.distributed.is_initialized() and torch.distributed.get_backend() == 'nccl':
+        torch.distributed.barrier()
     model.eval()
+
     matrix = numpy.zeros((classes, classes))
     with torch.no_grad():
         iterator = tqdm(dataset.test, disable=not echo)

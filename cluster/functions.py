@@ -151,15 +151,6 @@ def _execute(gpus:tuple[int,...], model:torch.nn.Module, data:Union[Dataset, Ite
 
 
 def _epochs_flow(rank:int, gpus:tuple[int,...], epochs:int, classes:int, model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], optimizer_args, optimizer_kwargs):
-    # print(f"Training thread#{rank} PID is: {os.getpid()}")
-    # if rank == 0:
-        # if isinstance(model, HybridModel):
-            # for layer in model._optical_model:
-                # print(type(layer).__name__)
-            # print(type(model._detectors).__name__)
-            # print(type(model._electronic_model).__name__)
-        # else:
-            # summary(model, (1, dataset.width, dataset.height), dataset.batch)
     setup(rank, len(gpus))
     model = torch.nn.parallel.DistributedDataParallel(deepcopy(model).to(gpus[rank]))
     dataset.sampler.parallel(rank, len(gpus))
@@ -187,26 +178,19 @@ def _epochs_flow(rank:int, gpus:tuple[int,...], epochs:int, classes:int, model:t
         torch.distributed.barrier()
     
     for i in range(epochs):
-        # print(f"| {time.time()} : {rank} : Start Training")
         loss_array = train(model, dataset, optimizer, loss_function, echo=(rank == 0))
         loss_array_tensor = torch.tensor(loss_array, dtype=torch.float32, device=gpus[rank])
         gathered_loss_tensors = [torch.zeros_like(loss_array_tensor) for _ in range(len(gpus))]
-        # print(f"| {time.time()} : {rank} : Training finished, gathering")
         torch.distributed.all_gather(gathered_loss_tensors, loss_array_tensor)
         
         if dataset.confusion_allowed:
-            # print(f"| {time.time()} : {rank} : Gathering finished, start validation")
             confusion_matrix = confusion(model, dataset, classes, echo=(rank == 0))
             confusion_matrices_tensor = torch.tensor(confusion_matrix, dtype=torch.float32, device=gpus[rank])
             gathered_confusion_matrices = [torch.zeros_like(confusion_matrices_tensor) for _ in range(len(gpus))]
-            # print(f"| {time.time()} : {rank} : Validation finished, gathering")
             torch.distributed.all_gather(gathered_confusion_matrices, confusion_matrices_tensor)
 
-        # print(f"| {time.time()} : {rank} : Gathering after validation finished, accquiring barrier")
         torch.distributed.barrier()
-        # print(f"| {time.time()} : {rank} : Barrier released, starting calculations")
         if rank == 0:
-            # print(f"| {time.time()} : {rank} : Meaning loss history")
             gathered_loss_tensors = [tensor.cpu().numpy() for tensor in gathered_loss_tensors]
             loss_array_reduced = sum(gathered_loss_tensors) / len(gpus)
             loss_histories.append(loss_array_reduced)
@@ -231,9 +215,7 @@ def _epochs_flow(rank:int, gpus:tuple[int,...], epochs:int, classes:int, model:t
         with open(_directory + "/cash/results.pkl", 'wb') as file:
             dump((models_history, loss_histories, confusion_matrices_history), file)
             
-    # print(f"| {time.time()} : {rank} : Barrier accquiring before cleaning up")
     torch.distributed.barrier()
-    # print(f"| {time.time()} : {rank} : Barrier released, cleaning up")
     cleanup()
 def _epochs(gpus:tuple[int,...], epochs:int, classes:int, model:torch.nn.Module, dataset:Dataset, loss_function:Callable[[torch.Tensor,torch.Tensor],torch.Tensor], optimizer:Type[torch.optim.Optimizer], *optimizer_args, **optimizer_kwargs):
     print(f"Training main thread PID is: {os.getpid()}")
